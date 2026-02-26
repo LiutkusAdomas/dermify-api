@@ -1,7 +1,7 @@
 package config_test
 
 import (
-	"api-template/config"
+	"dermify-api/config"
 	"os"
 	"testing"
 

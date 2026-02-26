@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"api-template/api/metrics"
+	"dermify-api/internal/api/metrics"
 	"encoding/json"
 	"net/http"
 )

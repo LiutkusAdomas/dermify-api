@@ -1,17 +1,17 @@
-FROM golang:1.21.0-alpine as builder
+FROM golang:1.23-alpine as builder
 
 WORKDIR /app
 COPY . /app
 
-RUN apk add make \
+RUN apk add make git \
     && make build
 
-ENTRYPOINT ["/app/api-template", "version"]
+ENTRYPOINT ["/app/dermify-api", "version"]
 
 FROM alpine
 
 WORKDIR /app
-COPY --from=builder /app/api-template /app
+COPY --from=builder /app/dermify-api /app
 COPY --from=builder /app/config.yaml /app
 
-ENTRYPOINT ["/app/api-template", "serve"]
+ENTRYPOINT ["/app/dermify-api", "serve"]

@@ -1,24 +1,28 @@
 package api
 
 import (
+	"database/sql"
 	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
 
-	"api-template/api/metrics"
-	"api-template/config"
+	"dermify-api/config"
+	"dermify-api/internal/api/metrics"
+	"dermify-api/internal/api/middleware"
+	postgres "dermify-api/internal/pkg"
+	"dermify-api/migrations"
 
 	"github.com/go-chi/chi/v5"
-	chimiddleware "github.com/go-chi/chi/v5/middleware"
 )
 
-const appName = "api-template"
+const appName = "dermify-api"
 
 type App struct {
 	logger  *slog.Logger
 	config  *config.Configuration
 	metrics *metrics.Client
+	db      *sql.DB
 }
 
 func New(configPath string) *App {
@@ -37,9 +41,30 @@ func New(configPath string) *App {
 
 // Start runs the API. It is triggered by the serve command.
 func (a *App) Start() {
+	db, err := postgres.Open(a.config.Database.DSN(), a.logger)
+	if err != nil {
+		a.logger.Error("connecting to database", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+	a.db = db
+	defer a.db.Close()
+
+	if err := postgres.MigrateFS(a.db, migrations.FS, "."); err != nil {
+		a.logger.Error("running database migrations", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+	a.logger.Info("database migrations completed")
+
 	r := chi.NewRouter()
-	r.Use(chimiddleware.Logger)
+
+	// Add CORS middleware first (before other middleware)
+	r.Use(middleware.CORSWithConfig(a.config))
+
+	// Add request ID and logging middleware
+	r.Use(middleware.RequestID)
+	r.Use(middleware.NewLoggingMiddleware(a.logger))
 	r.Use(a.NewMetricsMiddleware)
+
 	a.createRoutes(r)
 
 	port := fmt.Sprintf(":%d", a.config.Port)

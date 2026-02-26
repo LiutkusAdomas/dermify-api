@@ -14,8 +14,6 @@ const (
 	nanosecondToMillisecond = 1000000
 )
 
-// Middleware is a handler that exposes prometheus metrics for the number of requests,
-// the latency and the response size, partitioned by status code, method and HTTP path.
 type Middleware struct {
 	reqs    *prometheus.CounterVec
 	latency *prometheus.HistogramVec

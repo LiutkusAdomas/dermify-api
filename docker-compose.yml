@@ -1,0 +1,34 @@
+services:
+  db:
+    container_name: dermify-db
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=dermify
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d dermify"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    container_name: dermify-api
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - OVERRIDE_DATABASE_HOST=db
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local

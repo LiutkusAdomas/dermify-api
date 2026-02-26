@@ -1,7 +1,7 @@
 package main
 
 import (
-	"api-template/cmd"
+	"dermify-api/cmd"
 	"log"
 )
 

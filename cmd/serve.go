@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"api-template/api"
+	"dermify-api/internal/api"
 
 	"github.com/spf13/cobra"
 )

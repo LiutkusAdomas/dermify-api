@@ -6,7 +6,7 @@ import (
 
 func newRootCmd() *cobra.Command {
 	return &cobra.Command{
-		Use:   "api-template",
+		Use:   "dermify-api",
 		Short: "A template for APIs",
 	}
 }

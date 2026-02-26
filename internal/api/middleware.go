@@ -1,7 +1,7 @@
 package api
 
 import (
-	"api-template/api/middleware"
+	"dermify-api/internal/api/middleware"
 	"net/http"
 )
 

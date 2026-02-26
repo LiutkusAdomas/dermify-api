@@ -7,8 +7,8 @@ endpoint. There are make targets for building a binary, building and running a d
 
 ## Quickstart
 To quickly start up the API, run `make build-image` and then `make run-image`. This will build and run a docker
-image of the API. Alternatively, run `make build` to build a binary and then `./api-template serve` to run the newly
-built `api-template` binary.
+image of the API. Alternatively, run `make build` to build a binary and then `./dermify-api serve` to run the newly
+built `dermify-api` binary.
 
 By default the API will run on port 8080, but this can be changed by configuration
 

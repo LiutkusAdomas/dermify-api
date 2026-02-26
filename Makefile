@@ -1,5 +1,5 @@
-BINARY_NAME = api-template
-IMAGE_NAME = api-template
+BINARY_NAME = dermify-api
+IMAGE_NAME = dermify-api
 
 build:
 	@go build -o $(BINARY_NAME) -ldflags="-X main.Commit=$(git rev-parse HEAD)" .
