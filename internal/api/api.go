@@ -40,6 +40,15 @@ func New(configPath string) *App {
 }
 
 // Start runs the API. It is triggered by the serve command.
+//
+//	@title						Dermify API
+//	@version					1.0
+//	@description				Backend REST API for the Dermify application
+//	@host						localhost:8080
+//	@BasePath					/api/v1
+//	@securityDefinitions.apikey	BearerAuth
+//	@in							header
+//	@name						Authorization
 func (a *App) Start() {
 	db, err := postgres.Open(a.config.Database.DSN(), a.logger)
 	if err != nil {

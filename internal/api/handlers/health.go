@@ -5,18 +5,25 @@ import (
 	"net/http"
 )
 
-// HandleHealth handles health check endpoint
+// HandleHealth handles health check endpoint.
+//
+//	@Summary		Health check
+//	@Description	Returns the health status of the API
+//	@Tags			health
+//	@Produce		json
+//	@Success		200	{object}	HealthResponse
+//	@Router			/health [get]
 func HandleHealth() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		response := map[string]interface{}{
-			"status":    "healthy",
-			"timestamp": "2024-01-01T00:00:00Z",
-			"version":   "1.0.0",
+		response := HealthResponse{
+			Status:    "healthy",
+			Timestamp: "2024-01-01T00:00:00Z",
+			Version:   "1.0.0",
 		}
 
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(response)
+		json.NewEncoder(w).Encode(response) //nolint:errcheck // response write
 	}
 }

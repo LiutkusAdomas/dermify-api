@@ -4,6 +4,8 @@ WORKDIR /app
 COPY . /app
 
 RUN apk add make git \
+    && go install github.com/swaggo/swag/cmd/swag@latest \
+    && make swagger \
     && make build
 
 ENTRYPOINT ["/app/dermify-api", "version"]

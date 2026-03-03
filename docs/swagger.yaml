@@ -1,0 +1,463 @@
+basePath: /api/v1
+definitions:
+  apierrors.ErrorResponse:
+    properties:
+      code:
+        example: AUTH_INVALID_CREDENTIALS
+        type: string
+      error:
+        example: invalid credentials
+        type: string
+    type: object
+  handlers.CreateUserResponse:
+    properties:
+      email:
+        example: newuser@example.com
+        type: string
+      id:
+        example: 3
+        type: integer
+      message:
+        example: User created successfully
+        type: string
+      username:
+        example: newuser
+        type: string
+    type: object
+  handlers.HealthResponse:
+    properties:
+      status:
+        example: healthy
+        type: string
+      timestamp:
+        example: "2024-01-01T00:00:00Z"
+        type: string
+      version:
+        example: 1.0.0
+        type: string
+    type: object
+  handlers.MessageResponse:
+    properties:
+      message:
+        example: operation successful
+        type: string
+    type: object
+  handlers.UpdateUserResponse:
+    properties:
+      email:
+        example: updated@example.com
+        type: string
+      id:
+        example: "1"
+        type: string
+      message:
+        example: User updated successfully
+        type: string
+      username:
+        example: updateduser
+        type: string
+    type: object
+  handlers.UserResponse:
+    properties:
+      email:
+        example: johndoe@example.com
+        type: string
+      id:
+        example: 1
+        type: integer
+      username:
+        example: johndoe
+        type: string
+    type: object
+  handlers.fooResponse:
+    properties:
+      foo:
+        example: Bar
+        type: string
+    type: object
+  handlers.helloResponse:
+    properties:
+      hello:
+        example: World
+        type: string
+    type: object
+  handlers.loginRequest:
+    properties:
+      email:
+        example: johndoe@example.com
+        type: string
+      password:
+        example: secretpassword
+        type: string
+    type: object
+  handlers.loginResponse:
+    properties:
+      access_token:
+        example: eyJhbGciOiJIUzI1NiIs...
+        type: string
+      expires_in:
+        example: 3600
+        type: integer
+      message:
+        example: login successful
+        type: string
+      refresh_token:
+        example: dGhpcyBpcyBhIHJlZnJl...
+        type: string
+    type: object
+  handlers.logoutRequest:
+    properties:
+      refresh_token:
+        example: dGhpcyBpcyBhIHJlZnJl...
+        type: string
+    type: object
+  handlers.profileResponse:
+    properties:
+      bio:
+        example: Software developer
+        type: string
+      created_at:
+        example: "2024-01-01T00:00:00Z"
+        type: string
+      email:
+        example: johndoe@example.com
+        type: string
+      id:
+        example: 1
+        type: integer
+      username:
+        example: johndoe
+        type: string
+    type: object
+  handlers.refreshRequest:
+    properties:
+      refresh_token:
+        example: dGhpcyBpcyBhIHJlZnJl...
+        type: string
+    type: object
+  handlers.refreshResponse:
+    properties:
+      access_token:
+        example: eyJhbGciOiJIUzI1NiIs...
+        type: string
+      expires_in:
+        example: 3600
+        type: integer
+      refresh_token:
+        example: dGhpcyBpcyBhIHJlZnJl...
+        type: string
+    type: object
+  handlers.registerRequest:
+    properties:
+      email:
+        example: johndoe@example.com
+        type: string
+      password:
+        example: secretpassword
+        type: string
+      username:
+        example: johndoe
+        type: string
+    type: object
+  handlers.registerResponse:
+    properties:
+      email:
+        example: johndoe@example.com
+        type: string
+      id:
+        example: 1
+        type: integer
+      message:
+        example: user registered successfully
+        type: string
+      username:
+        example: johndoe
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Backend REST API for the Dermify application
+  title: Dermify API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates a user with email and password, returning JWT access
+        and refresh tokens
+      parameters:
+      - description: Login credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.loginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.loginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      summary: Login
+      tags:
+      - auth
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Revokes the provided refresh token
+      parameters:
+      - description: Logout request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.logoutRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      summary: Logout
+      tags:
+      - auth
+  /auth/me:
+    get:
+      description: Returns the authenticated user's profile
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.profileResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get user profile
+      tags:
+      - auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Validates an existing refresh token, revokes it, and issues a new
+        access/refresh token pair
+      parameters:
+      - description: Refresh token request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.refreshRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.refreshResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      summary: Refresh token
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new user account with a hashed password
+      parameters:
+      - description: Registration details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.registerRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.registerResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      summary: Register a new user
+      tags:
+      - auth
+  /foo:
+    get:
+      description: Returns a foo bar response and increments the foo metric counter
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.fooResponse'
+      summary: Foo bar
+      tags:
+      - general
+  /health:
+    get:
+      description: Returns the health status of the API
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.HealthResponse'
+      summary: Health check
+      tags:
+      - health
+  /hello:
+    get:
+      description: Returns a simple hello world message
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.helloResponse'
+      summary: Hello world
+      tags:
+      - general
+  /users:
+    get:
+      description: Returns a list of all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/handlers.UserResponse'
+            type: array
+      summary: List users
+      tags:
+      - users
+    post:
+      description: Creates a new user
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.CreateUserResponse'
+      summary: Create user
+      tags:
+      - users
+  /users/{id}:
+    delete:
+      description: Deletes a user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.MessageResponse'
+      summary: Delete user
+      tags:
+      - users
+    get:
+      description: Returns a specific user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.UserResponse'
+      summary: Get user
+      tags:
+      - users
+    put:
+      description: Updates an existing user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.UpdateUserResponse'
+      summary: Update user
+      tags:
+      - users
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

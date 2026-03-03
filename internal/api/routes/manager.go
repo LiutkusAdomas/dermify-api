@@ -7,7 +7,10 @@ import (
 	"dermify-api/internal/api/handlers"
 	"dermify-api/internal/api/metrics"
 
+	_ "dermify-api/docs"
+
 	"github.com/go-chi/chi/v5"
+	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
 
 // Manager handles all route registration
@@ -39,4 +42,7 @@ func (m *Manager) RegisterAllRoutes(router chi.Router) {
 
 	// Register metrics endpoint (outside API versioning)
 	router.Get("/metrics", handlers.HandleMetrics(m.metrics.Registry))
+
+	// Register Swagger UI
+	router.Get("/swagger/*", httpSwagger.WrapHandler)
 }

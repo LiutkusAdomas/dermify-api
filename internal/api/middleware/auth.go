@@ -2,11 +2,11 @@ package middleware
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
 	"strings"
 
 	"dermify-api/config"
+	"dermify-api/internal/api/apierrors"
 	"dermify-api/internal/api/auth"
 )
 
@@ -22,22 +22,19 @@ func RequireAuth(cfg *config.Configuration) func(http.Handler) http.Handler {
 
 			header := r.Header.Get("Authorization")
 			if header == "" {
-				w.WriteHeader(http.StatusUnauthorized)
-				json.NewEncoder(w).Encode(map[string]string{"error": "missing authorization header"})
+				apierrors.WriteError(w, http.StatusUnauthorized, apierrors.AuthMissingHeader, "missing authorization header")
 				return
 			}
 
 			parts := strings.SplitN(header, " ", 2)
 			if len(parts) != 2 || !strings.EqualFold(parts[0], "bearer") {
-				w.WriteHeader(http.StatusUnauthorized)
-				json.NewEncoder(w).Encode(map[string]string{"error": "invalid authorization header format"})
+				apierrors.WriteError(w, http.StatusUnauthorized, apierrors.AuthInvalidHeaderFormat, "invalid authorization header format")
 				return
 			}
 
 			claims, err := auth.ValidateAccessToken(parts[1], cfg.Auth.JWTSecret)
 			if err != nil {
-				w.WriteHeader(http.StatusUnauthorized)
-				json.NewEncoder(w).Encode(map[string]string{"error": "invalid or expired token"})
+				apierrors.WriteError(w, http.StatusUnauthorized, apierrors.AuthInvalidToken, "invalid or expired token")
 				return
 			}
 
