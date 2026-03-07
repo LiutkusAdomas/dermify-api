@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 01-01-PLAN.md
-last_updated: "2026-03-07T18:43:02Z"
-last_activity: 2026-03-07 -- Completed 01-01 domain models and service/repository scaffold
+stopped_at: Completed 01-02-PLAN.md
+last_updated: "2026-03-07T18:52:05Z"
+last_activity: 2026-03-07 -- Completed 01-02 RBAC system (middleware, handlers, routes, first-user bootstrap)
 progress:
   total_phases: 6
   completed_phases: 0
   total_plans: 5
-  completed_plans: 2
-  percent: 40
+  completed_plans: 3
+  percent: 60
 ---
 
 # Project State
@@ -26,28 +26,28 @@ See: .planning/PROJECT.md (updated 2026-03-07)
 ## Current Position
 
 Phase: 1 of 6 (Foundation)
-Plan: 2 of 5 in current phase
+Plan: 3 of 5 in current phase
 Status: Executing
-Last activity: 2026-03-07 -- Completed 01-01 domain models and service/repository scaffold
+Last activity: 2026-03-07 -- Completed 01-02 RBAC system (middleware, handlers, routes, first-user bootstrap)
 
-Progress: [████░░░░░░] 40%
+Progress: [██████░░░░] 60%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
+- Total plans completed: 3
 - Average duration: 4min
-- Total execution time: 0.12 hours
+- Total execution time: 0.20 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-foundation | 2 | 7min | 4min |
+| 01-foundation | 3 | 12min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 01-00 (2min), 01-01 (5min)
-- Trend: --
+- Last 5 plans: 01-00 (2min), 01-01 (5min), 01-02 (5min)
+- Trend: stable
 
 *Updated after each plan completion*
 
@@ -66,6 +66,9 @@ Recent decisions affecting current work:
 - [01-00]: Defined placeholder domain types in mocks.go before actual domain types exist
 - [01-01]: Sentinel errors use package-level vars with nolint:gochecknoglobals for golangci-lint compatibility
 - [01-01]: Mock repositories split into per-domain files to allow independent build-ignore management
+- [01-02]: Role field uses json omitempty tag for backward compatibility with pre-migration tokens
+- [01-02]: Login and refresh handler callers updated in Task 1 (Rule 3 blocking fix) due to GenerateAccessToken signature change
+- [01-02]: First-user bootstrap is non-fatal on error to avoid blocking registration
 
 ### Pending Todos
 
@@ -79,6 +82,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-07T18:43:02Z
-Stopped at: Completed 01-01-PLAN.md
-Resume file: .planning/phases/01-foundation/01-01-SUMMARY.md
+Last session: 2026-03-07T18:52:05Z
+Stopped at: Completed 01-02-PLAN.md
+Resume file: .planning/phases/01-foundation/01-02-SUMMARY.md

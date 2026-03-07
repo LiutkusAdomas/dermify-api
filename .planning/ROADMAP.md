@@ -36,7 +36,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 Plans:
 - [x] 01-00-PLAN.md -- Test infrastructure (Wave 0: mock repositories, test stubs, Makefile test target)
 - [x] 01-01-PLAN.md -- Domain models and service/repository scaffold (domain types, RoleService, PostgresRoleRepository)
-- [ ] 01-02-PLAN.md -- RBAC system (role migration, JWT claims, RequireRole middleware, role assignment endpoint, first-user bootstrap)
+- [x] 01-02-PLAN.md -- RBAC system (role migration, JWT claims, RequireRole middleware, role assignment endpoint, first-user bootstrap)
 - [ ] 01-03-PLAN.md -- Patient management with metadata tracking (patient CRUD, search/pagination, optimistic locking, metadata)
 - [ ] 01-04-PLAN.md -- Device/product registry with seed data (schema tables, seed migrations, read-only list/detail endpoints)
 
@@ -122,7 +122,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 2/5 | In Progress | - |
+| 1. Foundation | 3/5 | In Progress | - |
 | 2. Session Lifecycle | 0/2 | Not started | - |
 | 3. Energy-Based Modules | 0/2 | Not started | - |
 | 4. Injectable Modules and Outcomes | 0/2 | Not started | - |
