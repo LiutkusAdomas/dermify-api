@@ -40,7 +40,7 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Consent & Safety
 
 - [x] **CONS-01**: Clinician can record consent (type, method, datetime, risks discussed flag)
-- [ ] **CONS-02**: System blocks adding procedure modules until consent is captured
+- [x] **CONS-02**: System blocks adding procedure modules until consent is captured
 - [x] **CONS-03**: Clinician can complete contraindication screening checklist
 - [x] **CONS-04**: System captures contraindication flags and mitigation notes
 - [x] **CONS-05**: Clinician can record photo consent status (yes/no/limited)
@@ -189,7 +189,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SESS-05 | Phase 2 | Pending |
 | SESS-06 | Phase 2 | Complete |
 | CONS-01 | Phase 2 | Complete |
-| CONS-02 | Phase 2 | Pending |
+| CONS-02 | Phase 2 | Complete |
 | CONS-03 | Phase 2 | Complete |
 | CONS-04 | Phase 2 | Complete |
 | CONS-05 | Phase 2 | Complete |
