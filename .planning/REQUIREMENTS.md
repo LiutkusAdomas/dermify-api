@@ -9,7 +9,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Access Control
 
-- [ ] **RBAC-01**: System supports Doctor and Admin roles with distinct permissions
+- [x] **RBAC-01**: System supports Doctor and Admin roles with distinct permissions
 - [ ] **RBAC-02**: Doctor can perform all clinical operations (create sessions, add modules, sign off)
 - [ ] **RBAC-03**: Admin can manage patients and view sessions but cannot sign off or modify clinical data
 - [ ] **RBAC-04**: Endpoints enforce role-based authorization via middleware
@@ -167,7 +167,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| RBAC-01 | Phase 1 | Pending |
+| RBAC-01 | Phase 1 | Complete |
 | RBAC-02 | Phase 1 | Pending |
 | RBAC-03 | Phase 1 | Pending |
 | RBAC-04 | Phase 1 | Pending |
