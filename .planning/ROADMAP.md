@@ -51,11 +51,13 @@ Plans:
   3. The system blocks adding procedure modules to a session until consent is recorded (type, method, datetime, risks discussed)
   4. A clinician can complete contraindication screening (checklist, flags, mitigation notes) and record photo consent status before proceeding
   5. A session supports multiple procedure modules (the slots exist even though module types are delivered in later phases)
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
+- [ ] 02-01-PLAN.md -- Domain models, migrations, service interfaces, and mock repositories (contracts foundation)
+- [ ] 02-02-PLAN.md -- Session service with state machine and PostgreSQL repository
+- [ ] 02-03-PLAN.md -- Consent, contraindication, and module services with PostgreSQL repositories
+- [ ] 02-04-PLAN.md -- HTTP handlers, route wiring, metrics, and patient history integration
 
 ### Phase 3: Energy-Based Modules
 **Goal**: A clinician can document energy-based procedures (IPL, Nd:YAG, CO2/ablative, RF) within a treatment session, selecting devices from the registry and recording all device-specific parameters
@@ -124,7 +126,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 6/6 | Complete   | 2026-03-07 |
-| 2. Session Lifecycle | 0/2 | Not started | - |
+| 2. Session Lifecycle | 0/4 | Not started | - |
 | 3. Energy-Based Modules | 0/2 | Not started | - |
 | 4. Injectable Modules and Outcomes | 0/2 | Not started | - |
 | 5. Sign-off and Compliance | 0/2 | Not started | - |
