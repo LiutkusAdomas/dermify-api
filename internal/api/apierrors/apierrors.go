@@ -46,6 +46,23 @@ const (
 	RoleUserNotFound     = "ROLE_USER_NOT_FOUND"
 )
 
+// Error codes for patient-related failures.
+const (
+	PatientNotFound        = "PATIENT_NOT_FOUND"
+	PatientVersionConflict = "PATIENT_VERSION_CONFLICT"
+	PatientInvalidData     = "PATIENT_INVALID_DATA"
+	PatientCreationFailed  = "PATIENT_CREATION_FAILED"
+	PatientUpdateFailed    = "PATIENT_UPDATE_FAILED"
+	PatientLookupFailed    = "PATIENT_LOOKUP_FAILED"
+)
+
+// Error codes for registry-related failures.
+const (
+	RegistryDeviceNotFound  = "REGISTRY_DEVICE_NOT_FOUND"
+	RegistryProductNotFound = "REGISTRY_PRODUCT_NOT_FOUND"
+	RegistryLookupFailed    = "REGISTRY_LOOKUP_FAILED"
+)
+
 // Error codes for internal server errors.
 const (
 	InternalPasswordProcessing      = "INTERNAL_PASSWORD_PROCESSING"

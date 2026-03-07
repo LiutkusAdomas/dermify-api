@@ -17,11 +17,13 @@ import (
 
 // Manager handles all route registration.
 type Manager struct {
-	authRoutes *AuthRoutes
-	userRoutes *UserRoutes
-	apiRoutes  *APIRoutes
-	roleRoutes *RoleRoutes
-	metrics    *metrics.Client
+	authRoutes     *AuthRoutes
+	userRoutes     *UserRoutes
+	apiRoutes      *APIRoutes
+	roleRoutes     *RoleRoutes
+	patientRoutes  *PatientRoutes
+	registryRoutes *RegistryRoutes
+	metrics        *metrics.Client
 }
 
 // NewManager creates a new route manager.
@@ -29,12 +31,20 @@ func NewManager(db *sql.DB, cfg *config.Configuration, m *metrics.Client) *Manag
 	roleRepo := postgres.NewPostgresRoleRepository(db)
 	roleSvc := service.NewRoleService(roleRepo)
 
+	patientRepo := postgres.NewPostgresPatientRepository(db)
+	patientSvc := service.NewPatientService(patientRepo)
+
+	registryRepo := postgres.NewPostgresRegistryRepository(db)
+	registrySvc := service.NewRegistryService(registryRepo)
+
 	return &Manager{
-		metrics:    m,
-		authRoutes: NewAuthRoutes(db, roleSvc, cfg, m),
-		userRoutes: NewUserRoutes(db, m),
-		apiRoutes:  NewAPIRoutes(m),
-		roleRoutes: NewRoleRoutes(roleSvc, cfg, m),
+		metrics:        m,
+		authRoutes:     NewAuthRoutes(db, roleSvc, cfg, m),
+		userRoutes:     NewUserRoutes(db, m),
+		apiRoutes:      NewAPIRoutes(m),
+		roleRoutes:     NewRoleRoutes(roleSvc, cfg, m),
+		patientRoutes:  NewPatientRoutes(patientSvc, cfg, m),
+		registryRoutes: NewRegistryRoutes(registrySvc, cfg, m),
 	}
 }
 
@@ -46,6 +56,8 @@ func (m *Manager) RegisterAllRoutes(router chi.Router) {
 		m.authRoutes.RegisterRoutes(r)
 		m.userRoutes.RegisterRoutes(r)
 		m.roleRoutes.RegisterRoutes(r)
+		m.patientRoutes.RegisterRoutes(r)
+		m.registryRoutes.RegisterRoutes(r)
 	})
 
 	// Register metrics endpoint (outside API versioning).

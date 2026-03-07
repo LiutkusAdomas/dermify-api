@@ -37,3 +37,12 @@ func newRoleAssignmentCounter(reg *prometheus.Registry) prometheus.Counter {
 	reg.MustRegister(m)
 	return m
 }
+
+func newPatientCreatedCounter(reg *prometheus.Registry) prometheus.Counter {
+	m := prometheus.NewCounter(prometheus.CounterOpts{
+		Name: "patient_created_total",
+		Help: "Total number of patients created.",
+	})
+	reg.MustRegister(m)
+	return m
+}

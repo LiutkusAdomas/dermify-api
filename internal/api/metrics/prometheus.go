@@ -11,6 +11,7 @@ const (
 	loginSuccessCounterMetric     = "login_success_total"
 	loginFailureCounterMetric     = "login_failure_total"
 	roleAssignmentCounterMetric   = "role_assignment_total"
+	patientCreatedCounterMetric   = "patient_created_total"
 )
 
 // Client allows the creation and invocation of metrics within the API. Instantiation should occur through the New
@@ -31,6 +32,7 @@ func New(logger *slog.Logger) *Client {
 		loginSuccessCounterMetric:   newLoginSuccessCounter(reg),
 		loginFailureCounterMetric:   newLoginFailureCounter(reg),
 		roleAssignmentCounterMetric: newRoleAssignmentCounter(reg),
+		patientCreatedCounterMetric: newPatientCreatedCounter(reg),
 	}
 
 	return &Client{
@@ -55,4 +57,9 @@ func (c *Client) IncrementLoginFailureCount() {
 // IncrementRoleAssignmentCount increments the role assignment counter.
 func (c *Client) IncrementRoleAssignmentCount() {
 	c.metrics[roleAssignmentCounterMetric].(prometheus.Counter).Add(1)
+}
+
+// IncrementPatientCreatedCount increments the patient created counter.
+func (c *Client) IncrementPatientCreatedCount() {
+	c.metrics[patientCreatedCounterMetric].(prometheus.Counter).Add(1)
 }
