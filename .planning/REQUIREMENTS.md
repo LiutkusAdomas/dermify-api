@@ -33,8 +33,8 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **SESS-01**: Clinician can create a new treatment session linked to a patient
 - [x] **SESS-02**: Session captures header fields: patient, clinician, timing, indication codes, patient goal, Fitzpatrick skin type, context flags (tan, pregnancy, anticoagulants)
 - [x] **SESS-03**: Session follows lifecycle states: Draft -> In Progress -> Awaiting Sign-off -> Signed -> Locked
-- [ ] **SESS-04**: Server enforces valid state transitions (no skipping states)
-- [ ] **SESS-05**: Clinician can save a session as draft and return to it later
+- [x] **SESS-04**: Server enforces valid state transitions (no skipping states)
+- [x] **SESS-05**: Clinician can save a session as draft and return to it later
 - [x] **SESS-06**: Clinician can add multiple procedure modules to a single session
 
 ### Consent & Safety
@@ -185,8 +185,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SESS-01 | Phase 2 | Complete |
 | SESS-02 | Phase 2 | Complete |
 | SESS-03 | Phase 2 | Complete |
-| SESS-04 | Phase 2 | Pending |
-| SESS-05 | Phase 2 | Pending |
+| SESS-04 | Phase 2 | Complete |
+| SESS-05 | Phase 2 | Complete |
 | SESS-06 | Phase 2 | Complete |
 | CONS-01 | Phase 2 | Complete |
 | CONS-02 | Phase 2 | Complete |

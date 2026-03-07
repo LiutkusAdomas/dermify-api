@@ -126,7 +126,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 6/6 | Complete   | 2026-03-07 |
-| 2. Session Lifecycle | 2/4 | In Progress|  |
+| 2. Session Lifecycle | 3/4 | In Progress|  |
 | 3. Energy-Based Modules | 0/2 | Not started | - |
 | 4. Injectable Modules and Outcomes | 0/2 | Not started | - |
 | 5. Sign-off and Compliance | 0/2 | Not started | - |
