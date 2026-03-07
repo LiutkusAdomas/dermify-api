@@ -114,7 +114,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Metadata
 
-- [ ] **META-01**: All clinical records track created_at, created_by, updated_at, updated_by
+- [x] **META-01**: All clinical records track created_at, created_by, updated_at, updated_by
 - [ ] **META-02**: Signed records track signed_at, signed_by
 - [ ] **META-03**: Records maintain an incrementing version number for medico-legal defensibility
 
@@ -179,7 +179,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | REG-02 | Phase 1 | Pending |
 | REG-03 | Phase 1 | Pending |
 | REG-04 | Phase 1 | Pending |
-| META-01 | Phase 1 | Pending |
+| META-01 | Phase 1 | Complete |
 | META-02 | Phase 1 | Pending |
 | META-03 | Phase 1 | Pending |
 | SESS-01 | Phase 2 | Pending |
