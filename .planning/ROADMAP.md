@@ -12,7 +12,7 @@ Dermify is a clinical procedure documentation API for aesthetic dermatology. The
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation** - Service/repository architecture, RBAC, patient management, device/product registry, and metadata tracking
+- [x] **Phase 1: Foundation** - Service/repository architecture, RBAC, patient management, device/product registry, and metadata tracking (completed 2026-03-07)
 - [ ] **Phase 2: Session Lifecycle** - Treatment session creation, header fields, state machine, and consent/safety gates
 - [ ] **Phase 3: Energy-Based Modules** - IPL, Nd:YAG, CO2/ablative, and RF procedure modules with device linkage
 - [ ] **Phase 4: Injectable Modules and Outcomes** - Filler and botulinum toxin modules with product traceability, plus outcomes and aftercare
@@ -122,7 +122,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 3/5 | In Progress | - |
+| 1. Foundation | 5/5 | Complete   | 2026-03-07 |
 | 2. Session Lifecycle | 0/2 | Not started | - |
 | 3. Energy-Based Modules | 0/2 | Not started | - |
 | 4. Injectable Modules and Outcomes | 0/2 | Not started | - |

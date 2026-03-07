@@ -16,10 +16,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Patient Management
 
-- [ ] **PAT-01**: User can create a patient record with demographics (name, date of birth, contact)
-- [ ] **PAT-02**: User can search and list patients with filtering
-- [ ] **PAT-03**: User can update patient records
-- [ ] **PAT-04**: User can view a patient's session history
+- [x] **PAT-01**: User can create a patient record with demographics (name, date of birth, contact)
+- [x] **PAT-02**: User can search and list patients with filtering
+- [x] **PAT-03**: User can update patient records
+- [x] **PAT-04**: User can view a patient's session history
 
 ### Device & Product Registry
 
@@ -115,8 +115,8 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Metadata
 
 - [x] **META-01**: All clinical records track created_at, created_by, updated_at, updated_by
-- [ ] **META-02**: Signed records track signed_at, signed_by
-- [ ] **META-03**: Records maintain an incrementing version number for medico-legal defensibility
+- [x] **META-02**: Signed records track signed_at, signed_by
+- [x] **META-03**: Records maintain an incrementing version number for medico-legal defensibility
 
 ## v2 Requirements
 
@@ -171,17 +171,17 @@ Which phases cover which requirements. Updated during roadmap creation.
 | RBAC-02 | Phase 1 | Complete |
 | RBAC-03 | Phase 1 | Complete |
 | RBAC-04 | Phase 1 | Complete |
-| PAT-01 | Phase 1 | Pending |
-| PAT-02 | Phase 1 | Pending |
-| PAT-03 | Phase 1 | Pending |
-| PAT-04 | Phase 1 | Pending |
+| PAT-01 | Phase 1 | Complete |
+| PAT-02 | Phase 1 | Complete |
+| PAT-03 | Phase 1 | Complete |
+| PAT-04 | Phase 1 | Complete |
 | REG-01 | Phase 1 | Complete |
 | REG-02 | Phase 1 | Complete |
 | REG-03 | Phase 1 | Complete |
 | REG-04 | Phase 1 | Complete |
 | META-01 | Phase 1 | Complete |
-| META-02 | Phase 1 | Pending |
-| META-03 | Phase 1 | Pending |
+| META-02 | Phase 1 | Complete |
+| META-03 | Phase 1 | Complete |
 | SESS-01 | Phase 2 | Pending |
 | SESS-02 | Phase 2 | Pending |
 | SESS-03 | Phase 2 | Pending |
