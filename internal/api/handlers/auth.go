@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -11,6 +12,8 @@ import (
 	"dermify-api/internal/api/auth"
 	"dermify-api/internal/api/metrics"
 	"dermify-api/internal/api/middleware"
+	"dermify-api/internal/domain"
+	"dermify-api/internal/service"
 )
 
 type registerRequest struct {
@@ -39,7 +42,7 @@ type registerResponse struct {
 //	@Failure		409		{object}	apierrors.ErrorResponse
 //	@Failure		500		{object}	apierrors.ErrorResponse
 //	@Router			/auth/register [post]
-func HandleRegister(db *sql.DB, m *metrics.Client) func(w http.ResponseWriter, r *http.Request) {
+func HandleRegister(db *sql.DB, roleSvc *service.RoleService, m *metrics.Client) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
@@ -68,6 +71,18 @@ func HandleRegister(db *sql.DB, m *metrics.Client) func(w http.ResponseWriter, r
 		if err != nil {
 			apierrors.WriteError(w, http.StatusConflict, apierrors.UserAlreadyExists, "username or email already exists")
 			return
+		}
+
+		// First-user bootstrap: auto-promote to Admin if this is the first user.
+		isFirst, err := roleSvc.IsFirstUser(r.Context())
+		if err != nil {
+			slog.Error("failed to check first user status", "error", err)
+		} else if isFirst {
+			if assignErr := roleSvc.AssignRole(r.Context(), userID, domain.RoleAdmin); assignErr != nil {
+				slog.Error("failed to auto-promote first user to admin", "error", assignErr)
+			} else {
+				slog.Info("first user auto-promoted to admin", "user_id", userID)
+			}
 		}
 
 		w.WriteHeader(http.StatusCreated)
@@ -204,6 +219,7 @@ type profileResponse struct {
 	Username  string `json:"username" example:"johndoe"`
 	Email     string `json:"email" example:"johndoe@example.com"`
 	Bio       string `json:"bio" example:"Software developer"`
+	Role      string `json:"role" example:"doctor"`
 	CreatedAt string `json:"created_at" example:"2024-01-01T00:00:00Z"`
 }
 
@@ -231,9 +247,9 @@ func HandleGetProfile(db *sql.DB, m *metrics.Client) func(w http.ResponseWriter,
 		var resp profileResponse
 		var bio sql.NullString
 		err := db.QueryRow(
-			`SELECT id, username, email, bio, created_at FROM users WHERE id = $1`,
+			`SELECT id, username, email, bio, COALESCE(role, '') as role, created_at FROM users WHERE id = $1`,
 			claims.UserID,
-		).Scan(&resp.ID, &resp.Username, &resp.Email, &bio, &resp.CreatedAt)
+		).Scan(&resp.ID, &resp.Username, &resp.Email, &bio, &resp.Role, &resp.CreatedAt)
 		if err != nil {
 			apierrors.WriteError(w, http.StatusNotFound, apierrors.UserNotFound, "user not found")
 			return

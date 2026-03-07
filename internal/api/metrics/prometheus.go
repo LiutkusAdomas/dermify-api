@@ -7,9 +7,10 @@ import (
 )
 
 const (
-	fooCounterMetric          = "foo_counter"
-	loginSuccessCounterMetric = "login_success_total"
-	loginFailureCounterMetric = "login_failure_total"
+	fooCounterMetric              = "foo_counter"
+	loginSuccessCounterMetric     = "login_success_total"
+	loginFailureCounterMetric     = "login_failure_total"
+	roleAssignmentCounterMetric   = "role_assignment_total"
 )
 
 // Client allows the creation and invocation of metrics within the API. Instantiation should occur through the New
@@ -26,9 +27,10 @@ func New(logger *slog.Logger) *Client {
 	reg := prometheus.NewRegistry()
 
 	metrics := map[string]prometheus.Metric{
-		fooCounterMetric:          newFooCounter(reg),
-		loginSuccessCounterMetric: newLoginSuccessCounter(reg),
-		loginFailureCounterMetric: newLoginFailureCounter(reg),
+		fooCounterMetric:            newFooCounter(reg),
+		loginSuccessCounterMetric:   newLoginSuccessCounter(reg),
+		loginFailureCounterMetric:   newLoginFailureCounter(reg),
+		roleAssignmentCounterMetric: newRoleAssignmentCounter(reg),
 	}
 
 	return &Client{
@@ -48,4 +50,9 @@ func (c *Client) IncrementLoginSuccessCount() {
 
 func (c *Client) IncrementLoginFailureCount() {
 	c.metrics[loginFailureCounterMetric].(prometheus.Counter).Add(1)
+}
+
+// IncrementRoleAssignmentCount increments the role assignment counter.
+func (c *Client) IncrementRoleAssignmentCount() {
+	c.metrics[roleAssignmentCounterMetric].(prometheus.Counter).Add(1)
 }

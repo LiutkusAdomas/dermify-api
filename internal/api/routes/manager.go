@@ -6,6 +6,8 @@ import (
 	"dermify-api/config"
 	"dermify-api/internal/api/handlers"
 	"dermify-api/internal/api/metrics"
+	"dermify-api/internal/repository/postgres"
+	"dermify-api/internal/service"
 
 	_ "dermify-api/docs"
 
@@ -13,36 +15,42 @@ import (
 	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
 
-// Manager handles all route registration
+// Manager handles all route registration.
 type Manager struct {
 	authRoutes *AuthRoutes
 	userRoutes *UserRoutes
 	apiRoutes  *APIRoutes
+	roleRoutes *RoleRoutes
 	metrics    *metrics.Client
 }
 
-// NewManager creates a new route manager
-func NewManager(db *sql.DB, cfg *config.Configuration, metrics *metrics.Client) *Manager {
+// NewManager creates a new route manager.
+func NewManager(db *sql.DB, cfg *config.Configuration, m *metrics.Client) *Manager {
+	roleRepo := postgres.NewPostgresRoleRepository(db)
+	roleSvc := service.NewRoleService(roleRepo)
+
 	return &Manager{
-		metrics:    metrics,
-		authRoutes: NewAuthRoutes(db, cfg, metrics),
-		userRoutes: NewUserRoutes(db, metrics),
-		apiRoutes:  NewAPIRoutes(metrics),
+		metrics:    m,
+		authRoutes: NewAuthRoutes(db, roleSvc, cfg, m),
+		userRoutes: NewUserRoutes(db, m),
+		apiRoutes:  NewAPIRoutes(m),
+		roleRoutes: NewRoleRoutes(roleSvc, cfg, m),
 	}
 }
 
-// RegisterAllRoutes registers all route modules
+// RegisterAllRoutes registers all route modules.
 func (m *Manager) RegisterAllRoutes(router chi.Router) {
-	// Register API v1 routes
+	// Register API v1 routes.
 	router.Route("/api/v1", func(r chi.Router) {
 		m.apiRoutes.RegisterRoutes(r)
 		m.authRoutes.RegisterRoutes(r)
 		m.userRoutes.RegisterRoutes(r)
+		m.roleRoutes.RegisterRoutes(r)
 	})
 
-	// Register metrics endpoint (outside API versioning)
+	// Register metrics endpoint (outside API versioning).
 	router.Get("/metrics", handlers.HandleMetrics(m.metrics.Registry))
 
-	// Register Swagger UI
+	// Register Swagger UI.
 	router.Get("/swagger/*", httpSwagger.WrapHandler)
 }

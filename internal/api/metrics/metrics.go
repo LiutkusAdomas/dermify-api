@@ -28,3 +28,12 @@ func newLoginFailureCounter(reg *prometheus.Registry) prometheus.Counter {
 	reg.MustRegister(m)
 	return m
 }
+
+func newRoleAssignmentCounter(reg *prometheus.Registry) prometheus.Counter {
+	m := prometheus.NewCounter(prometheus.CounterOpts{
+		Name: "role_assignment_total",
+		Help: "Total number of role assignments.",
+	})
+	reg.MustRegister(m)
+	return m
+}
