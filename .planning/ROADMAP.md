@@ -31,12 +31,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. The system returns pre-loaded device entries (energy-based devices with manufacturers, models, handpieces) and product entries (fillers, botulinum toxins) from seed data
   4. All created/updated clinical records carry created_at, created_by, updated_at, updated_by metadata automatically
   5. Unauthorized role access to any protected endpoint returns a structured JSON error with appropriate HTTP status
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
-- [ ] 01-03: TBD
+- [ ] 01-01-PLAN.md -- Architecture foundation and RBAC (domain models, service/repository scaffold, role migration, RequireRole middleware, role assignment endpoint)
+- [ ] 01-02-PLAN.md -- Patient management with metadata tracking (patient CRUD, search/pagination, optimistic locking, created_at/by/updated_at/by/version)
+- [ ] 01-03-PLAN.md -- Device/product registry with seed data (schema tables, seed migrations, read-only list/detail endpoints)
 
 ### Phase 2: Session Lifecycle
 **Goal**: A clinician can create a treatment session for a patient, fill in clinical header fields, record consent and safety screening, and move the session through its lifecycle states -- producing a structured draft record ready for procedure modules
