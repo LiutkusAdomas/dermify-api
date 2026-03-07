@@ -16,5 +16,11 @@ lint:
 lint-fix:
 	@golangci-lint run --config golangci.yaml --fix
 
+test:
+	@go test ./... -count=1 -v
+
+test-short:
+	@go test ./internal/... -count=1 -short
+
 swagger:
 	@swag init -g internal/api/api.go --parseDependency --parseInternal -o docs
