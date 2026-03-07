@@ -70,8 +70,16 @@ func HandleLogin(db *sql.DB, cfg *config.Configuration, m *metrics.Client) func(
 			return
 		}
 
+		var role string
+		if err := db.QueryRow(
+			`SELECT COALESCE(role, '') FROM users WHERE id = $1`, userID,
+		).Scan(&role); err != nil {
+			apierrors.WriteError(w, http.StatusInternalServerError, apierrors.InternalUserLookup, "failed to look up user role")
+			return
+		}
+
 		accessToken, err := auth.GenerateAccessToken(
-			userID, req.Email, cfg.Auth.JWTSecret, cfg.Auth.AccessTokenExpiry,
+			userID, req.Email, role, cfg.Auth.JWTSecret, cfg.Auth.AccessTokenExpiry,
 		)
 		if err != nil {
 			apierrors.WriteError(w, http.StatusInternalServerError, apierrors.InternalTokenGeneration, "failed to generate token")

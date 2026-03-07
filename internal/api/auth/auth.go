@@ -16,6 +16,7 @@ import (
 type Claims struct {
 	UserID int64  `json:"user_id"`
 	Email  string `json:"email"`
+	Role   string `json:"role,omitempty"`
 	jwt.RegisteredClaims
 }
 
@@ -34,10 +35,11 @@ func CheckPassword(password, hash string) bool {
 }
 
 // GenerateAccessToken creates a signed JWT access token.
-func GenerateAccessToken(userID int64, email, secret string, expiry time.Duration) (string, error) {
+func GenerateAccessToken(userID int64, email, role, secret string, expiry time.Duration) (string, error) {
 	claims := Claims{
 		UserID: userID,
 		Email:  email,
+		Role:   role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(expiry)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),

@@ -28,10 +28,22 @@ const (
 	AuthRefreshTokenRequired = "AUTH_REFRESH_TOKEN_REQUIRED"
 )
 
+// Error codes for authorization failures.
+const (
+	AuthInsufficientRole = "AUTH_INSUFFICIENT_ROLE"
+)
+
 // Error codes for user-related failures.
 const (
-	UserNotFound     = "USER_NOT_FOUND"
+	UserNotFound      = "USER_NOT_FOUND"
 	UserAlreadyExists = "USER_ALREADY_EXISTS"
+)
+
+// Error codes for role-related failures.
+const (
+	RoleInvalidRole      = "ROLE_INVALID_ROLE"
+	RoleAssignmentFailed = "ROLE_ASSIGNMENT_FAILED"
+	RoleUserNotFound     = "ROLE_USER_NOT_FOUND"
 )
 
 // Error codes for internal server errors.

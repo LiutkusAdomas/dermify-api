@@ -164,13 +164,14 @@ func HandleRefreshToken(db *sql.DB, cfg *config.Configuration, m *metrics.Client
 		_ = auth.RevokeRefreshToken(db, oldHash)
 
 		var email string
-		err = db.QueryRow(`SELECT email FROM users WHERE id = $1`, userID).Scan(&email)
+		var role string
+		err = db.QueryRow(`SELECT email, COALESCE(role, '') FROM users WHERE id = $1`, userID).Scan(&email, &role)
 		if err != nil {
 			apierrors.WriteError(w, http.StatusInternalServerError, apierrors.InternalUserLookup, "failed to look up user")
 			return
 		}
 
-		accessToken, err := auth.GenerateAccessToken(userID, email, cfg.Auth.JWTSecret, cfg.Auth.AccessTokenExpiry)
+		accessToken, err := auth.GenerateAccessToken(userID, email, role, cfg.Auth.JWTSecret, cfg.Auth.AccessTokenExpiry)
 		if err != nil {
 			apierrors.WriteError(w, http.StatusInternalServerError, apierrors.InternalTokenGeneration, "failed to generate access token")
 			return

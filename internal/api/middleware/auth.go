@@ -44,6 +44,33 @@ func RequireAuth(cfg *config.Configuration) func(http.Handler) http.Handler {
 	}
 }
 
+// RequireRole returns middleware that checks whether the authenticated user
+// has one of the specified roles. Must be used after RequireAuth.
+func RequireRole(allowed ...string) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+
+			claims := GetUserClaims(r.Context())
+			if claims == nil {
+				apierrors.WriteError(w, http.StatusUnauthorized,
+					apierrors.AuthNotAuthenticated, "not authenticated")
+				return
+			}
+
+			for _, role := range allowed {
+				if claims.Role == role {
+					next.ServeHTTP(w, r)
+					return
+				}
+			}
+
+			apierrors.WriteError(w, http.StatusForbidden,
+				apierrors.AuthInsufficientRole, "insufficient role permissions")
+		})
+	}
+}
+
 // GetUserClaims extracts the authenticated user claims from the request context.
 // Returns nil if no claims are present.
 func GetUserClaims(ctx context.Context) *auth.Claims {
