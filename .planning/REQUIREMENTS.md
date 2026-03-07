@@ -23,10 +23,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Device & Product Registry
 
-- [ ] **REG-01**: System ships with seed data for energy-based devices (manufacturer, model, handpieces)
-- [ ] **REG-02**: System ships with seed data for injectable products (fillers, botulinum toxins with concentrations)
-- [ ] **REG-03**: System ships with seed data for indication codes and clinical endpoints
-- [ ] **REG-04**: Clinician can select devices and products from controlled lists when documenting procedures
+- [x] **REG-01**: System ships with seed data for energy-based devices (manufacturer, model, handpieces)
+- [x] **REG-02**: System ships with seed data for injectable products (fillers, botulinum toxins with concentrations)
+- [x] **REG-03**: System ships with seed data for indication codes and clinical endpoints
+- [x] **REG-04**: Clinician can select devices and products from controlled lists when documenting procedures
 
 ### Treatment Sessions
 
@@ -175,10 +175,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PAT-02 | Phase 1 | Pending |
 | PAT-03 | Phase 1 | Pending |
 | PAT-04 | Phase 1 | Pending |
-| REG-01 | Phase 1 | Pending |
-| REG-02 | Phase 1 | Pending |
-| REG-03 | Phase 1 | Pending |
-| REG-04 | Phase 1 | Pending |
+| REG-01 | Phase 1 | Complete |
+| REG-02 | Phase 1 | Complete |
+| REG-03 | Phase 1 | Complete |
+| REG-04 | Phase 1 | Complete |
 | META-01 | Phase 1 | Complete |
 | META-02 | Phase 1 | Pending |
 | META-03 | Phase 1 | Pending |

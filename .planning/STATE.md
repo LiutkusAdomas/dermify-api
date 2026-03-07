@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 01-02-PLAN.md
-last_updated: "2026-03-07T18:52:05Z"
-last_activity: 2026-03-07 -- Completed 01-02 RBAC system (middleware, handlers, routes, first-user bootstrap)
+stopped_at: Completed 01-04-PLAN.md
+last_updated: "2026-03-07T19:02:24Z"
+last_activity: 2026-03-07 -- Completed 01-04 device/product registry (schema, seed data, read-only API)
 progress:
   total_phases: 6
   completed_phases: 0
   total_plans: 5
-  completed_plans: 3
-  percent: 60
+  completed_plans: 4
+  percent: 80
 ---
 
 # Project State
@@ -26,27 +26,27 @@ See: .planning/PROJECT.md (updated 2026-03-07)
 ## Current Position
 
 Phase: 1 of 6 (Foundation)
-Plan: 3 of 5 in current phase
+Plan: 4 of 5 in current phase
 Status: Executing
-Last activity: 2026-03-07 -- Completed 01-02 RBAC system (middleware, handlers, routes, first-user bootstrap)
+Last activity: 2026-03-07 -- Completed 01-04 device/product registry (schema, seed data, read-only API)
 
-Progress: [██████░░░░] 60%
+Progress: [████████░░] 80%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 4min
-- Total execution time: 0.20 hours
+- Total plans completed: 4
+- Average duration: 5min
+- Total execution time: 0.32 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-foundation | 3 | 12min | 4min |
+| 01-foundation | 4 | 19min | 5min |
 
 **Recent Trend:**
-- Last 5 plans: 01-00 (2min), 01-01 (5min), 01-02 (5min)
+- Last 5 plans: 01-00 (2min), 01-01 (5min), 01-02 (5min), 01-04 (7min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -69,6 +69,9 @@ Recent decisions affecting current work:
 - [01-02]: Role field uses json omitempty tag for backward compatibility with pre-migration tokens
 - [01-02]: Login and refresh handler callers updated in Task 1 (Rule 3 blocking fix) due to GenerateAccessToken signature change
 - [01-02]: First-user bootstrap is non-fatal on error to avoid blocking registration
+- [01-04]: Registry repository interface includes type/module filter parameters for flexible query filtering
+- [01-04]: Device list excludes handpieces for performance; detail endpoint loads them separately
+- [01-04]: Domain types used directly as API response bodies for read-only registry
 
 ### Pending Todos
 
@@ -82,6 +85,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-07T18:52:05Z
-Stopped at: Completed 01-02-PLAN.md
-Resume file: .planning/phases/01-foundation/01-02-SUMMARY.md
+Last session: 2026-03-07T19:02:24Z
+Stopped at: Completed 01-04-PLAN.md
+Resume file: .planning/phases/01-foundation/01-04-SUMMARY.md
