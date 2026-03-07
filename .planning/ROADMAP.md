@@ -31,12 +31,14 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. The system returns pre-loaded device entries (energy-based devices with manufacturers, models, handpieces) and product entries (fillers, botulinum toxins) from seed data
   4. All created/updated clinical records carry created_at, created_by, updated_at, updated_by metadata automatically
   5. Unauthorized role access to any protected endpoint returns a structured JSON error with appropriate HTTP status
-**Plans**: 3 plans
+**Plans**: 5 plans
 
 Plans:
-- [ ] 01-01-PLAN.md -- Architecture foundation and RBAC (domain models, service/repository scaffold, role migration, RequireRole middleware, role assignment endpoint)
-- [ ] 01-02-PLAN.md -- Patient management with metadata tracking (patient CRUD, search/pagination, optimistic locking, created_at/by/updated_at/by/version)
-- [ ] 01-03-PLAN.md -- Device/product registry with seed data (schema tables, seed migrations, read-only list/detail endpoints)
+- [ ] 01-00-PLAN.md -- Test infrastructure (Wave 0: mock repositories, test stubs, Makefile test target)
+- [ ] 01-01-PLAN.md -- Domain models and service/repository scaffold (domain types, RoleService, PostgresRoleRepository)
+- [ ] 01-02-PLAN.md -- RBAC system (role migration, JWT claims, RequireRole middleware, role assignment endpoint, first-user bootstrap)
+- [ ] 01-03-PLAN.md -- Patient management with metadata tracking (patient CRUD, search/pagination, optimistic locking, metadata)
+- [ ] 01-04-PLAN.md -- Device/product registry with seed data (schema tables, seed migrations, read-only list/detail endpoints)
 
 ### Phase 2: Session Lifecycle
 **Goal**: A clinician can create a treatment session for a patient, fill in clinical header fields, record consent and safety screening, and move the session through its lifecycle states -- producing a structured draft record ready for procedure modules
@@ -120,7 +122,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/3 | Not started | - |
+| 1. Foundation | 0/5 | Not started | - |
 | 2. Session Lifecycle | 0/2 | Not started | - |
 | 3. Energy-Based Modules | 0/2 | Not started | - |
 | 4. Injectable Modules and Outcomes | 0/2 | Not started | - |
