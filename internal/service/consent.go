@@ -3,15 +3,16 @@ package service
 import (
 	"context"
 	"errors"
+	"time"
 
 	"dermify-api/internal/domain"
 )
 
 // Sentinel errors for consent operations.
 var (
-	ErrConsentNotFound      = errors.New("consent not found")       //nolint:gochecknoglobals // sentinel error
-	ErrConsentAlreadyExists = errors.New("consent already exists")  //nolint:gochecknoglobals // sentinel error
-	ErrInvalidConsentData   = errors.New("invalid consent data")    //nolint:gochecknoglobals // sentinel error
+	ErrConsentNotFound      = errors.New("consent not found")      //nolint:gochecknoglobals // sentinel error
+	ErrConsentAlreadyExists = errors.New("consent already exists") //nolint:gochecknoglobals // sentinel error
+	ErrInvalidConsentData   = errors.New("invalid consent data")   //nolint:gochecknoglobals // sentinel error
 )
 
 // ConsentRepository defines the data access contract for consent records.
@@ -37,19 +38,61 @@ func NewConsentService(repo ConsentRepository) *ConsentService {
 }
 
 // RecordConsent validates and creates a consent record for a session.
-// TODO: implement in Plan 02.
-func (s *ConsentService) RecordConsent(_ context.Context, _ *domain.Consent) error {
-	return nil
+func (s *ConsentService) RecordConsent(ctx context.Context, consent *domain.Consent) error {
+	if err := validateConsent(consent); err != nil {
+		return err
+	}
+
+	exists, err := s.repo.ExistsForSession(ctx, consent.SessionID)
+	if err != nil {
+		return err
+	}
+
+	if exists {
+		return ErrConsentAlreadyExists
+	}
+
+	now := time.Now()
+	consent.Version = 1
+	consent.CreatedAt = now
+	consent.UpdatedAt = now
+
+	return s.repo.Create(ctx, consent)
 }
 
 // GetBySessionID retrieves the consent record for a session.
-// TODO: implement in Plan 02.
-func (s *ConsentService) GetBySessionID(_ context.Context, _ int64) (*domain.Consent, error) {
-	return nil, nil
+func (s *ConsentService) GetBySessionID(ctx context.Context, sessionID int64) (*domain.Consent, error) {
+	return s.repo.GetBySessionID(ctx, sessionID)
 }
 
 // UpdateConsent validates and updates a consent record.
-// TODO: implement in Plan 02.
-func (s *ConsentService) UpdateConsent(_ context.Context, _ *domain.Consent) error {
+func (s *ConsentService) UpdateConsent(ctx context.Context, consent *domain.Consent) error {
+	if err := validateConsent(consent); err != nil {
+		return err
+	}
+
+	consent.UpdatedAt = time.Now()
+
+	return s.repo.Update(ctx, consent)
+}
+
+// validateConsent checks required fields on a consent record.
+func validateConsent(consent *domain.Consent) error {
+	if consent.SessionID <= 0 {
+		return ErrInvalidConsentData
+	}
+
+	if consent.ConsentType == "" {
+		return ErrInvalidConsentData
+	}
+
+	if consent.ConsentMethod == "" {
+		return ErrInvalidConsentData
+	}
+
+	if consent.ObtainedAt.IsZero() {
+		return ErrInvalidConsentData
+	}
+
 	return nil
 }

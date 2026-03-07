@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 	"errors"
+	"fmt"
+	"time"
 
 	"dermify-api/internal/domain"
 )
@@ -89,56 +91,210 @@ func NewSessionService(repo SessionRepository, consentRepo ConsentRepository, mo
 }
 
 // Create validates and creates a new session record.
-// TODO: implement in Plan 02.
-func (s *SessionService) Create(_ context.Context, _ *domain.Session) error {
+// It sets defaults (status=draft, version=1, timestamps) and persists via the repository.
+// If IndicationCodes are provided, they are stored after the session is created.
+func (s *SessionService) Create(ctx context.Context, session *domain.Session) error {
+	if err := validateSession(session); err != nil {
+		return err
+	}
+
+	now := time.Now()
+	session.Status = domain.SessionStatusDraft
+	session.Version = 1
+	session.CreatedAt = now
+	session.UpdatedAt = now
+	session.CreatedBy = session.ClinicianID
+	session.UpdatedBy = session.ClinicianID
+
+	if err := s.repo.Create(ctx, session); err != nil {
+		return fmt.Errorf("creating session: %w", err)
+	}
+
+	if len(session.IndicationCodes) > 0 {
+		if err := s.repo.SetIndicationCodes(ctx, session.ID, session.IndicationCodes); err != nil {
+			return fmt.Errorf("setting indication codes: %w", err)
+		}
+	}
+
 	return nil
 }
 
 // GetByID retrieves a session by ID.
-// TODO: implement in Plan 02.
-func (s *SessionService) GetByID(_ context.Context, _ int64) (*domain.Session, error) {
-	return nil, nil
+func (s *SessionService) GetByID(ctx context.Context, id int64) (*domain.Session, error) {
+	return s.repo.GetByID(ctx, id)
 }
 
 // Update validates and updates a session record with optimistic locking.
-// TODO: implement in Plan 02.
-func (s *SessionService) Update(_ context.Context, _ *domain.Session) error {
-	return nil
+// Only sessions in draft or in_progress state are editable.
+func (s *SessionService) Update(ctx context.Context, session *domain.Session) error {
+	existing, err := s.repo.GetByID(ctx, session.ID)
+	if err != nil {
+		return err
+	}
+
+	if !isEditable(existing.Status) {
+		return ErrSessionNotEditable
+	}
+
+	if err := validateSessionFields(session); err != nil {
+		return err
+	}
+
+	session.UpdatedAt = time.Now()
+
+	return s.repo.Update(ctx, session)
 }
 
 // TransitionState validates and applies a session state change.
-// TODO: implement in Plan 02.
-func (s *SessionService) TransitionState(_ context.Context, _ int64, _ string, _ int64) error {
-	return nil
+// It fetches the current session, checks the transition is valid, and updates
+// the status with optimistic locking.
+func (s *SessionService) TransitionState(ctx context.Context, id int64, newStatus string, userID int64) error {
+	existing, err := s.repo.GetByID(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	if !IsValidTransition(existing.Status, newStatus) {
+		return ErrInvalidStateTransition
+	}
+
+	return s.repo.UpdateStatus(ctx, id, newStatus, existing.Version, userID)
 }
 
-// List returns paginated sessions matching the given filter.
-// TODO: implement in Plan 02.
-func (s *SessionService) List(_ context.Context, _ SessionFilter) (*SessionListResult, error) {
-	return nil, nil
+// List returns paginated sessions matching the given filter with defaults applied.
+func (s *SessionService) List(ctx context.Context, filter SessionFilter) (*SessionListResult, error) {
+	if filter.Page <= 0 {
+		filter.Page = defaultPage
+	}
+
+	if filter.PerPage <= 0 {
+		filter.PerPage = defaultPerPage
+	}
+
+	if filter.PerPage > maxPerPage {
+		filter.PerPage = maxPerPage
+	}
+
+	return s.repo.List(ctx, filter)
 }
 
 // ListByPatient returns session summaries for a patient.
-// TODO: implement in Plan 02.
-func (s *SessionService) ListByPatient(_ context.Context, _ int64) ([]domain.SessionSummary, error) {
-	return nil, nil
+func (s *SessionService) ListByPatient(ctx context.Context, patientID int64) ([]domain.SessionSummary, error) {
+	return s.repo.ListByPatient(ctx, patientID)
+}
+
+// validModuleTypes contains the set of recognized procedure module types.
+var validModuleTypes = map[string]bool{ //nolint:gochecknoglobals // module type set
+	domain.ModuleTypeIPL:       true,
+	domain.ModuleTypeNdYAG:     true,
+	domain.ModuleTypeCO2:       true,
+	domain.ModuleTypeRF:        true,
+	domain.ModuleTypeFiller:    true,
+	domain.ModuleTypeBotulinum: true,
 }
 
 // AddModule validates consent exists before inserting a procedure module slot.
-// TODO: implement in Plan 02.
-func (s *SessionService) AddModule(_ context.Context, _ int64, _ string, _ int64) (*domain.SessionModule, error) {
-	return nil, nil
+// It checks session editability, validates the module type, enforces the consent
+// gate, and assigns the next sort order before creating the module.
+func (s *SessionService) AddModule(ctx context.Context, sessionID int64, moduleType string, userID int64) (*domain.SessionModule, error) {
+	session, err := s.repo.GetByID(ctx, sessionID)
+	if err != nil {
+		return nil, err
+	}
+
+	if !isEditable(session.Status) {
+		return nil, ErrSessionNotEditable
+	}
+
+	if !validModuleTypes[moduleType] {
+		return nil, ErrInvalidSessionData
+	}
+
+	hasConsent, err := s.consentRepo.ExistsForSession(ctx, sessionID)
+	if err != nil {
+		return nil, err
+	}
+
+	if !hasConsent {
+		return nil, ErrConsentRequired
+	}
+
+	sortOrder, err := s.moduleRepo.NextSortOrder(ctx, sessionID)
+	if err != nil {
+		return nil, err
+	}
+
+	module := &domain.SessionModule{
+		SessionID:  sessionID,
+		ModuleType: moduleType,
+		SortOrder:  sortOrder,
+		Version:    1,
+		CreatedBy:  userID,
+		UpdatedBy:  userID,
+	}
+
+	if err := s.moduleRepo.Create(ctx, module, userID); err != nil {
+		return nil, err
+	}
+
+	return module, nil
 }
 
-// ListModules returns all modules for a session.
-// TODO: implement in Plan 02.
-func (s *SessionService) ListModules(_ context.Context, _ int64) ([]domain.SessionModule, error) {
-	return nil, nil
+// ListModules returns all modules for a session ordered by sort order.
+func (s *SessionService) ListModules(ctx context.Context, sessionID int64) ([]domain.SessionModule, error) {
+	return s.moduleRepo.ListBySession(ctx, sessionID)
 }
 
-// RemoveModule removes a module from a session.
-// TODO: implement in Plan 02.
-func (s *SessionService) RemoveModule(_ context.Context, _ int64, _ int64, _ int64) error {
+// RemoveModule removes a module from an editable session.
+func (s *SessionService) RemoveModule(ctx context.Context, sessionID int64, moduleID int64, _ int64) error {
+	session, err := s.repo.GetByID(ctx, sessionID)
+	if err != nil {
+		return err
+	}
+
+	if !isEditable(session.Status) {
+		return ErrSessionNotEditable
+	}
+
+	return s.moduleRepo.Delete(ctx, moduleID, sessionID)
+}
+
+// isEditable returns true if the session status allows field updates.
+func isEditable(status string) bool {
+	return status == domain.SessionStatusDraft || status == domain.SessionStatusInProgress
+}
+
+// validateSession checks required fields for session creation.
+func validateSession(session *domain.Session) error {
+	if session.PatientID <= 0 {
+		return ErrInvalidSessionData
+	}
+
+	if session.ClinicianID <= 0 {
+		return ErrInvalidSessionData
+	}
+
+	return validateSessionFields(session)
+}
+
+// validateSessionFields checks optional fields that have constrained values.
+func validateSessionFields(session *domain.Session) error {
+	if session.FitzpatrickType != nil {
+		fitz := *session.FitzpatrickType
+		if fitz < domain.FitzpatrickMin || fitz > domain.FitzpatrickMax {
+			return ErrInvalidSessionData
+		}
+	}
+
+	if session.PhotoConsent != nil {
+		consent := *session.PhotoConsent
+		if consent != domain.PhotoConsentYes &&
+			consent != domain.PhotoConsentNo &&
+			consent != domain.PhotoConsentLimited {
+			return ErrInvalidSessionData
+		}
+	}
+
 	return nil
 }
 
