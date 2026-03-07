@@ -167,13 +167,75 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (populated during roadmap creation) | | |
+| RBAC-01 | Phase 1 | Pending |
+| RBAC-02 | Phase 1 | Pending |
+| RBAC-03 | Phase 1 | Pending |
+| RBAC-04 | Phase 1 | Pending |
+| PAT-01 | Phase 1 | Pending |
+| PAT-02 | Phase 1 | Pending |
+| PAT-03 | Phase 1 | Pending |
+| PAT-04 | Phase 1 | Pending |
+| REG-01 | Phase 1 | Pending |
+| REG-02 | Phase 1 | Pending |
+| REG-03 | Phase 1 | Pending |
+| REG-04 | Phase 1 | Pending |
+| META-01 | Phase 1 | Pending |
+| META-02 | Phase 1 | Pending |
+| META-03 | Phase 1 | Pending |
+| SESS-01 | Phase 2 | Pending |
+| SESS-02 | Phase 2 | Pending |
+| SESS-03 | Phase 2 | Pending |
+| SESS-04 | Phase 2 | Pending |
+| SESS-05 | Phase 2 | Pending |
+| SESS-06 | Phase 2 | Pending |
+| CONS-01 | Phase 2 | Pending |
+| CONS-02 | Phase 2 | Pending |
+| CONS-03 | Phase 2 | Pending |
+| CONS-04 | Phase 2 | Pending |
+| CONS-05 | Phase 2 | Pending |
+| IPL-01 | Phase 3 | Pending |
+| IPL-02 | Phase 3 | Pending |
+| IPL-03 | Phase 3 | Pending |
+| YAG-01 | Phase 3 | Pending |
+| YAG-02 | Phase 3 | Pending |
+| YAG-03 | Phase 3 | Pending |
+| CO2-01 | Phase 3 | Pending |
+| CO2-02 | Phase 3 | Pending |
+| CO2-03 | Phase 3 | Pending |
+| RF-01 | Phase 3 | Pending |
+| RF-02 | Phase 3 | Pending |
+| RF-03 | Phase 3 | Pending |
+| FILL-01 | Phase 4 | Pending |
+| FILL-02 | Phase 4 | Pending |
+| FILL-03 | Phase 4 | Pending |
+| TOX-01 | Phase 4 | Pending |
+| TOX-02 | Phase 4 | Pending |
+| TOX-03 | Phase 4 | Pending |
+| OUT-01 | Phase 4 | Pending |
+| OUT-02 | Phase 4 | Pending |
+| OUT-03 | Phase 4 | Pending |
+| OUT-04 | Phase 4 | Pending |
+| OUT-05 | Phase 4 | Pending |
+| LOCK-01 | Phase 5 | Pending |
+| LOCK-02 | Phase 5 | Pending |
+| LOCK-03 | Phase 5 | Pending |
+| LOCK-04 | Phase 5 | Pending |
+| LOCK-05 | Phase 5 | Pending |
+| LOCK-06 | Phase 5 | Pending |
+| AUDIT-01 | Phase 5 | Pending |
+| AUDIT-02 | Phase 5 | Pending |
+| AUDIT-03 | Phase 5 | Pending |
+| AUDIT-04 | Phase 5 | Pending |
+| PHOTO-01 | Phase 6 | Pending |
+| PHOTO-02 | Phase 6 | Pending |
+| PHOTO-03 | Phase 6 | Pending |
+| PHOTO-04 | Phase 6 | Pending |
 
 **Coverage:**
-- v1 requirements: 53 total
-- Mapped to phases: 0
-- Unmapped: 53
+- v1 requirements: 63 total
+- Mapped to phases: 63
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-07*
-*Last updated: 2026-03-07 after initial definition*
+*Last updated: 2026-03-07 after roadmap creation*
