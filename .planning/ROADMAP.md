@@ -24,7 +24,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 ### Phase 1: Foundation
 **Goal**: Doctors and admins can authenticate with role-appropriate permissions, manage patient records, and browse the device/product registry -- all built on a service/repository architecture that supports the clinical domains ahead
 **Depends on**: Nothing (first phase)
-**Requirements**: RBAC-01, RBAC-02, RBAC-03, RBAC-04, PAT-01, PAT-02, PAT-03, PAT-04, REG-01, REG-02, REG-03, REG-04, META-01, META-02, META-03
+**Requirements**: RBAC-01, RBAC-02, RBAC-03, RBAC-04, PAT-01, PAT-02, PAT-03, PAT-04, REG-01, REG-02, REG-03, REG-04, META-01, META-03
 **Success Criteria** (what must be TRUE):
   1. A Doctor user can access clinical endpoints (create patients, view registry) while an Admin user can manage patients but is blocked from clinical-only actions
   2. A user can create a patient record, search/filter the patient list, update patient details, and view a patient's session history (empty at this stage)
@@ -90,7 +90,7 @@ Plans:
 ### Phase 5: Sign-off and Compliance
 **Goal**: A clinician can sign off a completed session, producing a locked, immutable medical record with a full audit trail -- the core medico-legal requirement of the system
 **Depends on**: Phase 4
-**Requirements**: LOCK-01, LOCK-02, LOCK-03, LOCK-04, LOCK-05, LOCK-06, AUDIT-01, AUDIT-02, AUDIT-03, AUDIT-04
+**Requirements**: LOCK-01, LOCK-02, LOCK-03, LOCK-04, LOCK-05, LOCK-06, AUDIT-01, AUDIT-02, AUDIT-03, AUDIT-04, META-02
 **Success Criteria** (what must be TRUE):
   1. The system validates all required fields across the session (header, consent, modules, outcomes) and blocks sign-off with a clear list of what is incomplete
   2. A clinician can sign off a valid session, which records the timestamp and clinician ID, and the signed record becomes immutable -- any attempt to modify it (via API or direct SQL) fails
