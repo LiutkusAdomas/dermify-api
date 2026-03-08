@@ -46,6 +46,12 @@ func NewManager(db *sql.DB, cfg *config.Configuration, m *metrics.Client) *Manag
 	consentSvc := service.NewConsentService(consentRepo)
 	contraindicationSvc := service.NewContraindicationService(contraindicationRepo)
 
+	iplModuleRepo := postgres.NewPostgresIPLModuleRepository(db)
+	ndyagModuleRepo := postgres.NewPostgresNdYAGModuleRepository(db)
+	co2ModuleRepo := postgres.NewPostgresCO2ModuleRepository(db)
+	rfModuleRepo := postgres.NewPostgresRFModuleRepository(db)
+	energySvc := service.NewEnergyModuleService(sessionSvc, registrySvc, iplModuleRepo, ndyagModuleRepo, co2ModuleRepo, rfModuleRepo)
+
 	return &Manager{
 		metrics:        m,
 		authRoutes:     NewAuthRoutes(db, roleSvc, cfg, m),
@@ -54,7 +60,7 @@ func NewManager(db *sql.DB, cfg *config.Configuration, m *metrics.Client) *Manag
 		roleRoutes:     NewRoleRoutes(roleSvc, cfg, m),
 		patientRoutes:  NewPatientRoutes(patientSvc, cfg, m),
 		registryRoutes: NewRegistryRoutes(registrySvc, cfg, m),
-		sessionRoutes:  NewSessionRoutes(sessionSvc, consentSvc, contraindicationSvc, cfg, m),
+		sessionRoutes:  NewSessionRoutes(sessionSvc, consentSvc, contraindicationSvc, energySvc, cfg, m),
 	}
 }
 

@@ -16,6 +16,7 @@ type SessionRoutes struct {
 	sessionSvc *service.SessionService
 	consentSvc *service.ConsentService
 	screenSvc  *service.ContraindicationService
+	energySvc  *service.EnergyModuleService
 	config     *config.Configuration
 	metrics    *metrics.Client
 }
@@ -25,6 +26,7 @@ func NewSessionRoutes(
 	sessionSvc *service.SessionService,
 	consentSvc *service.ConsentService,
 	screenSvc *service.ContraindicationService,
+	energySvc *service.EnergyModuleService,
 	cfg *config.Configuration,
 	m *metrics.Client,
 ) *SessionRoutes {
@@ -32,6 +34,7 @@ func NewSessionRoutes(
 		sessionSvc: sessionSvc,
 		consentSvc: consentSvc,
 		screenSvc:  screenSvc,
+		energySvc:  energySvc,
 		config:     cfg,
 		metrics:    m,
 	}
@@ -68,6 +71,28 @@ func (sr *SessionRoutes) RegisterRoutes(router chi.Router) {
 			r.Post("/modules", handlers.HandleAddModule(sr.sessionSvc, sr.metrics))
 			r.Get("/modules", handlers.HandleListModules(sr.sessionSvc, sr.metrics))
 			r.Delete("/modules/{moduleId}", handlers.HandleRemoveModule(sr.sessionSvc, sr.metrics))
+
+			// Energy module type-specific routes.
+			r.Route("/modules/ipl", func(r chi.Router) {
+				r.Post("/", handlers.HandleCreateIPLModule(sr.energySvc, sr.metrics))
+				r.Get("/{moduleId}", handlers.HandleGetIPLModule(sr.energySvc, sr.metrics))
+				r.Put("/{moduleId}", handlers.HandleUpdateIPLModule(sr.energySvc, sr.metrics))
+			})
+			r.Route("/modules/ndyag", func(r chi.Router) {
+				r.Post("/", handlers.HandleCreateNdYAGModule(sr.energySvc, sr.metrics))
+				r.Get("/{moduleId}", handlers.HandleGetNdYAGModule(sr.energySvc, sr.metrics))
+				r.Put("/{moduleId}", handlers.HandleUpdateNdYAGModule(sr.energySvc, sr.metrics))
+			})
+			r.Route("/modules/co2", func(r chi.Router) {
+				r.Post("/", handlers.HandleCreateCO2Module(sr.energySvc, sr.metrics))
+				r.Get("/{moduleId}", handlers.HandleGetCO2Module(sr.energySvc, sr.metrics))
+				r.Put("/{moduleId}", handlers.HandleUpdateCO2Module(sr.energySvc, sr.metrics))
+			})
+			r.Route("/modules/rf", func(r chi.Router) {
+				r.Post("/", handlers.HandleCreateRFModule(sr.energySvc, sr.metrics))
+				r.Get("/{moduleId}", handlers.HandleGetRFModule(sr.energySvc, sr.metrics))
+				r.Put("/{moduleId}", handlers.HandleUpdateRFModule(sr.energySvc, sr.metrics))
+			})
 		})
 	})
 }
