@@ -19,6 +19,12 @@ type Configuration struct {
 	CORS        CORSConfig     `mapstructure:"cors"`
 	Database    DatabaseConfig `mapstructure:"database"`
 	Auth        AuthConfig     `mapstructure:"auth"`
+	Storage     StorageConfig  `mapstructure:"storage"`
+}
+
+// StorageConfig holds file storage configuration.
+type StorageConfig struct {
+	BasePath string `mapstructure:"base_path"`
 }
 
 // AuthConfig holds authentication and JWT configuration.

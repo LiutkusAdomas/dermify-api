@@ -11,6 +11,8 @@ auth:
   jwt_secret: "change-me-in-production"
   access_token_expiry: 15m
   refresh_token_expiry: 168h
+storage:
+  base_path: "./data/photos"
 cors:
   allowed_origins:
     - "http://localhost:3000"
