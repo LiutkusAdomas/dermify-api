@@ -107,10 +107,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Photo Documentation
 
-- [ ] **PHOTO-01**: Clinician can upload before photos linked to a session
-- [ ] **PHOTO-02**: Clinician can upload product label photos linked to a procedure module
-- [ ] **PHOTO-03**: Photos are stored on the local filesystem with organized naming
-- [ ] **PHOTO-04**: Photos require consent flag to be set before upload
+- [x] **PHOTO-01**: Clinician can upload before photos linked to a session
+- [x] **PHOTO-02**: Clinician can upload product label photos linked to a procedure module
+- [x] **PHOTO-03**: Photos are stored on the local filesystem with organized naming
+- [x] **PHOTO-04**: Photos require consent flag to be set before upload
 
 ### Metadata
 
@@ -226,10 +226,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUDIT-02 | Phase 5 | Complete |
 | AUDIT-03 | Phase 5 | Complete |
 | AUDIT-04 | Phase 5 | Complete |
-| PHOTO-01 | Phase 6 | Pending |
-| PHOTO-02 | Phase 6 | Pending |
-| PHOTO-03 | Phase 6 | Pending |
-| PHOTO-04 | Phase 6 | Pending |
+| PHOTO-01 | Phase 6 | Complete |
+| PHOTO-02 | Phase 6 | Complete |
+| PHOTO-03 | Phase 6 | Complete |
+| PHOTO-04 | Phase 6 | Complete |
 
 **Coverage:**
 - v1 requirements: 63 total
