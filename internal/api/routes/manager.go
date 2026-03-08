@@ -59,6 +59,15 @@ func NewManager(db *sql.DB, cfg *config.Configuration, m *metrics.Client) *Manag
 	outcomeRepo := postgres.NewPostgresOutcomeRepository(db)
 	outcomeSvc := service.NewOutcomeService(outcomeRepo, sessionSvc)
 
+	signoffRepo := postgres.NewPostgresSignoffRepository(db)
+	signoffSvc := service.NewSignoffService(sessionRepo, consentRepo, moduleRepo, outcomeRepo, signoffRepo)
+
+	addendumRepo := postgres.NewPostgresAddendumRepository(db)
+	addendumSvc := service.NewAddendumService(addendumRepo, sessionRepo)
+
+	auditRepo := postgres.NewPostgresAuditRepository(db)
+	auditSvc := service.NewAuditService(auditRepo)
+
 	return &Manager{
 		metrics:        m,
 		authRoutes:     NewAuthRoutes(db, roleSvc, cfg, m),
@@ -67,7 +76,7 @@ func NewManager(db *sql.DB, cfg *config.Configuration, m *metrics.Client) *Manag
 		roleRoutes:     NewRoleRoutes(roleSvc, cfg, m),
 		patientRoutes:  NewPatientRoutes(patientSvc, cfg, m),
 		registryRoutes: NewRegistryRoutes(registrySvc, cfg, m),
-		sessionRoutes:  NewSessionRoutes(sessionSvc, consentSvc, contraindicationSvc, energySvc, injectableSvc, outcomeSvc, cfg, m),
+		sessionRoutes:  NewSessionRoutes(sessionSvc, consentSvc, contraindicationSvc, energySvc, injectableSvc, outcomeSvc, signoffSvc, addendumSvc, auditSvc, cfg, m),
 	}
 }
 

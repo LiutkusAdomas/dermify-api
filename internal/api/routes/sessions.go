@@ -19,6 +19,9 @@ type SessionRoutes struct {
 	energySvc     *service.EnergyModuleService
 	injectableSvc *service.InjectableModuleService
 	outcomeSvc    *service.OutcomeService
+	signoffSvc    *service.SignoffService
+	addendumSvc   *service.AddendumService
+	auditSvc      *service.AuditService
 	config        *config.Configuration
 	metrics       *metrics.Client
 }
@@ -31,6 +34,9 @@ func NewSessionRoutes(
 	energySvc *service.EnergyModuleService,
 	injectableSvc *service.InjectableModuleService,
 	outcomeSvc *service.OutcomeService,
+	signoffSvc *service.SignoffService,
+	addendumSvc *service.AddendumService,
+	auditSvc *service.AuditService,
 	cfg *config.Configuration,
 	m *metrics.Client,
 ) *SessionRoutes {
@@ -41,6 +47,9 @@ func NewSessionRoutes(
 		energySvc:     energySvc,
 		injectableSvc: injectableSvc,
 		outcomeSvc:    outcomeSvc,
+		signoffSvc:    signoffSvc,
+		addendumSvc:   addendumSvc,
+		auditSvc:      auditSvc,
 		config:        cfg,
 		metrics:       m,
 	}
@@ -116,6 +125,19 @@ func (sr *SessionRoutes) RegisterRoutes(router chi.Router) {
 			r.Post("/outcome", handlers.HandleRecordOutcome(sr.outcomeSvc, sr.metrics))
 			r.Get("/outcome", handlers.HandleGetOutcome(sr.outcomeSvc, sr.metrics))
 			r.Put("/outcome", handlers.HandleUpdateOutcome(sr.outcomeSvc, sr.metrics))
+
+			// Sign-off routes.
+			r.Get("/signoff/readiness", handlers.HandleGetSignOffReadiness(sr.signoffSvc, sr.metrics))
+			r.Post("/signoff", handlers.HandleSignOffSession(sr.signoffSvc, sr.metrics))
+			r.Post("/lock", handlers.HandleLockSession(sr.signoffSvc, sr.metrics))
+
+			// Addendum routes.
+			r.Post("/addendums", handlers.HandleCreateAddendum(sr.addendumSvc, sr.metrics))
+			r.Get("/addendums", handlers.HandleListAddendums(sr.addendumSvc, sr.metrics))
+			r.Get("/addendums/{addendumId}", handlers.HandleGetAddendum(sr.addendumSvc, sr.metrics))
+
+			// Audit trail route.
+			r.Get("/audit", handlers.HandleGetAuditTrail(sr.auditSvc, sr.metrics))
 		})
 	})
 }
