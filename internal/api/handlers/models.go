@@ -141,3 +141,91 @@ type ModuleResponse struct {
 	UpdatedAt  time.Time `json:"updated_at"`
 	UpdatedBy  int64     `json:"updated_by" example:"1"`
 }
+
+// IPLModuleDetailResponse represents an IPL module detail in API responses.
+type IPLModuleDetailResponse struct {
+	ID             int64     `json:"id" example:"1"`
+	ModuleID       int64     `json:"module_id" example:"1"`
+	DeviceID       int64     `json:"device_id" example:"1"`
+	HandpieceID    *int64    `json:"handpiece_id,omitempty" example:"1"`
+	FilterBand     *string   `json:"filter_band,omitempty" example:"560nm"`
+	LightguideSize *string   `json:"lightguide_size,omitempty" example:"15x35mm"`
+	Fluence        *float64  `json:"fluence,omitempty" example:"14.5"`
+	PulseDuration  *float64  `json:"pulse_duration,omitempty" example:"20.0"`
+	PulseDelay     *float64  `json:"pulse_delay,omitempty" example:"30.0"`
+	PulseCount     *int      `json:"pulse_count,omitempty" example:"3"`
+	Passes         *int      `json:"passes,omitempty" example:"2"`
+	TotalPulses    *int      `json:"total_pulses,omitempty" example:"120"`
+	CoolingMode    *string   `json:"cooling_mode,omitempty" example:"contact"`
+	Notes          *string   `json:"notes,omitempty"`
+	Version        int       `json:"version" example:"1"`
+	CreatedAt      time.Time `json:"created_at"`
+	CreatedBy      int64     `json:"created_by" example:"1"`
+	UpdatedAt      time.Time `json:"updated_at"`
+	UpdatedBy      int64     `json:"updated_by" example:"1"`
+}
+
+// NdYAGModuleDetailResponse represents an Nd:YAG module detail in API responses.
+type NdYAGModuleDetailResponse struct {
+	ID             int64     `json:"id" example:"1"`
+	ModuleID       int64     `json:"module_id" example:"1"`
+	DeviceID       int64     `json:"device_id" example:"1"`
+	HandpieceID    *int64    `json:"handpiece_id,omitempty" example:"1"`
+	Wavelength     *string   `json:"wavelength,omitempty" example:"1064nm"`
+	SpotSize       *string   `json:"spot_size,omitempty" example:"6mm"`
+	Fluence        *float64  `json:"fluence,omitempty" example:"35.0"`
+	PulseDuration  *float64  `json:"pulse_duration,omitempty" example:"10.0"`
+	RepetitionRate *float64  `json:"repetition_rate,omitempty" example:"2.0"`
+	CoolingType    *string   `json:"cooling_type,omitempty" example:"air"`
+	TotalPulses    *int      `json:"total_pulses,omitempty" example:"200"`
+	Notes          *string   `json:"notes,omitempty"`
+	Version        int       `json:"version" example:"1"`
+	CreatedAt      time.Time `json:"created_at"`
+	CreatedBy      int64     `json:"created_by" example:"1"`
+	UpdatedAt      time.Time `json:"updated_at"`
+	UpdatedBy      int64     `json:"updated_by" example:"1"`
+}
+
+// CO2ModuleDetailResponse represents a CO2 module detail in API responses.
+type CO2ModuleDetailResponse struct {
+	ID              int64     `json:"id" example:"1"`
+	ModuleID        int64     `json:"module_id" example:"1"`
+	DeviceID        int64     `json:"device_id" example:"1"`
+	HandpieceID     *int64    `json:"handpiece_id,omitempty" example:"1"`
+	Mode            *string   `json:"mode,omitempty" example:"fractional"`
+	ScannerPattern  *string   `json:"scanner_pattern,omitempty" example:"square"`
+	Power           *float64  `json:"power,omitempty" example:"20.0"`
+	PulseEnergy     *float64  `json:"pulse_energy,omitempty" example:"100.0"`
+	PulseDuration   *float64  `json:"pulse_duration,omitempty" example:"0.5"`
+	Density         *float64  `json:"density,omitempty" example:"5.0"`
+	Pattern         *string   `json:"pattern,omitempty" example:"grid"`
+	Passes          *int      `json:"passes,omitempty" example:"2"`
+	AnaesthesiaUsed *string   `json:"anaesthesia_used,omitempty" example:"topical"`
+	Notes           *string   `json:"notes,omitempty"`
+	Version         int       `json:"version" example:"1"`
+	CreatedAt       time.Time `json:"created_at"`
+	CreatedBy       int64     `json:"created_by" example:"1"`
+	UpdatedAt       time.Time `json:"updated_at"`
+	UpdatedBy       int64     `json:"updated_by" example:"1"`
+}
+
+// RFModuleDetailResponse represents an RF module detail in API responses.
+type RFModuleDetailResponse struct {
+	ID            int64     `json:"id" example:"1"`
+	ModuleID      int64     `json:"module_id" example:"1"`
+	DeviceID      int64     `json:"device_id" example:"1"`
+	HandpieceID   *int64    `json:"handpiece_id,omitempty" example:"1"`
+	RFMode        *string   `json:"rf_mode,omitempty" example:"bipolar"`
+	TipType       *string   `json:"tip_type,omitempty" example:"insulated"`
+	Depth         *float64  `json:"depth,omitempty" example:"2.0"`
+	EnergyLevel   *float64  `json:"energy_level,omitempty" example:"30.0"`
+	Overlap       *float64  `json:"overlap,omitempty" example:"10.0"`
+	PulsesPerZone *int      `json:"pulses_per_zone,omitempty" example:"3"`
+	TotalPulses   *int      `json:"total_pulses,omitempty" example:"150"`
+	Notes         *string   `json:"notes,omitempty"`
+	Version       int       `json:"version" example:"1"`
+	CreatedAt     time.Time `json:"created_at"`
+	CreatedBy     int64     `json:"created_by" example:"1"`
+	UpdatedAt     time.Time `json:"updated_at"`
+	UpdatedBy     int64     `json:"updated_by" example:"1"`
+}

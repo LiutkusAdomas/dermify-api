@@ -100,6 +100,15 @@ const (
 	ModuleRemovalFailed  = "MODULE_REMOVAL_FAILED"
 )
 
+// Error codes for energy module detail failures.
+const (
+	ModuleDetailNotFound        = "MODULE_DETAIL_NOT_FOUND"
+	ModuleDetailVersionConflict = "MODULE_DETAIL_VERSION_CONFLICT"
+	ModuleDeviceTypeMismatch    = "MODULE_DEVICE_TYPE_MISMATCH"
+	ModuleHandpieceMismatch     = "MODULE_HANDPIECE_MISMATCH"
+	ModuleDetailUpdateFailed    = "MODULE_DETAIL_UPDATE_FAILED"
+)
+
 // Error codes for internal server errors.
 const (
 	InternalPasswordProcessing      = "INTERNAL_PASSWORD_PROCESSING"

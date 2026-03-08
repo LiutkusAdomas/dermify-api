@@ -7,12 +7,13 @@ import (
 )
 
 const (
-	fooCounterMetric              = "foo_counter"
-	loginSuccessCounterMetric     = "login_success_total"
-	loginFailureCounterMetric     = "login_failure_total"
-	roleAssignmentCounterMetric   = "role_assignment_total"
-	patientCreatedCounterMetric   = "patient_created_total"
-	sessionCreatedCounterMetric   = "session_created_total"
+	fooCounterMetric                 = "foo_counter"
+	loginSuccessCounterMetric        = "login_success_total"
+	loginFailureCounterMetric        = "login_failure_total"
+	roleAssignmentCounterMetric      = "role_assignment_total"
+	patientCreatedCounterMetric      = "patient_created_total"
+	sessionCreatedCounterMetric      = "session_created_total"
+	energyModuleCreatedCounterMetric = "energy_module_created_total"
 )
 
 // Client allows the creation and invocation of metrics within the API. Instantiation should occur through the New
@@ -29,12 +30,13 @@ func New(logger *slog.Logger) *Client {
 	reg := prometheus.NewRegistry()
 
 	metrics := map[string]prometheus.Metric{
-		fooCounterMetric:            newFooCounter(reg),
-		loginSuccessCounterMetric:   newLoginSuccessCounter(reg),
-		loginFailureCounterMetric:   newLoginFailureCounter(reg),
-		roleAssignmentCounterMetric: newRoleAssignmentCounter(reg),
-		patientCreatedCounterMetric: newPatientCreatedCounter(reg),
-		sessionCreatedCounterMetric: newSessionCreatedCounter(reg),
+		fooCounterMetric:                 newFooCounter(reg),
+		loginSuccessCounterMetric:        newLoginSuccessCounter(reg),
+		loginFailureCounterMetric:        newLoginFailureCounter(reg),
+		roleAssignmentCounterMetric:      newRoleAssignmentCounter(reg),
+		patientCreatedCounterMetric:      newPatientCreatedCounter(reg),
+		sessionCreatedCounterMetric:      newSessionCreatedCounter(reg),
+		energyModuleCreatedCounterMetric: newEnergyModuleCreatedCounter(reg),
 	}
 
 	return &Client{
@@ -69,4 +71,9 @@ func (c *Client) IncrementPatientCreatedCount() {
 // IncrementSessionCreatedCount increments the session created counter.
 func (c *Client) IncrementSessionCreatedCount() {
 	c.metrics[sessionCreatedCounterMetric].(prometheus.Counter).Add(1)
+}
+
+// IncrementEnergyModuleCreatedCount increments the energy module created counter.
+func (c *Client) IncrementEnergyModuleCreatedCount() {
+	c.metrics[energyModuleCreatedCounterMetric].(prometheus.Counter).Add(1)
 }

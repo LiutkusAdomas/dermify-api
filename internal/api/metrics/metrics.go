@@ -55,3 +55,12 @@ func newSessionCreatedCounter(reg *prometheus.Registry) prometheus.Counter {
 	reg.MustRegister(m)
 	return m
 }
+
+func newEnergyModuleCreatedCounter(reg *prometheus.Registry) prometheus.Counter {
+	m := prometheus.NewCounter(prometheus.CounterOpts{
+		Name: "dermify_energy_module_created_total",
+		Help: "Total number of energy modules created.",
+	})
+	reg.MustRegister(m)
+	return m
+}
