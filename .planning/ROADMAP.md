@@ -116,10 +116,12 @@ Plans:
   1. A clinician can upload before photos linked to a session and product label photos linked to a specific procedure module
   2. Photos are stored on the local filesystem with organized, predictable naming (not in the database)
   3. The system blocks photo uploads if the session's photo consent flag has not been set
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 06-01: TBD
+- [ ] 06-01-PLAN.md -- Photo domain type, SQL migration, PhotoService with consent gate and FileStore interface, mock repositories
+- [ ] 06-02-PLAN.md -- PostgreSQL photo repository, StorageConfig, and PhotoService unit tests
+- [ ] 06-03-PLAN.md -- HTTP handlers, LocalFileStore, error codes, metrics, route wiring, and DI for photo endpoints
 
 ## Progress
 
@@ -133,4 +135,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 3. Energy-Based Modules | 3/3 | Complete | 2026-03-08 |
 | 4. Injectable Modules and Outcomes | 2/3 | In Progress|  |
 | 5. Sign-off and Compliance | 0/3 | Not started | - |
-| 6. Photo Documentation | 0/1 | Not started | - |
+| 6. Photo Documentation | 0/3 | Not started | - |
