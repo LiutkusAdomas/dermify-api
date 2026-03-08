@@ -3,30 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 03-03-PLAN.md
-last_updated: "2026-03-08T09:38:02.269Z"
-last_activity: 2026-03-08 -- Completed 03-03 energy module HTTP layer wiring
+stopped_at: Completed 04-01-PLAN.md
+last_updated: "2026-03-08T10:16:47Z"
+last_activity: 2026-03-08 -- Completed 04-01 injectable modules and outcomes domain/service layer
 progress:
   total_phases: 6
   completed_phases: 3
-  total_plans: 13
-  completed_plans: 13
----
-
----
-gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-status: executing
-stopped_at: Completed 03-03-PLAN.md
-last_updated: "2026-03-08T09:33:04Z"
-last_activity: 2026-03-08 -- Completed 03-03 energy module HTTP layer wiring
-progress:
-  total_phases: 6
-  completed_phases: 3
-  total_plans: 13
-  completed_plans: 13
-  percent: 100
+  total_plans: 16
+  completed_plans: 14
+  percent: 87
 ---
 
 # Project State
@@ -36,23 +21,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-07)
 
 **Core value:** A clinician can document a complete treatment session producing a locked, auditable medical record
-**Current focus:** Phase 3: Energy-Based Modules (Complete)
+**Current focus:** Phase 4: Injectable Modules and Outcomes
 
 ## Current Position
 
-Phase: 3 of 6 (Energy-Based Modules) -- COMPLETE
-Plan: 3 of 3 in current phase
+Phase: 4 of 6 (Injectable Modules and Outcomes)
+Plan: 1 of 3 in current phase -- COMPLETE
 Status: Executing
-Last activity: 2026-03-08 -- Completed 03-03 energy module HTTP layer wiring
+Last activity: 2026-03-08 -- Completed 04-01 injectable modules and outcomes domain/service layer
 
-Progress: [██████████] 100%
+Progress: [████████░░] 87%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13
+- Total plans completed: 14
 - Average duration: 4min
-- Total execution time: 0.82 hours
+- Total execution time: 0.85 hours
 
 **By Phase:**
 
@@ -73,6 +58,7 @@ Progress: [██████████] 100%
 | Phase 03 P01 | 4min | 2 tasks | 10 files |
 | Phase 03 P02 | 4min | 2 tasks | 9 files |
 | Phase 03 P03 | 5min | 2 tasks | 11 files |
+| Phase 04 P01 | 2min | 2 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -122,6 +108,11 @@ Recent decisions affecting current work:
 - [Phase 03]: Tests build real SessionService and RegistryService with mocked repositories (concrete dependency injection)
 - [Phase 03-03]: Shared handleEnergyModuleError in dedicated energy_module_errors.go for clean separation
 - [Phase 03-03]: Update handlers re-fetch after update to return full updated record (consistent with session/consent pattern)
+- [Phase 04-01]: ProductID is required (int64, not pointer) matching DeviceID pattern from Phase 3
+- [Phase 04-01]: InjectionSites stored as json.RawMessage for flexible JSONB mapping
+- [Phase 04-01]: Outcome validation enforces aftercare-to-red-flags coupling per OUT-04
+- [Phase 04-01]: Session status guard allows outcomes only in in_progress or awaiting_signoff
+- [Phase 04-01]: validateInjectionSites is a package-level function (not method) for testability
 
 ### Pending Todos
 
@@ -135,6 +126,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-08T09:33:04.820Z
-Stopped at: Completed 03-03-PLAN.md
+Last session: 2026-03-08T10:16:47Z
+Stopped at: Completed 04-01-PLAN.md
 Resume file: None

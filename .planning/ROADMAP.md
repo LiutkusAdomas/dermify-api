@@ -87,7 +87,7 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 04-01-PLAN.md -- Domain types, migrations, service scaffolds with product validation and outcome logic, mock repositories
+- [x] 04-01-PLAN.md -- Domain types, migrations, service scaffolds with product validation and outcome logic, mock repositories
 - [ ] 04-02-PLAN.md -- Postgres repositories for filler, botulinum, and outcome tables plus service unit tests
 - [ ] 04-03-PLAN.md -- HTTP handlers, route wiring, metrics, and dependency injection for injectable modules and outcomes
 
@@ -130,6 +130,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 1. Foundation | 6/6 | Complete   | 2026-03-07 |
 | 2. Session Lifecycle | 4/4 | Complete |  |
 | 3. Energy-Based Modules | 3/3 | Complete | 2026-03-08 |
-| 4. Injectable Modules and Outcomes | 0/3 | Not started | - |
+| 4. Injectable Modules and Outcomes | 1/3 | In progress | - |
 | 5. Sign-off and Compliance | 0/2 | Not started | - |
 | 6. Photo Documentation | 0/1 | Not started | - |

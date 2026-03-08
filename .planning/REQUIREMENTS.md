@@ -71,23 +71,23 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Filler Module
 
-- [ ] **FILL-01**: Clinician can add a filler procedure module to a session
-- [ ] **FILL-02**: Module captures: product, syringe volume, total volume used, batch/lot, expiry, needle/cannula, injection planes, anatomical sites, endpoint
-- [ ] **FILL-03**: Module links to a product from the registry with batch/lot and expiry tracking
+- [x] **FILL-01**: Clinician can add a filler procedure module to a session
+- [x] **FILL-02**: Module captures: product, syringe volume, total volume used, batch/lot, expiry, needle/cannula, injection planes, anatomical sites, endpoint
+- [x] **FILL-03**: Module links to a product from the registry with batch/lot and expiry tracking
 
 ### Botulinum Module
 
-- [ ] **TOX-01**: Clinician can add a botulinum toxin procedure module to a session
-- [ ] **TOX-02**: Module captures: product, batch number, reconstitution details (diluent, volume, concentration), total units administered, injection sites with units per site
-- [ ] **TOX-03**: Module links to a product from the registry with batch tracking
+- [x] **TOX-01**: Clinician can add a botulinum toxin procedure module to a session
+- [x] **TOX-02**: Module captures: product, batch number, reconstitution details (diluent, volume, concentration), total units administered, injection sites with units per site
+- [x] **TOX-03**: Module links to a product from the registry with batch tracking
 
 ### Outcomes & Aftercare
 
-- [ ] **OUT-01**: Clinician can record immediate outcome (completed/partial/aborted)
-- [ ] **OUT-02**: Clinician can select clinical endpoints observed (module-specific list)
-- [ ] **OUT-03**: Clinician can record aftercare provided with templated instructions
-- [ ] **OUT-04**: Aftercare includes mandatory red flags and contact section
-- [ ] **OUT-05**: Clinician can set follow-up date/time linked to session
+- [x] **OUT-01**: Clinician can record immediate outcome (completed/partial/aborted)
+- [x] **OUT-02**: Clinician can select clinical endpoints observed (module-specific list)
+- [x] **OUT-03**: Clinician can record aftercare provided with templated instructions
+- [x] **OUT-04**: Aftercare includes mandatory red flags and contact section
+- [x] **OUT-05**: Clinician can set follow-up date/time linked to session
 
 ### Sign-off & Locking
 
@@ -205,17 +205,17 @@ Which phases cover which requirements. Updated during roadmap creation.
 | RF-01 | Phase 3 | Complete |
 | RF-02 | Phase 3 | Complete |
 | RF-03 | Phase 3 | Complete |
-| FILL-01 | Phase 4 | Pending |
-| FILL-02 | Phase 4 | Pending |
-| FILL-03 | Phase 4 | Pending |
-| TOX-01 | Phase 4 | Pending |
-| TOX-02 | Phase 4 | Pending |
-| TOX-03 | Phase 4 | Pending |
-| OUT-01 | Phase 4 | Pending |
-| OUT-02 | Phase 4 | Pending |
-| OUT-03 | Phase 4 | Pending |
-| OUT-04 | Phase 4 | Pending |
-| OUT-05 | Phase 4 | Pending |
+| FILL-01 | Phase 4 | Complete |
+| FILL-02 | Phase 4 | Complete |
+| FILL-03 | Phase 4 | Complete |
+| TOX-01 | Phase 4 | Complete |
+| TOX-02 | Phase 4 | Complete |
+| TOX-03 | Phase 4 | Complete |
+| OUT-01 | Phase 4 | Complete |
+| OUT-02 | Phase 4 | Complete |
+| OUT-03 | Phase 4 | Complete |
+| OUT-04 | Phase 4 | Complete |
+| OUT-05 | Phase 4 | Complete |
 | LOCK-01 | Phase 5 | Pending |
 | LOCK-02 | Phase 5 | Pending |
 | LOCK-03 | Phase 5 | Pending |
