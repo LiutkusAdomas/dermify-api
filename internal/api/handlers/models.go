@@ -1,6 +1,9 @@
 package handlers
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
 // MessageResponse represents a simple message response.
 type MessageResponse struct {
@@ -228,4 +231,63 @@ type RFModuleDetailResponse struct {
 	CreatedBy     int64     `json:"created_by" example:"1"`
 	UpdatedAt     time.Time `json:"updated_at"`
 	UpdatedBy     int64     `json:"updated_by" example:"1"`
+}
+
+// FillerModuleDetailResponse represents a filler module detail in API responses.
+type FillerModuleDetailResponse struct {
+	ID              int64      `json:"id" example:"1"`
+	ModuleID        int64      `json:"module_id" example:"1"`
+	ProductID       int64      `json:"product_id" example:"1"`
+	BatchNumber     *string    `json:"batch_number,omitempty"`
+	ExpiryDate      *time.Time `json:"expiry_date,omitempty"`
+	SyringeVolume   *float64   `json:"syringe_volume,omitempty" example:"1.0"`
+	TotalVolume     *float64   `json:"total_volume,omitempty" example:"1.0"`
+	NeedleType      *string    `json:"needle_type,omitempty" example:"27G cannula"`
+	InjectionPlane  *string    `json:"injection_plane,omitempty" example:"subcutaneous"`
+	AnatomicalSites *string    `json:"anatomical_sites,omitempty" example:"nasolabial folds"`
+	Endpoint        *string    `json:"endpoint,omitempty" example:"volume restoration"`
+	Notes           *string    `json:"notes,omitempty"`
+	Version         int        `json:"version" example:"1"`
+	CreatedAt       time.Time  `json:"created_at"`
+	CreatedBy       int64      `json:"created_by" example:"1"`
+	UpdatedAt       time.Time  `json:"updated_at"`
+	UpdatedBy       int64      `json:"updated_by" example:"1"`
+}
+
+// BotulinumModuleDetailResponse represents a botulinum module detail in API responses.
+type BotulinumModuleDetailResponse struct {
+	ID                     int64            `json:"id" example:"1"`
+	ModuleID               int64            `json:"module_id" example:"1"`
+	ProductID              int64            `json:"product_id" example:"1"`
+	BatchNumber            *string          `json:"batch_number,omitempty"`
+	ExpiryDate             *time.Time       `json:"expiry_date,omitempty"`
+	Diluent                *string          `json:"diluent,omitempty" example:"saline"`
+	DilutionVolume         *float64         `json:"dilution_volume,omitempty" example:"2.5"`
+	ResultingConcentration *string          `json:"resulting_concentration,omitempty" example:"4U/0.1ml"`
+	TotalUnits             *float64         `json:"total_units,omitempty" example:"50.0"`
+	InjectionSites         json.RawMessage  `json:"injection_sites,omitempty"`
+	Notes                  *string          `json:"notes,omitempty"`
+	Version                int              `json:"version" example:"1"`
+	CreatedAt              time.Time        `json:"created_at"`
+	CreatedBy              int64            `json:"created_by" example:"1"`
+	UpdatedAt              time.Time        `json:"updated_at"`
+	UpdatedBy              int64            `json:"updated_by" example:"1"`
+}
+
+// SessionOutcomeResponse represents a session outcome in API responses.
+type SessionOutcomeResponse struct {
+	ID             int64      `json:"id" example:"1"`
+	SessionID      int64      `json:"session_id" example:"1"`
+	OutcomeStatus  string     `json:"outcome_status" example:"completed"`
+	EndpointIDs    []int64    `json:"endpoint_ids,omitempty"`
+	AftercareNotes *string    `json:"aftercare_notes,omitempty"`
+	RedFlagsText   *string    `json:"red_flags_text,omitempty"`
+	ContactInfo    *string    `json:"contact_info,omitempty"`
+	FollowUpAt     *time.Time `json:"follow_up_at,omitempty"`
+	Notes          *string    `json:"notes,omitempty"`
+	Version        int        `json:"version" example:"1"`
+	CreatedAt      time.Time  `json:"created_at"`
+	CreatedBy      int64      `json:"created_by" example:"1"`
+	UpdatedAt      time.Time  `json:"updated_at"`
+	UpdatedBy      int64      `json:"updated_by" example:"1"`
 }

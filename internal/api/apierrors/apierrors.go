@@ -109,6 +109,23 @@ const (
 	ModuleDetailUpdateFailed    = "MODULE_DETAIL_UPDATE_FAILED"
 )
 
+// Error codes for injectable module detail failures.
+const (
+	ModuleProductTypeMismatch      = "MODULE_PRODUCT_TYPE_MISMATCH"
+	ModuleInvalidInjectionSites    = "MODULE_INVALID_INJECTION_SITES"
+	InjectableModuleCreationFailed = "INJECTABLE_MODULE_CREATION_FAILED"
+)
+
+// Error codes for outcome-related failures.
+const (
+	OutcomeNotFound        = "OUTCOME_NOT_FOUND"
+	OutcomeAlreadyExists   = "OUTCOME_ALREADY_EXISTS"
+	OutcomeInvalidData     = "OUTCOME_INVALID_DATA"
+	OutcomeSessionNotReady = "OUTCOME_SESSION_NOT_READY"
+	OutcomeCreationFailed  = "OUTCOME_CREATION_FAILED"
+	OutcomeUpdateFailed    = "OUTCOME_UPDATE_FAILED"
+)
+
 // Error codes for internal server errors.
 const (
 	InternalPasswordProcessing      = "INTERNAL_PASSWORD_PROCESSING"

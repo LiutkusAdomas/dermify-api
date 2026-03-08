@@ -64,3 +64,21 @@ func newEnergyModuleCreatedCounter(reg *prometheus.Registry) prometheus.Counter 
 	reg.MustRegister(m)
 	return m
 }
+
+func newInjectableModuleCreatedCounter(reg *prometheus.Registry) prometheus.Counter {
+	m := prometheus.NewCounter(prometheus.CounterOpts{
+		Name: "dermify_injectable_module_created_total",
+		Help: "Total number of injectable modules created.",
+	})
+	reg.MustRegister(m)
+	return m
+}
+
+func newOutcomeRecordedCounter(reg *prometheus.Registry) prometheus.Counter {
+	m := prometheus.NewCounter(prometheus.CounterOpts{
+		Name: "dermify_outcome_recorded_total",
+		Help: "Total number of outcomes recorded.",
+	})
+	reg.MustRegister(m)
+	return m
+}

@@ -13,7 +13,9 @@ const (
 	roleAssignmentCounterMetric      = "role_assignment_total"
 	patientCreatedCounterMetric      = "patient_created_total"
 	sessionCreatedCounterMetric      = "session_created_total"
-	energyModuleCreatedCounterMetric = "energy_module_created_total"
+	energyModuleCreatedCounterMetric     = "energy_module_created_total"
+	injectableModuleCreatedCounterMetric = "injectable_module_created_total"
+	outcomeRecordedCounterMetric         = "outcome_recorded_total"
 )
 
 // Client allows the creation and invocation of metrics within the API. Instantiation should occur through the New
@@ -36,7 +38,9 @@ func New(logger *slog.Logger) *Client {
 		roleAssignmentCounterMetric:      newRoleAssignmentCounter(reg),
 		patientCreatedCounterMetric:      newPatientCreatedCounter(reg),
 		sessionCreatedCounterMetric:      newSessionCreatedCounter(reg),
-		energyModuleCreatedCounterMetric: newEnergyModuleCreatedCounter(reg),
+		energyModuleCreatedCounterMetric:     newEnergyModuleCreatedCounter(reg),
+		injectableModuleCreatedCounterMetric: newInjectableModuleCreatedCounter(reg),
+		outcomeRecordedCounterMetric:         newOutcomeRecordedCounter(reg),
 	}
 
 	return &Client{
@@ -76,4 +80,14 @@ func (c *Client) IncrementSessionCreatedCount() {
 // IncrementEnergyModuleCreatedCount increments the energy module created counter.
 func (c *Client) IncrementEnergyModuleCreatedCount() {
 	c.metrics[energyModuleCreatedCounterMetric].(prometheus.Counter).Add(1)
+}
+
+// IncrementInjectableModuleCreatedCount increments the injectable module created counter.
+func (c *Client) IncrementInjectableModuleCreatedCount() {
+	c.metrics[injectableModuleCreatedCounterMetric].(prometheus.Counter).Add(1)
+}
+
+// IncrementOutcomeRecordedCount increments the outcome recorded counter.
+func (c *Client) IncrementOutcomeRecordedCount() {
+	c.metrics[outcomeRecordedCounterMetric].(prometheus.Counter).Add(1)
 }
