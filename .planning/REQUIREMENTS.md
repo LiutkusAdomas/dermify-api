@@ -47,27 +47,27 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### IPL Module
 
-- [ ] **IPL-01**: Clinician can add an IPL procedure module to a session
-- [ ] **IPL-02**: Module captures: filter/band, lightguide size, fluence, pulse duration, pulse delay, pulse count (MSP), passes, total pulses, cooling mode
-- [ ] **IPL-03**: Module links to a device from the registry with handpiece selection
+- [x] **IPL-01**: Clinician can add an IPL procedure module to a session
+- [x] **IPL-02**: Module captures: filter/band, lightguide size, fluence, pulse duration, pulse delay, pulse count (MSP), passes, total pulses, cooling mode
+- [x] **IPL-03**: Module links to a device from the registry with handpiece selection
 
 ### Nd:YAG Module
 
-- [ ] **YAG-01**: Clinician can add an Nd:YAG procedure module to a session
-- [ ] **YAG-02**: Module captures: wavelength, spot size, fluence, pulse duration, repetition rate, cooling type, total pulses
-- [ ] **YAG-03**: Module links to a device from the registry
+- [x] **YAG-01**: Clinician can add an Nd:YAG procedure module to a session
+- [x] **YAG-02**: Module captures: wavelength, spot size, fluence, pulse duration, repetition rate, cooling type, total pulses
+- [x] **YAG-03**: Module links to a device from the registry
 
 ### CO2/Ablative Module
 
-- [ ] **CO2-01**: Clinician can add a CO2/ablative procedure module to a session
-- [ ] **CO2-02**: Module captures: mode, handpiece/scanner, power, pulse energy, pulse duration, density, pattern, passes, anaesthesia used
-- [ ] **CO2-03**: Module links to a device from the registry
+- [x] **CO2-01**: Clinician can add a CO2/ablative procedure module to a session
+- [x] **CO2-02**: Module captures: mode, handpiece/scanner, power, pulse energy, pulse duration, density, pattern, passes, anaesthesia used
+- [x] **CO2-03**: Module links to a device from the registry
 
 ### RF Module
 
-- [ ] **RF-01**: Clinician can add an RF/RF microneedling procedure module to a session
-- [ ] **RF-02**: Module captures: RF mode, tip type, depth, energy level, overlap, pulses per zone, total pulses
-- [ ] **RF-03**: Module links to a device from the registry
+- [x] **RF-01**: Clinician can add an RF/RF microneedling procedure module to a session
+- [x] **RF-02**: Module captures: RF mode, tip type, depth, energy level, overlap, pulses per zone, total pulses
+- [x] **RF-03**: Module links to a device from the registry
 
 ### Filler Module
 
@@ -193,18 +193,18 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CONS-03 | Phase 2 | Complete |
 | CONS-04 | Phase 2 | Complete |
 | CONS-05 | Phase 2 | Complete |
-| IPL-01 | Phase 3 | Pending |
-| IPL-02 | Phase 3 | Pending |
-| IPL-03 | Phase 3 | Pending |
-| YAG-01 | Phase 3 | Pending |
-| YAG-02 | Phase 3 | Pending |
-| YAG-03 | Phase 3 | Pending |
-| CO2-01 | Phase 3 | Pending |
-| CO2-02 | Phase 3 | Pending |
-| CO2-03 | Phase 3 | Pending |
-| RF-01 | Phase 3 | Pending |
-| RF-02 | Phase 3 | Pending |
-| RF-03 | Phase 3 | Pending |
+| IPL-01 | Phase 3 | Complete |
+| IPL-02 | Phase 3 | Complete |
+| IPL-03 | Phase 3 | Complete |
+| YAG-01 | Phase 3 | Complete |
+| YAG-02 | Phase 3 | Complete |
+| YAG-03 | Phase 3 | Complete |
+| CO2-01 | Phase 3 | Complete |
+| CO2-02 | Phase 3 | Complete |
+| CO2-03 | Phase 3 | Complete |
+| RF-01 | Phase 3 | Complete |
+| RF-02 | Phase 3 | Complete |
+| RF-03 | Phase 3 | Complete |
 | FILL-01 | Phase 4 | Pending |
 | FILL-02 | Phase 4 | Pending |
 | FILL-03 | Phase 4 | Pending |
