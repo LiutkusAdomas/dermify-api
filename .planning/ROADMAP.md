@@ -68,11 +68,12 @@ Plans:
   2. A clinician can add Nd:YAG, CO2/ablative, and RF modules to a session with their respective device-specific parameter sets fully captured
   3. Each module links to a device from the registry -- attempting to reference a non-existent device returns an error
   4. A single session can contain multiple modules of different types (e.g., IPL treatment on one area plus RF on another)
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
+- [ ] 03-01-PLAN.md -- Domain types, migrations, repository interfaces, service scaffold, and mock repositories (contracts foundation)
+- [ ] 03-02-PLAN.md -- Postgres repositories for all 4 module types and EnergyModuleService unit tests
+- [ ] 03-03-PLAN.md -- HTTP handlers, route wiring, metrics, and dependency injection for all 4 module types
 
 ### Phase 4: Injectable Modules and Outcomes
 **Goal**: A clinician can document injectable procedures (fillers, botulinum toxin) with full product traceability, then record outcomes, aftercare instructions, and follow-up scheduling for the complete session
@@ -126,8 +127,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 6/6 | Complete   | 2026-03-07 |
-| 2. Session Lifecycle | 3/4 | In Progress|  |
-| 3. Energy-Based Modules | 0/2 | Not started | - |
+| 2. Session Lifecycle | 4/4 | Complete |  |
+| 3. Energy-Based Modules | 0/3 | Not started | - |
 | 4. Injectable Modules and Outcomes | 0/2 | Not started | - |
 | 5. Sign-off and Compliance | 0/2 | Not started | - |
 | 6. Photo Documentation | 0/1 | Not started | - |
