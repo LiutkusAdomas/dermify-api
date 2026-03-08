@@ -100,11 +100,19 @@ func (r *PostgresPatientRepository) Update(ctx context.Context, patient *domain.
 
 // List returns paginated patients matching the given filter.
 func (r *PostgresPatientRepository) List(ctx context.Context, filter service.PatientFilter) (*service.PatientListResult, error) {
-	baseQuery := `SELECT id, first_name, last_name, date_of_birth, sex,
-		phone, email, external_reference, version,
-		created_at, created_by, updated_at, updated_by
-	FROM patients`
-	countQuery := "SELECT COUNT(*) FROM patients"
+	baseQuery := `SELECT p.id, p.first_name, p.last_name, p.date_of_birth, p.sex,
+		p.phone, p.email, p.external_reference, p.version,
+		p.created_at, p.created_by, p.updated_at, p.updated_by,
+		COALESCE(sess.session_count, 0), sess.last_session_date
+	FROM patients p
+	LEFT JOIN (
+		SELECT patient_id,
+			   COUNT(*) AS session_count,
+			   MAX(created_at) AS last_session_date
+		FROM sessions
+		GROUP BY patient_id
+	) sess ON sess.patient_id = p.id`
+	countQuery := "SELECT COUNT(*) FROM patients p"
 
 	whereClause := ""
 	args := []interface{}{}
@@ -113,7 +121,7 @@ func (r *PostgresPatientRepository) List(ctx context.Context, filter service.Pat
 	if filter.Search != "" {
 		searchPattern := strings.ToLower(filter.Search) + "%"
 		whereClause = fmt.Sprintf(
-			` WHERE LOWER(last_name) LIKE $%d OR LOWER(first_name) LIKE $%d OR LOWER(email) LIKE $%d OR phone LIKE $%d`,
+			` WHERE LOWER(p.last_name) LIKE $%d OR LOWER(p.first_name) LIKE $%d OR LOWER(p.email) LIKE $%d OR p.phone LIKE $%d`,
 			argIndex, argIndex, argIndex, argIndex,
 		)
 		args = append(args, searchPattern)
@@ -128,7 +136,7 @@ func (r *PostgresPatientRepository) List(ctx context.Context, filter service.Pat
 	}
 
 	// Apply ordering and pagination.
-	orderClause := " ORDER BY last_name ASC"
+	orderClause := " ORDER BY p.last_name ASC"
 	offset := (filter.Page - 1) * filter.PerPage
 	limitClause := fmt.Sprintf(" LIMIT $%d OFFSET $%d", argIndex, argIndex+1)
 	args = append(args, filter.PerPage, offset)
@@ -151,9 +159,31 @@ func (r *PostgresPatientRepository) List(ctx context.Context, filter service.Pat
 }
 
 // GetSessionHistory returns session summaries for a patient.
-// Returns empty slice since sessions are not yet implemented.
-func (r *PostgresPatientRepository) GetSessionHistory(_ context.Context, _ int64) ([]domain.SessionSummary, error) {
-	return []domain.SessionSummary{}, nil
+func (r *PostgresPatientRepository) GetSessionHistory(ctx context.Context, patientID int64) ([]domain.SessionSummary, error) {
+	rows, err := r.db.QueryContext(ctx,
+		`SELECT id, created_at, status FROM sessions
+		WHERE patient_id = $1
+		ORDER BY created_at DESC`, patientID,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("querying session history: %w", err)
+	}
+	defer rows.Close()
+
+	summaries := []domain.SessionSummary{}
+	for rows.Next() {
+		var s domain.SessionSummary
+		if err := rows.Scan(&s.ID, &s.CreatedAt, &s.Status); err != nil {
+			return nil, fmt.Errorf("scanning session summary: %w", err)
+		}
+		summaries = append(summaries, s)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterating session summaries: %w", err)
+	}
+
+	return summaries, nil
 }
 
 // scanPatientListItems scans rows into PatientListItem slice.
@@ -166,13 +196,11 @@ func scanPatientListItems(rows *sql.Rows) ([]service.PatientListItem, error) {
 			&item.ID, &item.FirstName, &item.LastName, &item.DateOfBirth, &item.Sex,
 			&item.Phone, &item.Email, &item.ExternalReference,
 			&item.Version, &item.CreatedAt, &item.CreatedBy, &item.UpdatedAt, &item.UpdatedBy,
+			&item.SessionCount, &item.LastSessionDate,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("scanning patient row: %w", err)
 		}
-		// Session count and last session date are placeholders until Phase 2.
-		item.SessionCount = 0
-		item.LastSessionDate = nil
 		patients = append(patients, item)
 	}
 
