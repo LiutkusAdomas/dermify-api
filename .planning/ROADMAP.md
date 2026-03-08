@@ -101,11 +101,12 @@ Plans:
   3. A clinician can add addendums to a locked session (with date, author, reason, content) and those addendums are themselves immutable once saved
   4. Every create, update, sign-off, and lock operation on clinical entities is recorded in an append-only audit trail with action, timestamp, user ID, entity type, and entity ID
   5. Immutability is enforced at the database level via triggers -- not just application-layer checks
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 05-01: TBD
-- [ ] 05-02: TBD
+- [ ] 05-01-PLAN.md -- Domain types, SQL migrations (signed_at/signed_by, addendums, audit trail, immutability triggers, audit triggers), service interfaces, mock repositories
+- [ ] 05-02-PLAN.md -- Postgres repositories for signoff, addendum, and audit, plus service unit tests
+- [ ] 05-03-PLAN.md -- HTTP handlers, route wiring, metrics, and DI for sign-off, addendum, and audit endpoints
 
 ### Phase 6: Photo Documentation
 **Goal**: A clinician can attach before photos and product label photos to sessions, stored on the local filesystem with proper consent gating
@@ -131,5 +132,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 2. Session Lifecycle | 4/4 | Complete |  |
 | 3. Energy-Based Modules | 3/3 | Complete | 2026-03-08 |
 | 4. Injectable Modules and Outcomes | 2/3 | In Progress|  |
-| 5. Sign-off and Compliance | 0/2 | Not started | - |
+| 5. Sign-off and Compliance | 0/3 | Not started | - |
 | 6. Photo Documentation | 0/1 | Not started | - |
