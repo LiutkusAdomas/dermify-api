@@ -82,3 +82,30 @@ func newOutcomeRecordedCounter(reg *prometheus.Registry) prometheus.Counter {
 	reg.MustRegister(m)
 	return m
 }
+
+func newSessionSignedCounter(reg *prometheus.Registry) prometheus.Counter {
+	m := prometheus.NewCounter(prometheus.CounterOpts{
+		Name: "dermify_session_signed_total",
+		Help: "Total number of sessions signed off.",
+	})
+	reg.MustRegister(m)
+	return m
+}
+
+func newSessionLockedCounter(reg *prometheus.Registry) prometheus.Counter {
+	m := prometheus.NewCounter(prometheus.CounterOpts{
+		Name: "dermify_session_locked_total",
+		Help: "Total number of sessions locked.",
+	})
+	reg.MustRegister(m)
+	return m
+}
+
+func newAddendumCreatedCounter(reg *prometheus.Registry) prometheus.Counter {
+	m := prometheus.NewCounter(prometheus.CounterOpts{
+		Name: "dermify_addendum_created_total",
+		Help: "Total number of addendums created.",
+	})
+	reg.MustRegister(m)
+	return m
+}

@@ -126,6 +126,27 @@ const (
 	OutcomeUpdateFailed    = "OUTCOME_UPDATE_FAILED"
 )
 
+// Error codes for sign-off related failures.
+const (
+	SignoffSessionIncomplete = "SIGNOFF_SESSION_INCOMPLETE"
+	SignoffNotReady          = "SIGNOFF_NOT_READY"
+	SignoffFailed            = "SIGNOFF_FAILED"
+	SignoffLockFailed        = "SIGNOFF_LOCK_FAILED"
+)
+
+// Error codes for addendum related failures.
+const (
+	AddendumNotFound         = "ADDENDUM_NOT_FOUND"
+	AddendumInvalidData      = "ADDENDUM_INVALID_DATA"
+	AddendumSessionNotLocked = "ADDENDUM_SESSION_NOT_LOCKED"
+	AddendumCreationFailed   = "ADDENDUM_CREATION_FAILED"
+)
+
+// Error codes for audit related failures.
+const (
+	AuditLookupFailed = "AUDIT_LOOKUP_FAILED"
+)
+
 // Error codes for internal server errors.
 const (
 	InternalPasswordProcessing      = "INTERNAL_PASSWORD_PROCESSING"
