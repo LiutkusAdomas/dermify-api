@@ -63,6 +63,43 @@ const (
 	RegistryLookupFailed    = "REGISTRY_LOOKUP_FAILED"
 )
 
+// Error codes for session-related failures.
+const (
+	SessionNotFound          = "SESSION_NOT_FOUND"
+	SessionVersionConflict   = "SESSION_VERSION_CONFLICT"
+	SessionInvalidData       = "SESSION_INVALID_DATA"
+	SessionInvalidTransition = "SESSION_INVALID_TRANSITION"
+	SessionNotEditable       = "SESSION_NOT_EDITABLE"
+	SessionCreationFailed    = "SESSION_CREATION_FAILED"
+	SessionUpdateFailed      = "SESSION_UPDATE_FAILED"
+	SessionLookupFailed      = "SESSION_LOOKUP_FAILED"
+)
+
+// Error codes for consent-related failures.
+const (
+	ConsentNotFound       = "CONSENT_NOT_FOUND"
+	ConsentRequired       = "CONSENT_REQUIRED"
+	ConsentAlreadyExists  = "CONSENT_ALREADY_EXISTS"
+	ConsentInvalidData    = "CONSENT_INVALID_DATA"
+	ConsentCreationFailed = "CONSENT_CREATION_FAILED"
+)
+
+// Error codes for screening-related failures.
+const (
+	ScreeningNotFound       = "SCREENING_NOT_FOUND"
+	ScreeningAlreadyExists  = "SCREENING_ALREADY_EXISTS"
+	ScreeningInvalidData    = "SCREENING_INVALID_DATA"
+	ScreeningCreationFailed = "SCREENING_CREATION_FAILED"
+)
+
+// Error codes for module-related failures.
+const (
+	ModuleNotFound       = "MODULE_NOT_FOUND"
+	ModuleInvalidData    = "MODULE_INVALID_DATA"
+	ModuleCreationFailed = "MODULE_CREATION_FAILED"
+	ModuleRemovalFailed  = "MODULE_REMOVAL_FAILED"
+)
+
 // Error codes for internal server errors.
 const (
 	InternalPasswordProcessing      = "INTERNAL_PASSWORD_PROCESSING"

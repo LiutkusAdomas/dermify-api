@@ -46,3 +46,12 @@ func newPatientCreatedCounter(reg *prometheus.Registry) prometheus.Counter {
 	reg.MustRegister(m)
 	return m
 }
+
+func newSessionCreatedCounter(reg *prometheus.Registry) prometheus.Counter {
+	m := prometheus.NewCounter(prometheus.CounterOpts{
+		Name: "session_created_total",
+		Help: "Total number of sessions created.",
+	})
+	reg.MustRegister(m)
+	return m
+}
