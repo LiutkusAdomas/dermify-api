@@ -84,11 +84,12 @@ Plans:
   2. A clinician can add a botulinum toxin module with product, batch tracking, reconstitution details (diluent, volume, concentration), total units, and per-site injection mapping
   3. A clinician can record the session outcome (completed/partial/aborted), select observed clinical endpoints from a module-specific list, and document aftercare with templated instructions including mandatory red flags
   4. A clinician can set a follow-up date/time linked to the session
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
+- [ ] 04-01-PLAN.md -- Domain types, migrations, service scaffolds with product validation and outcome logic, mock repositories
+- [ ] 04-02-PLAN.md -- Postgres repositories for filler, botulinum, and outcome tables plus service unit tests
+- [ ] 04-03-PLAN.md -- HTTP handlers, route wiring, metrics, and dependency injection for injectable modules and outcomes
 
 ### Phase 5: Sign-off and Compliance
 **Goal**: A clinician can sign off a completed session, producing a locked, immutable medical record with a full audit trail -- the core medico-legal requirement of the system
@@ -128,7 +129,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 |-------|----------------|--------|-----------|
 | 1. Foundation | 6/6 | Complete   | 2026-03-07 |
 | 2. Session Lifecycle | 4/4 | Complete |  |
-| 3. Energy-Based Modules | 0/3 | Not started | - |
-| 4. Injectable Modules and Outcomes | 0/2 | Not started | - |
+| 3. Energy-Based Modules | 3/3 | Complete | 2026-03-08 |
+| 4. Injectable Modules and Outcomes | 0/3 | Not started | - |
 | 5. Sign-off and Compliance | 0/2 | Not started | - |
 | 6. Photo Documentation | 0/1 | Not started | - |
