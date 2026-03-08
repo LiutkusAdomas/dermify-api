@@ -92,18 +92,18 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Sign-off & Locking
 
 - [ ] **LOCK-01**: System validates all required fields before allowing sign-off (blocks if incomplete)
-- [ ] **LOCK-02**: Clinician can sign off a session (records timestamp and clinician ID)
-- [ ] **LOCK-03**: Signed session becomes immutable — original record cannot be modified
-- [ ] **LOCK-04**: Clinician can add addendums to a locked session (date, author, reason, content)
-- [ ] **LOCK-05**: Addendums are themselves immutable once saved
-- [ ] **LOCK-06**: Immutability is enforced at the database level (not just application layer)
+- [x] **LOCK-02**: Clinician can sign off a session (records timestamp and clinician ID)
+- [x] **LOCK-03**: Signed session becomes immutable — original record cannot be modified
+- [x] **LOCK-04**: Clinician can add addendums to a locked session (date, author, reason, content)
+- [x] **LOCK-05**: Addendums are themselves immutable once saved
+- [x] **LOCK-06**: Immutability is enforced at the database level (not just application layer)
 
 ### Audit Trail
 
-- [ ] **AUDIT-01**: System logs all create, update, and delete operations on clinical entities
-- [ ] **AUDIT-02**: Each audit entry captures: action, timestamp, user ID, entity type, entity ID
-- [ ] **AUDIT-03**: Audit log is append-only — entries cannot be modified or deleted
-- [ ] **AUDIT-04**: Sign-off and lock events are recorded in the audit trail
+- [x] **AUDIT-01**: System logs all create, update, and delete operations on clinical entities
+- [x] **AUDIT-02**: Each audit entry captures: action, timestamp, user ID, entity type, entity ID
+- [x] **AUDIT-03**: Audit log is append-only — entries cannot be modified or deleted
+- [x] **AUDIT-04**: Sign-off and lock events are recorded in the audit trail
 
 ### Photo Documentation
 
@@ -115,7 +115,7 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Metadata
 
 - [x] **META-01**: All clinical records track created_at, created_by, updated_at, updated_by
-- [ ] **META-02**: Signed records track signed_at, signed_by
+- [x] **META-02**: Signed records track signed_at, signed_by
 - [x] **META-03**: Records maintain an incrementing version number for medico-legal defensibility
 
 ## v2 Requirements
@@ -180,7 +180,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | REG-03 | Phase 1 | Complete |
 | REG-04 | Phase 1 | Complete |
 | META-01 | Phase 1 | Complete |
-| META-02 | Phase 5 | Pending |
+| META-02 | Phase 5 | Complete |
 | META-03 | Phase 1 | Complete |
 | SESS-01 | Phase 2 | Complete |
 | SESS-02 | Phase 2 | Complete |
@@ -217,15 +217,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 | OUT-04 | Phase 4 | Complete |
 | OUT-05 | Phase 4 | Complete |
 | LOCK-01 | Phase 5 | Pending |
-| LOCK-02 | Phase 5 | Pending |
-| LOCK-03 | Phase 5 | Pending |
-| LOCK-04 | Phase 5 | Pending |
-| LOCK-05 | Phase 5 | Pending |
-| LOCK-06 | Phase 5 | Pending |
-| AUDIT-01 | Phase 5 | Pending |
-| AUDIT-02 | Phase 5 | Pending |
-| AUDIT-03 | Phase 5 | Pending |
-| AUDIT-04 | Phase 5 | Pending |
+| LOCK-02 | Phase 5 | Complete |
+| LOCK-03 | Phase 5 | Complete |
+| LOCK-04 | Phase 5 | Complete |
+| LOCK-05 | Phase 5 | Complete |
+| LOCK-06 | Phase 5 | Complete |
+| AUDIT-01 | Phase 5 | Complete |
+| AUDIT-02 | Phase 5 | Complete |
+| AUDIT-03 | Phase 5 | Complete |
+| AUDIT-04 | Phase 5 | Complete |
 | PHOTO-01 | Phase 6 | Pending |
 | PHOTO-02 | Phase 6 | Pending |
 | PHOTO-03 | Phase 6 | Pending |
