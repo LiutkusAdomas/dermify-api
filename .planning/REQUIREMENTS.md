@@ -91,7 +91,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Sign-off & Locking
 
-- [ ] **LOCK-01**: System validates all required fields before allowing sign-off (blocks if incomplete)
+- [x] **LOCK-01**: System validates all required fields before allowing sign-off (blocks if incomplete)
 - [x] **LOCK-02**: Clinician can sign off a session (records timestamp and clinician ID)
 - [x] **LOCK-03**: Signed session becomes immutable — original record cannot be modified
 - [x] **LOCK-04**: Clinician can add addendums to a locked session (date, author, reason, content)
@@ -216,7 +216,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | OUT-03 | Phase 4 | Complete |
 | OUT-04 | Phase 4 | Complete |
 | OUT-05 | Phase 4 | Complete |
-| LOCK-01 | Phase 5 | Pending |
+| LOCK-01 | Phase 5 | Complete |
 | LOCK-02 | Phase 5 | Complete |
 | LOCK-03 | Phase 5 | Complete |
 | LOCK-04 | Phase 5 | Complete |
