@@ -96,11 +96,11 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **LOCK-03**: Signed session becomes immutable — original record cannot be modified
 - [x] **LOCK-04**: Clinician can add addendums to a locked session (date, author, reason, content)
 - [x] **LOCK-05**: Addendums are themselves immutable once saved
-- [ ] **LOCK-06**: Immutability is enforced at the database level (not just application layer)
+- [x] **LOCK-06**: Immutability is enforced at the database level (not just application layer)
 
 ### Audit Trail
 
-- [ ] **AUDIT-01**: System logs all create, update, and delete operations on clinical entities
+- [x] **AUDIT-01**: System logs all create, update, and delete operations on clinical entities
 - [x] **AUDIT-02**: Each audit entry captures: action, timestamp, user ID, entity type, entity ID
 - [x] **AUDIT-03**: Audit log is append-only — entries cannot be modified or deleted
 - [x] **AUDIT-04**: Sign-off and lock events are recorded in the audit trail
@@ -221,8 +221,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LOCK-03 | Phase 5 | Complete |
 | LOCK-04 | Phase 5 | Complete |
 | LOCK-05 | Phase 5 | Complete |
-| LOCK-06 | Phase 7 | Pending |
-| AUDIT-01 | Phase 7 | Pending |
+| LOCK-06 | Phase 7 | Complete |
+| AUDIT-01 | Phase 7 | Complete |
 | AUDIT-02 | Phase 5 | Complete |
 | AUDIT-03 | Phase 5 | Complete |
 | AUDIT-04 | Phase 5 | Complete |
