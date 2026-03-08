@@ -18,6 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 4: Injectable Modules and Outcomes** - Filler and botulinum toxin modules with product traceability, plus outcomes and aftercare
 - [ ] **Phase 5: Sign-off and Compliance** - Validation gates, record sign-off, database-enforced immutability, addendums, and audit trail
 - [x] **Phase 6: Photo Documentation** - Before photos, label photos, filesystem storage, and consent-gated uploads (completed 2026-03-08)
+- [ ] **Phase 7: Photo Immutability and Audit Triggers** - DB-level immutability and audit triggers for session_photos (gap closure)
 
 ## Phase Details
 
@@ -123,6 +124,16 @@ Plans:
 - [ ] 06-02-PLAN.md -- PostgreSQL photo repository, StorageConfig, and PhotoService unit tests
 - [ ] 06-03-PLAN.md -- HTTP handlers, LocalFileStore, error codes, metrics, route wiring, and DI for photo endpoints
 
+### Phase 7: Photo Immutability and Audit Triggers
+**Goal**: Close cross-phase integration gaps by adding DB-level immutability and audit triggers for session_photos, ensuring photo operations on signed/locked sessions are blocked at the database level and all photo operations are recorded in the audit trail
+**Depends on**: Phase 6
+**Requirements**: LOCK-06, AUDIT-01
+**Gap Closure:** Closes gaps from v1.0 milestone audit
+**Success Criteria** (what must be TRUE):
+  1. Any attempt to UPDATE or DELETE a row in session_photos when the parent session is signed or locked fails at the database level (not just application layer)
+  2. Every INSERT, UPDATE, and DELETE on session_photos is recorded in the audit_trail table with action, timestamp, user ID, entity type, and entity ID
+**Plans**: 0 plans (pending /gsd:plan-phase 7)
+
 ## Progress
 
 **Execution Order:**
@@ -136,3 +147,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 4. Injectable Modules and Outcomes | 2/3 | In Progress|  |
 | 5. Sign-off and Compliance | 0/3 | Not started | - |
 | 6. Photo Documentation | 3/3 | Complete   | 2026-03-08 |
+| 7. Photo Immutability and Audit Triggers | 0/0 | Not started | - |
