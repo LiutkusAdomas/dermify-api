@@ -5,10 +5,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-)
 
-// ErrUserNotFound is returned when no user matches the given ID.
-var ErrUserNotFound = errors.New("user not found") //nolint:gochecknoglobals // sentinel error
+	"dermify-api/internal/service"
+)
 
 // PostgresRoleRepository implements service.RoleRepository using PostgreSQL.
 type PostgresRoleRepository struct {
@@ -36,7 +35,7 @@ func (r *PostgresRoleRepository) UpdateUserRole(ctx context.Context, userID int6
 	}
 
 	if rowsAffected == 0 {
-		return ErrUserNotFound
+		return service.ErrUserNotFound
 	}
 
 	return nil
@@ -51,7 +50,7 @@ func (r *PostgresRoleRepository) GetUserRole(ctx context.Context, userID int64) 
 	).Scan(&role)
 
 	if errors.Is(err, sql.ErrNoRows) {
-		return "", ErrUserNotFound
+		return "", service.ErrUserNotFound
 	}
 
 	if err != nil {

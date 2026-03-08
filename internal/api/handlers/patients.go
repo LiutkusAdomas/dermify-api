@@ -6,7 +6,6 @@ import (
 	"log/slog"
 	"math"
 	"net/http"
-	"strconv"
 	"time"
 
 	"dermify-api/internal/api/apierrors"
@@ -14,8 +13,6 @@ import (
 	"dermify-api/internal/api/middleware"
 	"dermify-api/internal/domain"
 	"dermify-api/internal/service"
-
-	"github.com/go-chi/chi/v5"
 )
 
 type createPatientRequest struct {
@@ -312,27 +309,6 @@ func toPatientResponse(p *domain.Patient, sessionCount int, lastSessionDate *tim
 		UpdatedAt:         p.UpdatedAt,
 		UpdatedBy:         p.UpdatedBy,
 	}
-}
-
-// parseIDParam extracts the "id" URL parameter as an int64.
-func parseIDParam(r *http.Request) (int64, error) {
-	idStr := chi.URLParam(r, "id")
-	return strconv.ParseInt(idStr, 10, 64)
-}
-
-// parseIntParam extracts an integer query parameter with a default value.
-func parseIntParam(r *http.Request, key string, defaultVal int) int {
-	val := r.URL.Query().Get(key)
-	if val == "" {
-		return defaultVal
-	}
-
-	parsed, err := strconv.Atoi(val)
-	if err != nil {
-		return defaultVal
-	}
-
-	return parsed
 }
 
 // handlePatientCreateError maps service create errors to HTTP responses.

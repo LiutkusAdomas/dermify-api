@@ -402,20 +402,6 @@ func toModuleResponse(m *domain.SessionModule) ModuleResponse {
 	}
 }
 
-// parseInt64Param extracts an int64 query parameter with a default value.
-func parseInt64Param(r *http.Request, key string, defaultVal int64) int64 {
-	val := r.URL.Query().Get(key)
-	if val == "" {
-		return defaultVal
-	}
-
-	parsed, err := strconv.ParseInt(val, 10, 64)
-	if err != nil {
-		return defaultVal
-	}
-
-	return parsed
-}
 
 // handleSessionCreateError maps service create errors to HTTP responses.
 func handleSessionCreateError(w http.ResponseWriter, err error) {

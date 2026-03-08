@@ -35,8 +35,10 @@ const (
 
 // Error codes for user-related failures.
 const (
-	UserNotFound      = "USER_NOT_FOUND"
-	UserAlreadyExists = "USER_ALREADY_EXISTS"
+	UserNotFound        = "USER_NOT_FOUND"
+	UserAlreadyExists   = "USER_ALREADY_EXISTS"
+	UserInvalidData     = "USER_INVALID_DATA"
+	UserOperationFailed = "USER_OPERATION_FAILED"
 )
 
 // Error codes for role-related failures.

@@ -7,7 +7,6 @@ import (
 
 	"dermify-api/internal/api/apierrors"
 	"dermify-api/internal/api/metrics"
-	"dermify-api/internal/repository/postgres"
 	"dermify-api/internal/service"
 )
 
@@ -59,7 +58,7 @@ func HandleAssignRole(svc *service.RoleService, m *metrics.Client) func(http.Res
 			case errors.Is(err, service.ErrInvalidRole):
 				apierrors.WriteError(w, http.StatusBadRequest,
 					apierrors.RoleInvalidRole, "invalid role value")
-			case errors.Is(err, postgres.ErrUserNotFound):
+			case errors.Is(err, service.ErrUserNotFound):
 				apierrors.WriteError(w, http.StatusNotFound,
 					apierrors.RoleUserNotFound, "user not found")
 			default:

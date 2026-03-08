@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"database/sql"
 	"encoding/json"
+	"errors"
 	"log/slog"
 	"net/http"
 	"time"
@@ -12,7 +12,6 @@ import (
 	"dermify-api/internal/api/auth"
 	"dermify-api/internal/api/metrics"
 	"dermify-api/internal/api/middleware"
-	"dermify-api/internal/domain"
 	"dermify-api/internal/service"
 )
 
@@ -42,7 +41,7 @@ type registerResponse struct {
 //	@Failure		409		{object}	apierrors.ErrorResponse
 //	@Failure		500		{object}	apierrors.ErrorResponse
 //	@Router			/auth/register [post]
-func HandleRegister(db *sql.DB, roleSvc *service.RoleService, m *metrics.Client) func(w http.ResponseWriter, r *http.Request) {
+func HandleRegister(authSvc *service.AuthService, m *metrics.Client) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
@@ -63,33 +62,17 @@ func HandleRegister(db *sql.DB, roleSvc *service.RoleService, m *metrics.Client)
 			return
 		}
 
-		var userID int64
-		err = db.QueryRow(
-			`INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING id`,
-			req.Username, req.Email, hash,
-		).Scan(&userID)
+		user, err := authSvc.Register(r.Context(), req.Username, req.Email, hash)
 		if err != nil {
-			apierrors.WriteError(w, http.StatusConflict, apierrors.UserAlreadyExists, "username or email already exists")
+			handleAuthError(w, err)
 			return
 		}
 
-		// First-user bootstrap: auto-promote to Admin if this is the first user.
-		isFirst, err := roleSvc.IsFirstUser(r.Context())
-		if err != nil {
-			slog.Error("failed to check first user status", "error", err)
-		} else if isFirst {
-			if assignErr := roleSvc.AssignRole(r.Context(), userID, domain.RoleAdmin); assignErr != nil {
-				slog.Error("failed to auto-promote first user to admin", "error", assignErr)
-			} else {
-				slog.Info("first user auto-promoted to admin", "user_id", userID)
-			}
-		}
-
 		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(registerResponse{
-			ID:       userID,
-			Username: req.Username,
-			Email:    req.Email,
+		json.NewEncoder(w).Encode(registerResponse{ //nolint:errcheck // response write
+			ID:       user.ID,
+			Username: user.Username,
+			Email:    user.Email,
 			Message:  "user registered successfully",
 		})
 	}
@@ -110,7 +93,7 @@ type logoutRequest struct {
 //	@Success		200		{object}	MessageResponse
 //	@Failure		400		{object}	apierrors.ErrorResponse
 //	@Router			/auth/logout [post]
-func HandleLogout(db *sql.DB, m *metrics.Client) func(w http.ResponseWriter, r *http.Request) {
+func HandleLogout(authSvc *service.AuthService, m *metrics.Client) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
@@ -122,11 +105,11 @@ func HandleLogout(db *sql.DB, m *metrics.Client) func(w http.ResponseWriter, r *
 
 		if req.RefreshToken != "" {
 			tokenHash := auth.HashToken(req.RefreshToken)
-			_ = auth.RevokeRefreshToken(db, tokenHash)
+			_ = authSvc.RevokeRefreshToken(r.Context(), tokenHash)
 		}
 
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(map[string]string{"message": "logged out successfully"})
+		json.NewEncoder(w).Encode(map[string]string{"message": "logged out successfully"}) //nolint:errcheck // response write
 	}
 }
 
@@ -154,7 +137,7 @@ type refreshResponse struct {
 //	@Failure		401		{object}	apierrors.ErrorResponse
 //	@Failure		500		{object}	apierrors.ErrorResponse
 //	@Router			/auth/refresh [post]
-func HandleRefreshToken(db *sql.DB, cfg *config.Configuration, m *metrics.Client) func(w http.ResponseWriter, r *http.Request) {
+func HandleRefreshToken(authSvc *service.AuthService, cfg *config.Configuration, m *metrics.Client) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
@@ -170,23 +153,22 @@ func HandleRefreshToken(db *sql.DB, cfg *config.Configuration, m *metrics.Client
 		}
 
 		oldHash := auth.HashToken(req.RefreshToken)
-		userID, err := auth.ValidateRefreshToken(db, oldHash)
+
+		userID, err := authSvc.ValidateRefreshToken(r.Context(), oldHash)
 		if err != nil {
-			apierrors.WriteError(w, http.StatusUnauthorized, apierrors.AuthInvalidRefreshToken, "invalid or expired refresh token")
+			handleAuthError(w, err)
 			return
 		}
 
-		_ = auth.RevokeRefreshToken(db, oldHash)
+		_ = authSvc.RevokeRefreshToken(r.Context(), oldHash)
 
-		var email string
-		var role string
-		err = db.QueryRow(`SELECT email, COALESCE(role, '') FROM users WHERE id = $1`, userID).Scan(&email, &role)
+		user, err := authSvc.GetUserByID(r.Context(), userID)
 		if err != nil {
 			apierrors.WriteError(w, http.StatusInternalServerError, apierrors.InternalUserLookup, "failed to look up user")
 			return
 		}
 
-		accessToken, err := auth.GenerateAccessToken(userID, email, role, cfg.Auth.JWTSecret, cfg.Auth.AccessTokenExpiry)
+		accessToken, err := auth.GenerateAccessToken(user.ID, user.Email, user.Role, cfg.Auth.JWTSecret, cfg.Auth.AccessTokenExpiry)
 		if err != nil {
 			apierrors.WriteError(w, http.StatusInternalServerError, apierrors.InternalTokenGeneration, "failed to generate access token")
 			return
@@ -200,13 +182,14 @@ func HandleRefreshToken(db *sql.DB, cfg *config.Configuration, m *metrics.Client
 
 		newHash := auth.HashToken(newRefreshToken)
 		expiresAt := time.Now().Add(cfg.Auth.RefreshTokenExpiry)
-		if err := auth.StoreRefreshToken(db, userID, newHash, expiresAt); err != nil {
+
+		if err := authSvc.StoreRefreshToken(r.Context(), user.ID, newHash, expiresAt); err != nil {
 			apierrors.WriteError(w, http.StatusInternalServerError, apierrors.InternalRefreshTokenStorage, "failed to store refresh token")
 			return
 		}
 
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(refreshResponse{
+		json.NewEncoder(w).Encode(refreshResponse{ //nolint:errcheck // response write
 			AccessToken:  accessToken,
 			RefreshToken: newRefreshToken,
 			ExpiresIn:    int(cfg.Auth.AccessTokenExpiry.Seconds()),
@@ -234,7 +217,7 @@ type profileResponse struct {
 //	@Failure		401	{object}	apierrors.ErrorResponse
 //	@Failure		404	{object}	apierrors.ErrorResponse
 //	@Router			/auth/me [get]
-func HandleGetProfile(db *sql.DB, m *metrics.Client) func(w http.ResponseWriter, r *http.Request) {
+func HandleGetProfile(authSvc *service.AuthService, m *metrics.Client) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
@@ -244,22 +227,47 @@ func HandleGetProfile(db *sql.DB, m *metrics.Client) func(w http.ResponseWriter,
 			return
 		}
 
-		var resp profileResponse
-		var bio sql.NullString
-		err := db.QueryRow(
-			`SELECT id, username, email, bio, COALESCE(role, '') as role, created_at FROM users WHERE id = $1`,
-			claims.UserID,
-		).Scan(&resp.ID, &resp.Username, &resp.Email, &bio, &resp.Role, &resp.CreatedAt)
+		user, err := authSvc.GetUserByID(r.Context(), claims.UserID)
 		if err != nil {
-			apierrors.WriteError(w, http.StatusNotFound, apierrors.UserNotFound, "user not found")
+			handleAuthError(w, err)
 			return
 		}
 
-		if bio.Valid {
-			resp.Bio = bio.String
+		resp := profileResponse{
+			ID:        user.ID,
+			Username:  user.Username,
+			Email:     user.Email,
+			Role:      user.Role,
+			CreatedAt: user.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+		}
+
+		if user.Bio != nil {
+			resp.Bio = *user.Bio
 		}
 
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(resp)
+		json.NewEncoder(w).Encode(resp) //nolint:errcheck // response write
+	}
+}
+
+// handleAuthError maps service auth errors to HTTP responses.
+func handleAuthError(w http.ResponseWriter, err error) {
+	switch {
+	case errors.Is(err, service.ErrUserAlreadyExists):
+		apierrors.WriteError(w, http.StatusConflict,
+			apierrors.UserAlreadyExists, "username or email already exists")
+	case errors.Is(err, service.ErrInvalidCredentials):
+		apierrors.WriteError(w, http.StatusUnauthorized,
+			apierrors.AuthInvalidCredentials, "invalid credentials")
+	case errors.Is(err, service.ErrRefreshTokenInvalid):
+		apierrors.WriteError(w, http.StatusUnauthorized,
+			apierrors.AuthInvalidRefreshToken, "invalid or expired refresh token")
+	case errors.Is(err, service.ErrUserNotFound):
+		apierrors.WriteError(w, http.StatusNotFound,
+			apierrors.UserNotFound, "user not found")
+	default:
+		slog.Error("auth operation failed", "error", err)
+		apierrors.WriteError(w, http.StatusInternalServerError,
+			apierrors.InternalUserLookup, "internal error")
 	}
 }

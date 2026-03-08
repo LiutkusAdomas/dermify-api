@@ -270,8 +270,3 @@ func parsePhotoIDParam(r *http.Request) (int64, error) {
 	return strconv.ParseInt(idStr, 10, 64)
 }
 
-// parseModuleIDParam extracts the module ID from the URL path parameter.
-func parseModuleIDParam(r *http.Request) (int64, error) {
-	idStr := chi.URLParam(r, "moduleId")
-	return strconv.ParseInt(idStr, 10, 64)
-}

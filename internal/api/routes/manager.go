@@ -72,10 +72,15 @@ func NewManager(db *sql.DB, cfg *config.Configuration, m *metrics.Client) *Manag
 	photoFileStore := service.NewLocalFileStore(cfg.Storage.BasePath)
 	photoSvc := service.NewPhotoService(photoRepo, sessionRepo, moduleRepo, photoFileStore)
 
+	userRepo := postgres.NewPostgresUserRepository(db)
+	userSvc := service.NewUserService(userRepo)
+	authRepo := postgres.NewPostgresAuthRepository(db)
+	authSvc := service.NewAuthService(authRepo, userRepo, roleSvc)
+
 	return &Manager{
 		metrics:        m,
-		authRoutes:     NewAuthRoutes(db, roleSvc, cfg, m),
-		userRoutes:     NewUserRoutes(db, m),
+		authRoutes:     NewAuthRoutes(authSvc, cfg, m),
+		userRoutes:     NewUserRoutes(userSvc, cfg, m),
 		apiRoutes:      NewAPIRoutes(m),
 		roleRoutes:     NewRoleRoutes(roleSvc, cfg, m),
 		patientRoutes:  NewPatientRoutes(patientSvc, cfg, m),

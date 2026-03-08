@@ -19,10 +19,7 @@ func NewAPIRoutes(metrics *metrics.Client) *APIRoutes {
 	}
 }
 
-// RegisterRoutes registers general API routes
+// RegisterRoutes registers general API routes.
 func (ar *APIRoutes) RegisterRoutes(router chi.Router) {
-	// Health check and general endpoints
 	router.Get("/health", handlers.HandleHealth())
-	router.Get("/hello", handlers.HandleHello())
-	router.Get("/foo", handlers.HandleFoo(ar.metrics))
 }

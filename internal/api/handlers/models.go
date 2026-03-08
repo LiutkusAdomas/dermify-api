@@ -19,25 +19,13 @@ type HealthResponse struct {
 
 // UserResponse represents a user in API responses.
 type UserResponse struct {
-	ID       int    `json:"id" example:"1"`
-	Username string `json:"username" example:"johndoe"`
-	Email    string `json:"email" example:"johndoe@example.com"`
-}
-
-// CreateUserResponse represents the response after creating a user.
-type CreateUserResponse struct {
-	ID       int    `json:"id" example:"3"`
-	Username string `json:"username" example:"newuser"`
-	Email    string `json:"email" example:"newuser@example.com"`
-	Message  string `json:"message" example:"User created successfully"`
-}
-
-// UpdateUserResponse represents the response after updating a user.
-type UpdateUserResponse struct {
-	ID       string `json:"id" example:"1"`
-	Username string `json:"username" example:"updateduser"`
-	Email    string `json:"email" example:"updated@example.com"`
-	Message  string `json:"message" example:"User updated successfully"`
+	ID        int64     `json:"id" example:"1"`
+	Username  string    `json:"username" example:"johndoe"`
+	Email     string    `json:"email" example:"johndoe@example.com"`
+	Bio       *string   `json:"bio,omitempty" example:"Software developer"`
+	Role      string    `json:"role" example:"doctor"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 // PatientResponse represents a patient in API responses.

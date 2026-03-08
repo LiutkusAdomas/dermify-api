@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"database/sql"
 	"encoding/json"
 	"net/http"
 	"time"
@@ -10,6 +9,7 @@ import (
 	"dermify-api/internal/api/apierrors"
 	"dermify-api/internal/api/auth"
 	"dermify-api/internal/api/metrics"
+	"dermify-api/internal/service"
 )
 
 type loginRequest struct {
@@ -38,7 +38,7 @@ type loginResponse struct {
 //	@Failure		401		{object}	apierrors.ErrorResponse
 //	@Failure		500		{object}	apierrors.ErrorResponse
 //	@Router			/auth/login [post]
-func HandleLogin(db *sql.DB, cfg *config.Configuration, m *metrics.Client) func(w http.ResponseWriter, r *http.Request) {
+func HandleLogin(authSvc *service.AuthService, cfg *config.Configuration, m *metrics.Client) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
@@ -53,33 +53,21 @@ func HandleLogin(db *sql.DB, cfg *config.Configuration, m *metrics.Client) func(
 			return
 		}
 
-		var userID int64
-		var passwordHash string
-		err := db.QueryRow(
-			`SELECT id, password_hash FROM users WHERE LOWER(email) = LOWER($1)`, req.Email,
-		).Scan(&userID, &passwordHash)
+		user, err := authSvc.Authenticate(r.Context(), req.Email)
 		if err != nil {
 			m.IncrementLoginFailureCount()
 			apierrors.WriteError(w, http.StatusUnauthorized, apierrors.AuthInvalidCredentials, "invalid credentials")
 			return
 		}
 
-		if !auth.CheckPassword(req.Password, passwordHash) {
+		if !auth.CheckPassword(req.Password, user.PasswordHash) {
 			m.IncrementLoginFailureCount()
 			apierrors.WriteError(w, http.StatusUnauthorized, apierrors.AuthInvalidCredentials, "invalid credentials")
 			return
 		}
 
-		var role string
-		if err := db.QueryRow(
-			`SELECT COALESCE(role, '') FROM users WHERE id = $1`, userID,
-		).Scan(&role); err != nil {
-			apierrors.WriteError(w, http.StatusInternalServerError, apierrors.InternalUserLookup, "failed to look up user role")
-			return
-		}
-
 		accessToken, err := auth.GenerateAccessToken(
-			userID, req.Email, role, cfg.Auth.JWTSecret, cfg.Auth.AccessTokenExpiry,
+			user.ID, user.Email, user.Role, cfg.Auth.JWTSecret, cfg.Auth.AccessTokenExpiry,
 		)
 		if err != nil {
 			apierrors.WriteError(w, http.StatusInternalServerError, apierrors.InternalTokenGeneration, "failed to generate token")
@@ -94,7 +82,8 @@ func HandleLogin(db *sql.DB, cfg *config.Configuration, m *metrics.Client) func(
 
 		tokenHash := auth.HashToken(refreshToken)
 		expiresAt := time.Now().Add(cfg.Auth.RefreshTokenExpiry)
-		if err := auth.StoreRefreshToken(db, userID, tokenHash, expiresAt); err != nil {
+
+		if err := authSvc.StoreRefreshToken(r.Context(), user.ID, tokenHash, expiresAt); err != nil {
 			apierrors.WriteError(w, http.StatusInternalServerError, apierrors.InternalRefreshTokenStorage, "failed to store refresh token")
 			return
 		}
@@ -102,7 +91,7 @@ func HandleLogin(db *sql.DB, cfg *config.Configuration, m *metrics.Client) func(
 		m.IncrementLoginSuccessCount()
 
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(loginResponse{
+		json.NewEncoder(w).Encode(loginResponse{ //nolint:errcheck // response write
 			AccessToken:  accessToken,
 			RefreshToken: refreshToken,
 			ExpiresIn:    int(cfg.Auth.AccessTokenExpiry.Seconds()),

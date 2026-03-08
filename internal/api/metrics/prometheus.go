@@ -7,7 +7,6 @@ import (
 )
 
 const (
-	fooCounterMetric                 = "foo_counter"
 	loginSuccessCounterMetric        = "login_success_total"
 	loginFailureCounterMetric        = "login_failure_total"
 	roleAssignmentCounterMetric      = "role_assignment_total"
@@ -36,7 +35,6 @@ func New(logger *slog.Logger) *Client {
 	reg := prometheus.NewRegistry()
 
 	metrics := map[string]prometheus.Metric{
-		fooCounterMetric:                 newFooCounter(reg),
 		loginSuccessCounterMetric:        newLoginSuccessCounter(reg),
 		loginFailureCounterMetric:        newLoginFailureCounter(reg),
 		roleAssignmentCounterMetric:      newRoleAssignmentCounter(reg),
@@ -56,10 +54,6 @@ func New(logger *slog.Logger) *Client {
 		metrics:  metrics,
 		Registry: reg,
 	}
-}
-
-func (c *Client) IncrementFooCount() {
-	c.metrics[fooCounterMetric].(prometheus.Counter).Add(1)
 }
 
 func (c *Client) IncrementLoginSuccessCount() {

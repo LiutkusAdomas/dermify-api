@@ -1,0 +1,65 @@
+package testutil
+
+import (
+	"context"
+
+	"dermify-api/internal/domain"
+)
+
+// MockUserRepository is a test double for service.UserRepository.
+type MockUserRepository struct {
+	CreateFn     func(ctx context.Context, user *domain.User) error
+	GetByIDFn    func(ctx context.Context, id int64) (*domain.User, error)
+	GetByEmailFn func(ctx context.Context, email string) (*domain.User, error)
+	UpdateFn     func(ctx context.Context, user *domain.User) error
+	DeleteFn     func(ctx context.Context, id int64) error
+	ListFn       func(ctx context.Context) ([]*domain.User, error)
+}
+
+// Create delegates to CreateFn if set, otherwise returns nil.
+func (m *MockUserRepository) Create(ctx context.Context, user *domain.User) error {
+	if m.CreateFn != nil {
+		return m.CreateFn(ctx, user)
+	}
+	return nil
+}
+
+// GetByID delegates to GetByIDFn if set, otherwise returns nil and nil.
+func (m *MockUserRepository) GetByID(ctx context.Context, id int64) (*domain.User, error) {
+	if m.GetByIDFn != nil {
+		return m.GetByIDFn(ctx, id)
+	}
+	return nil, nil
+}
+
+// GetByEmail delegates to GetByEmailFn if set, otherwise returns nil and nil.
+func (m *MockUserRepository) GetByEmail(ctx context.Context, email string) (*domain.User, error) {
+	if m.GetByEmailFn != nil {
+		return m.GetByEmailFn(ctx, email)
+	}
+	return nil, nil
+}
+
+// Update delegates to UpdateFn if set, otherwise returns nil.
+func (m *MockUserRepository) Update(ctx context.Context, user *domain.User) error {
+	if m.UpdateFn != nil {
+		return m.UpdateFn(ctx, user)
+	}
+	return nil
+}
+
+// Delete delegates to DeleteFn if set, otherwise returns nil.
+func (m *MockUserRepository) Delete(ctx context.Context, id int64) error {
+	if m.DeleteFn != nil {
+		return m.DeleteFn(ctx, id)
+	}
+	return nil
+}
+
+// List delegates to ListFn if set, otherwise returns empty slice.
+func (m *MockUserRepository) List(ctx context.Context) ([]*domain.User, error) {
+	if m.ListFn != nil {
+		return m.ListFn(ctx)
+	}
+	return []*domain.User{}, nil
+}
