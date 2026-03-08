@@ -52,6 +52,13 @@ func NewManager(db *sql.DB, cfg *config.Configuration, m *metrics.Client) *Manag
 	rfModuleRepo := postgres.NewPostgresRFModuleRepository(db)
 	energySvc := service.NewEnergyModuleService(sessionSvc, registrySvc, iplModuleRepo, ndyagModuleRepo, co2ModuleRepo, rfModuleRepo)
 
+	fillerModuleRepo := postgres.NewPostgresFillerModuleRepository(db)
+	botulinumModuleRepo := postgres.NewPostgresBotulinumModuleRepository(db)
+	injectableSvc := service.NewInjectableModuleService(sessionSvc, registrySvc, fillerModuleRepo, botulinumModuleRepo)
+
+	outcomeRepo := postgres.NewPostgresOutcomeRepository(db)
+	outcomeSvc := service.NewOutcomeService(outcomeRepo, sessionSvc)
+
 	return &Manager{
 		metrics:        m,
 		authRoutes:     NewAuthRoutes(db, roleSvc, cfg, m),
@@ -60,7 +67,7 @@ func NewManager(db *sql.DB, cfg *config.Configuration, m *metrics.Client) *Manag
 		roleRoutes:     NewRoleRoutes(roleSvc, cfg, m),
 		patientRoutes:  NewPatientRoutes(patientSvc, cfg, m),
 		registryRoutes: NewRegistryRoutes(registrySvc, cfg, m),
-		sessionRoutes:  NewSessionRoutes(sessionSvc, consentSvc, contraindicationSvc, energySvc, cfg, m),
+		sessionRoutes:  NewSessionRoutes(sessionSvc, consentSvc, contraindicationSvc, energySvc, injectableSvc, outcomeSvc, cfg, m),
 	}
 }
 

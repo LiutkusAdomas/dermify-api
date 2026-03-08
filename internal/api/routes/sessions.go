@@ -13,12 +13,14 @@ import (
 
 // SessionRoutes handles all session lifecycle routes.
 type SessionRoutes struct {
-	sessionSvc *service.SessionService
-	consentSvc *service.ConsentService
-	screenSvc  *service.ContraindicationService
-	energySvc  *service.EnergyModuleService
-	config     *config.Configuration
-	metrics    *metrics.Client
+	sessionSvc    *service.SessionService
+	consentSvc    *service.ConsentService
+	screenSvc     *service.ContraindicationService
+	energySvc     *service.EnergyModuleService
+	injectableSvc *service.InjectableModuleService
+	outcomeSvc    *service.OutcomeService
+	config        *config.Configuration
+	metrics       *metrics.Client
 }
 
 // NewSessionRoutes creates a new SessionRoutes instance.
@@ -27,16 +29,20 @@ func NewSessionRoutes(
 	consentSvc *service.ConsentService,
 	screenSvc *service.ContraindicationService,
 	energySvc *service.EnergyModuleService,
+	injectableSvc *service.InjectableModuleService,
+	outcomeSvc *service.OutcomeService,
 	cfg *config.Configuration,
 	m *metrics.Client,
 ) *SessionRoutes {
 	return &SessionRoutes{
-		sessionSvc: sessionSvc,
-		consentSvc: consentSvc,
-		screenSvc:  screenSvc,
-		energySvc:  energySvc,
-		config:     cfg,
-		metrics:    m,
+		sessionSvc:    sessionSvc,
+		consentSvc:    consentSvc,
+		screenSvc:     screenSvc,
+		energySvc:     energySvc,
+		injectableSvc: injectableSvc,
+		outcomeSvc:    outcomeSvc,
+		config:        cfg,
+		metrics:       m,
 	}
 }
 
@@ -93,6 +99,23 @@ func (sr *SessionRoutes) RegisterRoutes(router chi.Router) {
 				r.Get("/{moduleId}", handlers.HandleGetRFModule(sr.energySvc, sr.metrics))
 				r.Put("/{moduleId}", handlers.HandleUpdateRFModule(sr.energySvc, sr.metrics))
 			})
+
+			// Injectable module type-specific routes.
+			r.Route("/modules/filler", func(r chi.Router) {
+				r.Post("/", handlers.HandleCreateFillerModule(sr.injectableSvc, sr.metrics))
+				r.Get("/{moduleId}", handlers.HandleGetFillerModule(sr.injectableSvc, sr.metrics))
+				r.Put("/{moduleId}", handlers.HandleUpdateFillerModule(sr.injectableSvc, sr.metrics))
+			})
+			r.Route("/modules/botulinum", func(r chi.Router) {
+				r.Post("/", handlers.HandleCreateBotulinumModule(sr.injectableSvc, sr.metrics))
+				r.Get("/{moduleId}", handlers.HandleGetBotulinumModule(sr.injectableSvc, sr.metrics))
+				r.Put("/{moduleId}", handlers.HandleUpdateBotulinumModule(sr.injectableSvc, sr.metrics))
+			})
+
+			// Outcome routes (session-level singleton, like consent).
+			r.Post("/outcome", handlers.HandleRecordOutcome(sr.outcomeSvc, sr.metrics))
+			r.Get("/outcome", handlers.HandleGetOutcome(sr.outcomeSvc, sr.metrics))
+			r.Put("/outcome", handlers.HandleUpdateOutcome(sr.outcomeSvc, sr.metrics))
 		})
 	})
 }
