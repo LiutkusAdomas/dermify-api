@@ -132,12 +132,15 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. Any attempt to UPDATE or DELETE a row in session_photos when the parent session is signed or locked fails at the database level (not just application layer)
   2. Every INSERT, UPDATE, and DELETE on session_photos is recorded in the audit_trail table with action, timestamp, user ID, entity type, and entity ID
-**Plans**: 0 plans (pending /gsd:plan-phase 7)
+**Plans**: 1 plan
+
+Plans:
+- [ ] 07-01-PLAN.md -- Add immutability and audit triggers for session_photos via new Goose migration
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -147,4 +150,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 4. Injectable Modules and Outcomes | 2/3 | In Progress|  |
 | 5. Sign-off and Compliance | 0/3 | Not started | - |
 | 6. Photo Documentation | 3/3 | Complete   | 2026-03-08 |
-| 7. Photo Immutability and Audit Triggers | 0/0 | Not started | - |
+| 7. Photo Immutability and Audit Triggers | 0/1 | Not started | - |
