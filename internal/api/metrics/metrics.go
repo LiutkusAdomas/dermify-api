@@ -109,3 +109,12 @@ func newAddendumCreatedCounter(reg *prometheus.Registry) prometheus.Counter {
 	reg.MustRegister(m)
 	return m
 }
+
+func newPhotoUploadedCounter(reg *prometheus.Registry) prometheus.Counter {
+	m := prometheus.NewCounter(prometheus.CounterOpts{
+		Name: "dermify_photo_uploaded_total",
+		Help: "Total number of photos uploaded.",
+	})
+	reg.MustRegister(m)
+	return m
+}

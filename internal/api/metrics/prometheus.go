@@ -19,6 +19,7 @@ const (
 	sessionSignedCounterMetric           = "session_signed_total"
 	sessionLockedCounterMetric           = "session_locked_total"
 	addendumCreatedCounterMetric         = "addendum_created_total"
+	photoUploadedCounterMetric           = "photo_uploaded_total"
 )
 
 // Client allows the creation and invocation of metrics within the API. Instantiation should occur through the New
@@ -47,6 +48,7 @@ func New(logger *slog.Logger) *Client {
 		sessionSignedCounterMetric:           newSessionSignedCounter(reg),
 		sessionLockedCounterMetric:           newSessionLockedCounter(reg),
 		addendumCreatedCounterMetric:         newAddendumCreatedCounter(reg),
+		photoUploadedCounterMetric:           newPhotoUploadedCounter(reg),
 	}
 
 	return &Client{
@@ -111,4 +113,9 @@ func (c *Client) IncrementSessionLockedCount() {
 // IncrementAddendumCreatedCount increments the addendum created counter.
 func (c *Client) IncrementAddendumCreatedCount() {
 	c.metrics[addendumCreatedCounterMetric].(prometheus.Counter).Add(1)
+}
+
+// IncrementPhotoUploadedCount increments the photo uploaded counter.
+func (c *Client) IncrementPhotoUploadedCount() {
+	c.metrics[photoUploadedCounterMetric].(prometheus.Counter).Add(1)
 }

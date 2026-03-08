@@ -147,6 +147,17 @@ const (
 	AuditLookupFailed = "AUDIT_LOOKUP_FAILED"
 )
 
+// Error codes for photo-related failures.
+const (
+	PhotoNotFound           = "PHOTO_NOT_FOUND"
+	PhotoConsentRequired    = "PHOTO_CONSENT_REQUIRED"
+	PhotoInvalidData        = "PHOTO_INVALID_DATA"
+	PhotoUploadFailed       = "PHOTO_UPLOAD_FAILED"
+	PhotoDeleteFailed       = "PHOTO_DELETE_FAILED"
+	PhotoLookupFailed       = "PHOTO_LOOKUP_FAILED"
+	PhotoSessionNotEditable = "PHOTO_SESSION_NOT_EDITABLE"
+)
+
 // Error codes for internal server errors.
 const (
 	InternalPasswordProcessing      = "INTERNAL_PASSWORD_PROCESSING"
