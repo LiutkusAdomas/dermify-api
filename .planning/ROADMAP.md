@@ -135,4 +135,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 3. Energy-Based Modules | 3/3 | Complete | 2026-03-08 |
 | 4. Injectable Modules and Outcomes | 2/3 | In Progress|  |
 | 5. Sign-off and Compliance | 0/3 | Not started | - |
-| 6. Photo Documentation | 1/3 | In Progress|  |
+| 6. Photo Documentation | 2/3 | In Progress|  |
