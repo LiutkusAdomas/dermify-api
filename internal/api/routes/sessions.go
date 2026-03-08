@@ -22,6 +22,8 @@ type SessionRoutes struct {
 	signoffSvc    *service.SignoffService
 	addendumSvc   *service.AddendumService
 	auditSvc      *service.AuditService
+	photoSvc      *service.PhotoService
+	storagePath   string
 	config        *config.Configuration
 	metrics       *metrics.Client
 }
@@ -37,6 +39,8 @@ func NewSessionRoutes(
 	signoffSvc *service.SignoffService,
 	addendumSvc *service.AddendumService,
 	auditSvc *service.AuditService,
+	photoSvc *service.PhotoService,
+	storagePath string,
 	cfg *config.Configuration,
 	m *metrics.Client,
 ) *SessionRoutes {
@@ -50,6 +54,8 @@ func NewSessionRoutes(
 		signoffSvc:    signoffSvc,
 		addendumSvc:   addendumSvc,
 		auditSvc:      auditSvc,
+		photoSvc:      photoSvc,
+		storagePath:   storagePath,
 		config:        cfg,
 		metrics:       m,
 	}
@@ -138,6 +144,19 @@ func (sr *SessionRoutes) RegisterRoutes(router chi.Router) {
 
 			// Audit trail route.
 			r.Get("/audit", handlers.HandleGetAuditTrail(sr.auditSvc, sr.metrics))
+
+			// Photo routes.
+			r.Route("/photos", func(r chi.Router) {
+				r.Post("/before", handlers.HandleUploadBeforePhoto(sr.photoSvc, sr.metrics))
+				r.Get("/", handlers.HandleListSessionPhotos(sr.photoSvc, sr.metrics))
+				r.Route("/{photoId}", func(r chi.Router) {
+					r.Get("/", handlers.HandleGetPhoto(sr.photoSvc, sr.metrics))
+					r.Get("/file", handlers.HandleServePhotoFile(sr.photoSvc, sr.storagePath))
+					r.Delete("/", handlers.HandleDeletePhoto(sr.photoSvc, sr.metrics))
+				})
+				// Label photo upload requires moduleId.
+				r.Post("/label/{moduleId}", handlers.HandleUploadLabelPhoto(sr.photoSvc, sr.metrics))
+			})
 		})
 	})
 }
