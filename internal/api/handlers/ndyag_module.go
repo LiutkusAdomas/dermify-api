@@ -43,6 +43,20 @@ type updateNdYAGModuleRequest struct {
 }
 
 // HandleCreateNdYAGModule creates an Nd:YAG module detail for a session.
+//
+//	@Summary		Create Nd:YAG module
+//	@Description	Creates an Nd:YAG laser module detail for a session.
+//	@Tags			modules-ndyag
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id		path	int							true	"Session ID"
+//	@Param			request	body	createNdYAGModuleRequest	true	"Nd:YAG module details"
+//	@Success		201		{object}	NdYAGModuleDetailResponse
+//	@Failure		400		{object}	apierrors.ErrorResponse
+//	@Failure		404		{object}	apierrors.ErrorResponse
+//	@Failure		409		{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/modules/ndyag [post]
 func HandleCreateNdYAGModule(svc *service.EnergyModuleService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -95,6 +109,18 @@ func HandleCreateNdYAGModule(svc *service.EnergyModuleService, m *metrics.Client
 }
 
 // HandleGetNdYAGModule returns an Nd:YAG module detail by module ID.
+//
+//	@Summary		Get Nd:YAG module
+//	@Description	Returns an Nd:YAG module detail by module ID.
+//	@Tags			modules-ndyag
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id			path	int	true	"Session ID"
+//	@Param			moduleId	path	int	true	"Module ID"
+//	@Success		200	{object}	NdYAGModuleDetailResponse
+//	@Failure		400	{object}	apierrors.ErrorResponse
+//	@Failure		404	{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/modules/ndyag/{moduleId} [get]
 func HandleGetNdYAGModule(svc *service.EnergyModuleService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -119,6 +145,21 @@ func HandleGetNdYAGModule(svc *service.EnergyModuleService, m *metrics.Client) f
 }
 
 // HandleUpdateNdYAGModule updates an Nd:YAG module detail.
+//
+//	@Summary		Update Nd:YAG module
+//	@Description	Updates an Nd:YAG module detail. Requires version for optimistic locking.
+//	@Tags			modules-ndyag
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id			path	int							true	"Session ID"
+//	@Param			moduleId	path	int							true	"Module ID"
+//	@Param			request		body	updateNdYAGModuleRequest	true	"Updated Nd:YAG details"
+//	@Success		200			{object}	NdYAGModuleDetailResponse
+//	@Failure		400			{object}	apierrors.ErrorResponse
+//	@Failure		404			{object}	apierrors.ErrorResponse
+//	@Failure		409			{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/modules/ndyag/{moduleId} [put]
 func HandleUpdateNdYAGModule(svc *service.EnergyModuleService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

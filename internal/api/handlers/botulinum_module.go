@@ -42,6 +42,20 @@ type updateBotulinumModuleRequest struct {
 }
 
 // HandleCreateBotulinumModule creates a botulinum module detail for a session.
+//
+//	@Summary		Create botulinum module
+//	@Description	Creates a botulinum toxin module detail for a session.
+//	@Tags			modules-botulinum
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id		path	int								true	"Session ID"
+//	@Param			request	body	createBotulinumModuleRequest	true	"Botulinum module details"
+//	@Success		201		{object}	BotulinumModuleDetailResponse
+//	@Failure		400		{object}	apierrors.ErrorResponse
+//	@Failure		404		{object}	apierrors.ErrorResponse
+//	@Failure		409		{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/modules/botulinum [post]
 func HandleCreateBotulinumModule(svc *service.InjectableModuleService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -93,6 +107,18 @@ func HandleCreateBotulinumModule(svc *service.InjectableModuleService, m *metric
 }
 
 // HandleGetBotulinumModule returns a botulinum module detail by module ID.
+//
+//	@Summary		Get botulinum module
+//	@Description	Returns a botulinum toxin module detail by module ID.
+//	@Tags			modules-botulinum
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id			path	int	true	"Session ID"
+//	@Param			moduleId	path	int	true	"Module ID"
+//	@Success		200	{object}	BotulinumModuleDetailResponse
+//	@Failure		400	{object}	apierrors.ErrorResponse
+//	@Failure		404	{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/modules/botulinum/{moduleId} [get]
 func HandleGetBotulinumModule(svc *service.InjectableModuleService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -117,6 +143,21 @@ func HandleGetBotulinumModule(svc *service.InjectableModuleService, m *metrics.C
 }
 
 // HandleUpdateBotulinumModule updates a botulinum module detail.
+//
+//	@Summary		Update botulinum module
+//	@Description	Updates a botulinum toxin module detail. Requires version for optimistic locking.
+//	@Tags			modules-botulinum
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id			path	int								true	"Session ID"
+//	@Param			moduleId	path	int								true	"Module ID"
+//	@Param			request		body	updateBotulinumModuleRequest	true	"Updated botulinum details"
+//	@Success		200			{object}	BotulinumModuleDetailResponse
+//	@Failure		400			{object}	apierrors.ErrorResponse
+//	@Failure		404			{object}	apierrors.ErrorResponse
+//	@Failure		409			{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/modules/botulinum/{moduleId} [put]
 func HandleUpdateBotulinumModule(svc *service.InjectableModuleService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

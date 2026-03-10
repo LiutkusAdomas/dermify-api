@@ -43,6 +43,20 @@ type updateRFModuleRequest struct {
 }
 
 // HandleCreateRFModule creates an RF module detail for a session.
+//
+//	@Summary		Create RF module
+//	@Description	Creates a radiofrequency module detail for a session.
+//	@Tags			modules-rf
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id		path	int						true	"Session ID"
+//	@Param			request	body	createRFModuleRequest	true	"RF module details"
+//	@Success		201		{object}	RFModuleDetailResponse
+//	@Failure		400		{object}	apierrors.ErrorResponse
+//	@Failure		404		{object}	apierrors.ErrorResponse
+//	@Failure		409		{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/modules/rf [post]
 func HandleCreateRFModule(svc *service.EnergyModuleService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -95,6 +109,18 @@ func HandleCreateRFModule(svc *service.EnergyModuleService, m *metrics.Client) f
 }
 
 // HandleGetRFModule returns an RF module detail by module ID.
+//
+//	@Summary		Get RF module
+//	@Description	Returns an RF module detail by module ID.
+//	@Tags			modules-rf
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id			path	int	true	"Session ID"
+//	@Param			moduleId	path	int	true	"Module ID"
+//	@Success		200	{object}	RFModuleDetailResponse
+//	@Failure		400	{object}	apierrors.ErrorResponse
+//	@Failure		404	{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/modules/rf/{moduleId} [get]
 func HandleGetRFModule(svc *service.EnergyModuleService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -119,6 +145,21 @@ func HandleGetRFModule(svc *service.EnergyModuleService, m *metrics.Client) func
 }
 
 // HandleUpdateRFModule updates an RF module detail.
+//
+//	@Summary		Update RF module
+//	@Description	Updates an RF module detail. Requires version for optimistic locking.
+//	@Tags			modules-rf
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id			path	int						true	"Session ID"
+//	@Param			moduleId	path	int						true	"Module ID"
+//	@Param			request		body	updateRFModuleRequest	true	"Updated RF details"
+//	@Success		200			{object}	RFModuleDetailResponse
+//	@Failure		400			{object}	apierrors.ErrorResponse
+//	@Failure		404			{object}	apierrors.ErrorResponse
+//	@Failure		409			{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/modules/rf/{moduleId} [put]
 func HandleUpdateRFModule(svc *service.EnergyModuleService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

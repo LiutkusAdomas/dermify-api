@@ -44,6 +44,20 @@ type updateFillerModuleRequest struct {
 }
 
 // HandleCreateFillerModule creates a filler module detail for a session.
+//
+//	@Summary		Create filler module
+//	@Description	Creates a dermal filler module detail for a session.
+//	@Tags			modules-filler
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id		path	int							true	"Session ID"
+//	@Param			request	body	createFillerModuleRequest	true	"Filler module details"
+//	@Success		201		{object}	FillerModuleDetailResponse
+//	@Failure		400		{object}	apierrors.ErrorResponse
+//	@Failure		404		{object}	apierrors.ErrorResponse
+//	@Failure		409		{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/modules/filler [post]
 func HandleCreateFillerModule(svc *service.InjectableModuleService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -96,6 +110,18 @@ func HandleCreateFillerModule(svc *service.InjectableModuleService, m *metrics.C
 }
 
 // HandleGetFillerModule returns a filler module detail by module ID.
+//
+//	@Summary		Get filler module
+//	@Description	Returns a filler module detail by module ID.
+//	@Tags			modules-filler
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id			path	int	true	"Session ID"
+//	@Param			moduleId	path	int	true	"Module ID"
+//	@Success		200	{object}	FillerModuleDetailResponse
+//	@Failure		400	{object}	apierrors.ErrorResponse
+//	@Failure		404	{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/modules/filler/{moduleId} [get]
 func HandleGetFillerModule(svc *service.InjectableModuleService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -120,6 +146,21 @@ func HandleGetFillerModule(svc *service.InjectableModuleService, m *metrics.Clie
 }
 
 // HandleUpdateFillerModule updates a filler module detail.
+//
+//	@Summary		Update filler module
+//	@Description	Updates a filler module detail. Requires version for optimistic locking.
+//	@Tags			modules-filler
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id			path	int							true	"Session ID"
+//	@Param			moduleId	path	int							true	"Module ID"
+//	@Param			request		body	updateFillerModuleRequest	true	"Updated filler details"
+//	@Success		200			{object}	FillerModuleDetailResponse
+//	@Failure		400			{object}	apierrors.ErrorResponse
+//	@Failure		404			{object}	apierrors.ErrorResponse
+//	@Failure		409			{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/modules/filler/{moduleId} [put]
 func HandleUpdateFillerModule(svc *service.InjectableModuleService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

@@ -47,6 +47,20 @@ type updateCO2ModuleRequest struct {
 }
 
 // HandleCreateCO2Module creates a CO2 module detail for a session.
+//
+//	@Summary		Create CO2 module
+//	@Description	Creates a CO2 laser module detail for a session.
+//	@Tags			modules-co2
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id		path	int						true	"Session ID"
+//	@Param			request	body	createCO2ModuleRequest	true	"CO2 module details"
+//	@Success		201		{object}	CO2ModuleDetailResponse
+//	@Failure		400		{object}	apierrors.ErrorResponse
+//	@Failure		404		{object}	apierrors.ErrorResponse
+//	@Failure		409		{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/modules/co2 [post]
 func HandleCreateCO2Module(svc *service.EnergyModuleService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -101,6 +115,18 @@ func HandleCreateCO2Module(svc *service.EnergyModuleService, m *metrics.Client) 
 }
 
 // HandleGetCO2Module returns a CO2 module detail by module ID.
+//
+//	@Summary		Get CO2 module
+//	@Description	Returns a CO2 module detail by module ID.
+//	@Tags			modules-co2
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id			path	int	true	"Session ID"
+//	@Param			moduleId	path	int	true	"Module ID"
+//	@Success		200	{object}	CO2ModuleDetailResponse
+//	@Failure		400	{object}	apierrors.ErrorResponse
+//	@Failure		404	{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/modules/co2/{moduleId} [get]
 func HandleGetCO2Module(svc *service.EnergyModuleService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -125,6 +151,21 @@ func HandleGetCO2Module(svc *service.EnergyModuleService, m *metrics.Client) fun
 }
 
 // HandleUpdateCO2Module updates a CO2 module detail.
+//
+//	@Summary		Update CO2 module
+//	@Description	Updates a CO2 module detail. Requires version for optimistic locking.
+//	@Tags			modules-co2
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id			path	int						true	"Session ID"
+//	@Param			moduleId	path	int						true	"Module ID"
+//	@Param			request		body	updateCO2ModuleRequest	true	"Updated CO2 details"
+//	@Success		200			{object}	CO2ModuleDetailResponse
+//	@Failure		400			{object}	apierrors.ErrorResponse
+//	@Failure		404			{object}	apierrors.ErrorResponse
+//	@Failure		409			{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/modules/co2/{moduleId} [put]
 func HandleUpdateCO2Module(svc *service.EnergyModuleService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

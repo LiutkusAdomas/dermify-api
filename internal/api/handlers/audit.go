@@ -12,6 +12,18 @@ import (
 )
 
 // HandleGetAuditTrail returns audit trail entries filtered by entity type and ID.
+//
+//	@Summary		Get audit trail
+//	@Description	Returns audit trail entries filtered by entity type and ID.
+//	@Tags			audit
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			entity_type	query	string	true	"Entity type (e.g. session, patient)"
+//	@Param			entity_id	query	int		true	"Entity ID"
+//	@Success		200	{array}		domain.AuditEntry
+//	@Failure		400	{object}	apierrors.ErrorResponse
+//	@Failure		500	{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/audit [get]
 func HandleGetAuditTrail(svc *service.AuditService, _ *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

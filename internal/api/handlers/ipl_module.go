@@ -47,6 +47,20 @@ type updateIPLModuleRequest struct {
 }
 
 // HandleCreateIPLModule creates an IPL module detail for a session.
+//
+//	@Summary		Create IPL module
+//	@Description	Creates an IPL (Intense Pulsed Light) module detail for a session.
+//	@Tags			modules-ipl
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id		path	int						true	"Session ID"
+//	@Param			request	body	createIPLModuleRequest	true	"IPL module details"
+//	@Success		201		{object}	IPLModuleDetailResponse
+//	@Failure		400		{object}	apierrors.ErrorResponse
+//	@Failure		404		{object}	apierrors.ErrorResponse
+//	@Failure		409		{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/modules/ipl [post]
 func HandleCreateIPLModule(svc *service.EnergyModuleService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -101,6 +115,18 @@ func HandleCreateIPLModule(svc *service.EnergyModuleService, m *metrics.Client) 
 }
 
 // HandleGetIPLModule returns an IPL module detail by module ID.
+//
+//	@Summary		Get IPL module
+//	@Description	Returns an IPL module detail by module ID.
+//	@Tags			modules-ipl
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id			path	int	true	"Session ID"
+//	@Param			moduleId	path	int	true	"Module ID"
+//	@Success		200	{object}	IPLModuleDetailResponse
+//	@Failure		400	{object}	apierrors.ErrorResponse
+//	@Failure		404	{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/modules/ipl/{moduleId} [get]
 func HandleGetIPLModule(svc *service.EnergyModuleService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -125,6 +151,21 @@ func HandleGetIPLModule(svc *service.EnergyModuleService, m *metrics.Client) fun
 }
 
 // HandleUpdateIPLModule updates an IPL module detail.
+//
+//	@Summary		Update IPL module
+//	@Description	Updates an IPL module detail. Requires version for optimistic locking.
+//	@Tags			modules-ipl
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id			path	int						true	"Session ID"
+//	@Param			moduleId	path	int						true	"Module ID"
+//	@Param			request		body	updateIPLModuleRequest	true	"Updated IPL details"
+//	@Success		200			{object}	IPLModuleDetailResponse
+//	@Failure		400			{object}	apierrors.ErrorResponse
+//	@Failure		404			{object}	apierrors.ErrorResponse
+//	@Failure		409			{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/modules/ipl/{moduleId} [put]
 func HandleUpdateIPLModule(svc *service.EnergyModuleService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

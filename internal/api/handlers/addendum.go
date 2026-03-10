@@ -22,6 +22,20 @@ type createAddendumRequest struct {
 }
 
 // HandleCreateAddendum creates a new addendum on a locked session.
+//
+//	@Summary		Create addendum
+//	@Description	Creates a new addendum note on a locked session.
+//	@Tags			addendums
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id		path	int						true	"Session ID"
+//	@Param			request	body	createAddendumRequest	true	"Addendum details"
+//	@Success		201		{object}	domain.Addendum
+//	@Failure		400		{object}	apierrors.ErrorResponse
+//	@Failure		404		{object}	apierrors.ErrorResponse
+//	@Failure		409		{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/addendums [post]
 func HandleCreateAddendum(svc *service.AddendumService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -67,6 +81,17 @@ func HandleCreateAddendum(svc *service.AddendumService, m *metrics.Client) func(
 }
 
 // HandleListAddendums returns all addendums for a session.
+//
+//	@Summary		List addendums
+//	@Description	Returns all addendum notes for a session.
+//	@Tags			addendums
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id	path	int	true	"Session ID"
+//	@Success		200	{array}		domain.Addendum
+//	@Failure		400	{object}	apierrors.ErrorResponse
+//	@Failure		500	{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/addendums [get]
 func HandleListAddendums(svc *service.AddendumService, _ *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -92,6 +117,18 @@ func HandleListAddendums(svc *service.AddendumService, _ *metrics.Client) func(h
 }
 
 // HandleGetAddendum returns a single addendum by ID.
+//
+//	@Summary		Get addendum
+//	@Description	Returns a single addendum by ID.
+//	@Tags			addendums
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id			path	int	true	"Session ID"
+//	@Param			addendumId	path	int	true	"Addendum ID"
+//	@Success		200	{object}	domain.Addendum
+//	@Failure		400	{object}	apierrors.ErrorResponse
+//	@Failure		404	{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/addendums/{addendumId} [get]
 func HandleGetAddendum(svc *service.AddendumService, _ *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

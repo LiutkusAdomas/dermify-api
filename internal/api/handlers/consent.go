@@ -32,6 +32,20 @@ type updateConsentRequest struct {
 }
 
 // HandleRecordConsent records a consent for a session.
+//
+//	@Summary		Record consent
+//	@Description	Records informed consent for a session (one per session).
+//	@Tags			consent
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id		path	int						true	"Session ID"
+//	@Param			request	body	recordConsentRequest	true	"Consent details"
+//	@Success		201		{object}	ConsentResponse
+//	@Failure		400		{object}	apierrors.ErrorResponse
+//	@Failure		409		{object}	apierrors.ErrorResponse
+//	@Failure		500		{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/consent [post]
 func HandleRecordConsent(svc *service.ConsentService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -79,6 +93,17 @@ func HandleRecordConsent(svc *service.ConsentService, m *metrics.Client) func(ht
 }
 
 // HandleGetConsent returns the consent record for a session.
+//
+//	@Summary		Get consent
+//	@Description	Returns the consent record for a session.
+//	@Tags			consent
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id	path	int	true	"Session ID"
+//	@Success		200	{object}	ConsentResponse
+//	@Failure		400	{object}	apierrors.ErrorResponse
+//	@Failure		404	{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/consent [get]
 func HandleGetConsent(svc *service.ConsentService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -102,6 +127,19 @@ func HandleGetConsent(svc *service.ConsentService, m *metrics.Client) func(http.
 }
 
 // HandleUpdateConsent updates a consent record for a session.
+//
+//	@Summary		Update consent
+//	@Description	Updates the consent record for a session. Requires version for optimistic locking.
+//	@Tags			consent
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id		path	int						true	"Session ID"
+//	@Param			request	body	updateConsentRequest	true	"Updated consent details"
+//	@Success		200		{object}	ConsentResponse
+//	@Failure		400		{object}	apierrors.ErrorResponse
+//	@Failure		404		{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/consent [put]
 func HandleUpdateConsent(svc *service.ConsentService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

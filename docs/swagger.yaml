@@ -9,20 +9,346 @@ definitions:
         example: invalid credentials
         type: string
     type: object
-  handlers.CreateUserResponse:
+  domain.Addendum:
     properties:
-      email:
-        example: newuser@example.com
+      author_id:
+        type: integer
+      content:
+        type: string
+      created_at:
         type: string
       id:
-        example: 3
         type: integer
-      message:
-        example: User created successfully
+      reason:
         type: string
-      username:
-        example: newuser
+      session_id:
+        type: integer
+    type: object
+  domain.AuditEntry:
+    properties:
+      action:
         type: string
+      entity_id:
+        type: integer
+      entity_type:
+        type: string
+      id:
+        type: integer
+      new_values:
+        items:
+          type: integer
+        type: array
+      old_values:
+        items:
+          type: integer
+        type: array
+      performed_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  domain.ClinicalEndpoint:
+    properties:
+      active:
+        type: boolean
+      code:
+        type: string
+      id:
+        type: integer
+      module_type:
+        type: string
+      name:
+        type: string
+    type: object
+  domain.Device:
+    properties:
+      active:
+        type: boolean
+      created_at:
+        type: string
+      device_type:
+        type: string
+      handpieces:
+        items:
+          $ref: '#/definitions/domain.Handpiece'
+        type: array
+      id:
+        type: integer
+      manufacturer:
+        type: string
+      model:
+        type: string
+      name:
+        type: string
+    type: object
+  domain.Handpiece:
+    properties:
+      active:
+        type: boolean
+      created_at:
+        type: string
+      device_id:
+        type: integer
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  domain.IndicationCode:
+    properties:
+      active:
+        type: boolean
+      code:
+        type: string
+      id:
+        type: integer
+      module_type:
+        type: string
+      name:
+        type: string
+    type: object
+  domain.Photo:
+    properties:
+      content_type:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        type: integer
+      file_path:
+        type: string
+      id:
+        type: integer
+      module_id:
+        type: integer
+      original_name:
+        type: string
+      photo_type:
+        type: string
+      session_id:
+        type: integer
+      size_bytes:
+        type: integer
+      updated_at:
+        type: string
+      updated_by:
+        type: integer
+      version:
+        type: integer
+    type: object
+  domain.Product:
+    properties:
+      active:
+        type: boolean
+      concentration:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      manufacturer:
+        type: string
+      name:
+        type: string
+      product_type:
+        type: string
+    type: object
+  domain.SessionSummary:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      status:
+        type: string
+    type: object
+  handlers.BotulinumModuleDetailResponse:
+    properties:
+      batch_number:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        example: 1
+        type: integer
+      diluent:
+        example: saline
+        type: string
+      dilution_volume:
+        example: 2.5
+        type: number
+      expiry_date:
+        type: string
+      id:
+        example: 1
+        type: integer
+      injection_sites:
+        items:
+          type: integer
+        type: array
+      module_id:
+        example: 1
+        type: integer
+      notes:
+        type: string
+      product_id:
+        example: 1
+        type: integer
+      resulting_concentration:
+        example: 4U/0.1ml
+        type: string
+      total_units:
+        example: 50
+        type: number
+      updated_at:
+        type: string
+      updated_by:
+        example: 1
+        type: integer
+      version:
+        example: 1
+        type: integer
+    type: object
+  handlers.CO2ModuleDetailResponse:
+    properties:
+      anaesthesia_used:
+        example: topical
+        type: string
+      created_at:
+        type: string
+      created_by:
+        example: 1
+        type: integer
+      density:
+        example: 5
+        type: number
+      device_id:
+        example: 1
+        type: integer
+      handpiece_id:
+        example: 1
+        type: integer
+      id:
+        example: 1
+        type: integer
+      mode:
+        example: fractional
+        type: string
+      module_id:
+        example: 1
+        type: integer
+      notes:
+        type: string
+      passes:
+        example: 2
+        type: integer
+      pattern:
+        example: grid
+        type: string
+      power:
+        example: 20
+        type: number
+      pulse_duration:
+        example: 0.5
+        type: number
+      pulse_energy:
+        example: 100
+        type: number
+      scanner_pattern:
+        example: square
+        type: string
+      updated_at:
+        type: string
+      updated_by:
+        example: 1
+        type: integer
+      version:
+        example: 1
+        type: integer
+    type: object
+  handlers.ConsentResponse:
+    properties:
+      consent_method:
+        example: verbal
+        type: string
+      consent_type:
+        example: informed
+        type: string
+      created_at:
+        type: string
+      created_by:
+        example: 1
+        type: integer
+      id:
+        example: 1
+        type: integer
+      notes:
+        type: string
+      obtained_at:
+        type: string
+      risks_discussed:
+        example: true
+        type: boolean
+      session_id:
+        example: 1
+        type: integer
+      updated_at:
+        type: string
+      updated_by:
+        example: 1
+        type: integer
+      version:
+        example: 1
+        type: integer
+    type: object
+  handlers.FillerModuleDetailResponse:
+    properties:
+      anatomical_sites:
+        example: nasolabial folds
+        type: string
+      batch_number:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        example: 1
+        type: integer
+      endpoint:
+        example: volume restoration
+        type: string
+      expiry_date:
+        type: string
+      id:
+        example: 1
+        type: integer
+      injection_plane:
+        example: subcutaneous
+        type: string
+      module_id:
+        example: 1
+        type: integer
+      needle_type:
+        example: 27G cannula
+        type: string
+      notes:
+        type: string
+      product_id:
+        example: 1
+        type: integer
+      syringe_volume:
+        example: 1
+        type: number
+      total_volume:
+        example: 1
+        type: number
+      updated_at:
+        type: string
+      updated_by:
+        example: 1
+        type: integer
+      version:
+        example: 1
+        type: integer
     type: object
   handlers.HealthResponse:
     properties:
@@ -36,49 +362,644 @@ definitions:
         example: 1.0.0
         type: string
     type: object
+  handlers.IPLModuleDetailResponse:
+    properties:
+      cooling_mode:
+        example: contact
+        type: string
+      created_at:
+        type: string
+      created_by:
+        example: 1
+        type: integer
+      device_id:
+        example: 1
+        type: integer
+      filter_band:
+        example: 560nm
+        type: string
+      fluence:
+        example: 14.5
+        type: number
+      handpiece_id:
+        example: 1
+        type: integer
+      id:
+        example: 1
+        type: integer
+      lightguide_size:
+        example: 15x35mm
+        type: string
+      module_id:
+        example: 1
+        type: integer
+      notes:
+        type: string
+      passes:
+        example: 2
+        type: integer
+      pulse_count:
+        example: 3
+        type: integer
+      pulse_delay:
+        example: 30
+        type: number
+      pulse_duration:
+        example: 20
+        type: number
+      total_pulses:
+        example: 120
+        type: integer
+      updated_at:
+        type: string
+      updated_by:
+        example: 1
+        type: integer
+      version:
+        example: 1
+        type: integer
+    type: object
   handlers.MessageResponse:
     properties:
       message:
         example: operation successful
         type: string
     type: object
-  handlers.UpdateUserResponse:
+  handlers.ModuleResponse:
     properties:
+      created_at:
+        type: string
+      created_by:
+        example: 1
+        type: integer
+      id:
+        example: 1
+        type: integer
+      module_type:
+        example: ipl
+        type: string
+      session_id:
+        example: 1
+        type: integer
+      sort_order:
+        example: 1
+        type: integer
+      updated_at:
+        type: string
+      updated_by:
+        example: 1
+        type: integer
+      version:
+        example: 1
+        type: integer
+    type: object
+  handlers.NdYAGModuleDetailResponse:
+    properties:
+      cooling_type:
+        example: air
+        type: string
+      created_at:
+        type: string
+      created_by:
+        example: 1
+        type: integer
+      device_id:
+        example: 1
+        type: integer
+      fluence:
+        example: 35
+        type: number
+      handpiece_id:
+        example: 1
+        type: integer
+      id:
+        example: 1
+        type: integer
+      module_id:
+        example: 1
+        type: integer
+      notes:
+        type: string
+      pulse_duration:
+        example: 10
+        type: number
+      repetition_rate:
+        example: 2
+        type: number
+      spot_size:
+        example: 6mm
+        type: string
+      total_pulses:
+        example: 200
+        type: integer
+      updated_at:
+        type: string
+      updated_by:
+        example: 1
+        type: integer
+      version:
+        example: 1
+        type: integer
+      wavelength:
+        example: 1064nm
+        type: string
+    type: object
+  handlers.PaginatedResponse:
+    properties:
+      data: {}
+      page:
+        example: 1
+        type: integer
+      per_page:
+        example: 20
+        type: integer
+      total:
+        example: 50
+        type: integer
+      total_pages:
+        example: 3
+        type: integer
+    type: object
+  handlers.PatientResponse:
+    properties:
+      created_at:
+        type: string
+      created_by:
+        example: 1
+        type: integer
+      date_of_birth:
+        example: "1990-01-15"
+        type: string
       email:
-        example: updated@example.com
+        example: jane@example.com
+        type: string
+      external_reference:
+        example: EXT-001
+        type: string
+      first_name:
+        example: Jane
         type: string
       id:
-        example: "1"
+        example: 1
+        type: integer
+      last_name:
+        example: Doe
         type: string
-      message:
-        example: User updated successfully
+      last_session_date:
         type: string
-      username:
-        example: updateduser
+      phone:
+        example: "+1234567890"
         type: string
+      session_count:
+        example: 0
+        type: integer
+      sex:
+        example: female
+        type: string
+      updated_at:
+        type: string
+      updated_by:
+        example: 1
+        type: integer
+      version:
+        example: 1
+        type: integer
+    type: object
+  handlers.RFModuleDetailResponse:
+    properties:
+      created_at:
+        type: string
+      created_by:
+        example: 1
+        type: integer
+      depth:
+        example: 2
+        type: number
+      device_id:
+        example: 1
+        type: integer
+      energy_level:
+        example: 30
+        type: number
+      handpiece_id:
+        example: 1
+        type: integer
+      id:
+        example: 1
+        type: integer
+      module_id:
+        example: 1
+        type: integer
+      notes:
+        type: string
+      overlap:
+        example: 10
+        type: number
+      pulses_per_zone:
+        example: 3
+        type: integer
+      rf_mode:
+        example: bipolar
+        type: string
+      tip_type:
+        example: insulated
+        type: string
+      total_pulses:
+        example: 150
+        type: integer
+      updated_at:
+        type: string
+      updated_by:
+        example: 1
+        type: integer
+      version:
+        example: 1
+        type: integer
+    type: object
+  handlers.ScreeningResponse:
+    properties:
+      active_cold_sores:
+        type: boolean
+      active_infection:
+        type: boolean
+      anticoagulants:
+        type: boolean
+      autoimmune_disorder:
+        type: boolean
+      breastfeeding:
+        type: boolean
+      created_at:
+        type: string
+      created_by:
+        example: 1
+        type: integer
+      has_flags:
+        type: boolean
+      id:
+        example: 1
+        type: integer
+      isotretinoin:
+        type: boolean
+      keloid_history:
+        type: boolean
+      mitigation_notes:
+        type: string
+      notes:
+        type: string
+      photosensitivity:
+        type: boolean
+      pregnant:
+        type: boolean
+      recent_tan:
+        type: boolean
+      session_id:
+        example: 1
+        type: integer
+      updated_at:
+        type: string
+      updated_by:
+        example: 1
+        type: integer
+      version:
+        example: 1
+        type: integer
+    type: object
+  handlers.SessionOutcomeResponse:
+    properties:
+      aftercare_notes:
+        type: string
+      contact_info:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        example: 1
+        type: integer
+      endpoint_ids:
+        items:
+          type: integer
+        type: array
+      follow_up_at:
+        type: string
+      id:
+        example: 1
+        type: integer
+      notes:
+        type: string
+      outcome_status:
+        example: completed
+        type: string
+      red_flags_text:
+        type: string
+      session_id:
+        example: 1
+        type: integer
+      updated_at:
+        type: string
+      updated_by:
+        example: 1
+        type: integer
+      version:
+        example: 1
+        type: integer
+    type: object
+  handlers.SessionResponse:
+    properties:
+      clinician_id:
+        example: 1
+        type: integer
+      completed_at:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        example: 1
+        type: integer
+      fitzpatrick_type:
+        type: integer
+      id:
+        example: 1
+        type: integer
+      indication_code_ids:
+        items:
+          type: integer
+        type: array
+      is_pregnant:
+        type: boolean
+      is_tanned:
+        type: boolean
+      notes:
+        type: string
+      on_anticoagulants:
+        type: boolean
+      patient_goal:
+        type: string
+      patient_id:
+        example: 1
+        type: integer
+      photo_consent:
+        type: string
+      scheduled_at:
+        type: string
+      started_at:
+        type: string
+      status:
+        example: draft
+        type: string
+      updated_at:
+        type: string
+      updated_by:
+        example: 1
+        type: integer
+      version:
+        example: 1
+        type: integer
     type: object
   handlers.UserResponse:
     properties:
+      bio:
+        example: Software developer
+        type: string
+      created_at:
+        type: string
       email:
         example: johndoe@example.com
         type: string
       id:
         example: 1
         type: integer
+      role:
+        example: doctor
+        type: string
+      updated_at:
+        type: string
       username:
         example: johndoe
         type: string
     type: object
-  handlers.fooResponse:
+  handlers.addModuleRequest:
     properties:
-      foo:
-        example: Bar
+      module_type:
         type: string
     type: object
-  handlers.helloResponse:
+  handlers.assignRoleRequest:
     properties:
-      hello:
-        example: World
+      role:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  handlers.assignRoleResponse:
+    properties:
+      message:
+        type: string
+      role:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  handlers.createAddendumRequest:
+    properties:
+      content:
+        type: string
+      reason:
+        type: string
+    type: object
+  handlers.createBotulinumModuleRequest:
+    properties:
+      batch_number:
+        type: string
+      diluent:
+        type: string
+      dilution_volume:
+        type: number
+      expiry_date:
+        type: string
+      injection_sites:
+        items:
+          type: integer
+        type: array
+      notes:
+        type: string
+      product_id:
+        type: integer
+      resulting_concentration:
+        type: string
+      total_units:
+        type: number
+    type: object
+  handlers.createCO2ModuleRequest:
+    properties:
+      anaesthesia_used:
+        type: string
+      density:
+        type: number
+      device_id:
+        type: integer
+      handpiece_id:
+        type: integer
+      mode:
+        type: string
+      notes:
+        type: string
+      passes:
+        type: integer
+      pattern:
+        type: string
+      power:
+        type: number
+      pulse_duration:
+        type: number
+      pulse_energy:
+        type: number
+      scanner_pattern:
+        type: string
+    type: object
+  handlers.createFillerModuleRequest:
+    properties:
+      anatomical_sites:
+        type: string
+      batch_number:
+        type: string
+      endpoint:
+        type: string
+      expiry_date:
+        type: string
+      injection_plane:
+        type: string
+      needle_type:
+        type: string
+      notes:
+        type: string
+      product_id:
+        type: integer
+      syringe_volume:
+        type: number
+      total_volume:
+        type: number
+    type: object
+  handlers.createIPLModuleRequest:
+    properties:
+      cooling_mode:
+        type: string
+      device_id:
+        type: integer
+      filter_band:
+        type: string
+      fluence:
+        type: number
+      handpiece_id:
+        type: integer
+      lightguide_size:
+        type: string
+      notes:
+        type: string
+      passes:
+        type: integer
+      pulse_count:
+        type: integer
+      pulse_delay:
+        type: number
+      pulse_duration:
+        type: number
+      total_pulses:
+        type: integer
+    type: object
+  handlers.createNdYAGModuleRequest:
+    properties:
+      cooling_type:
+        type: string
+      device_id:
+        type: integer
+      fluence:
+        type: number
+      handpiece_id:
+        type: integer
+      notes:
+        type: string
+      pulse_duration:
+        type: number
+      repetition_rate:
+        type: number
+      spot_size:
+        type: string
+      total_pulses:
+        type: integer
+      wavelength:
+        type: string
+    type: object
+  handlers.createPatientRequest:
+    properties:
+      date_of_birth:
+        type: string
+      email:
+        type: string
+      external_reference:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      phone:
+        type: string
+      sex:
+        type: string
+    type: object
+  handlers.createRFModuleRequest:
+    properties:
+      depth:
+        type: number
+      device_id:
+        type: integer
+      energy_level:
+        type: number
+      handpiece_id:
+        type: integer
+      notes:
+        type: string
+      overlap:
+        type: number
+      pulses_per_zone:
+        type: integer
+      rf_mode:
+        type: string
+      tip_type:
+        type: string
+      total_pulses:
+        type: integer
+    type: object
+  handlers.createSessionRequest:
+    properties:
+      fitzpatrick_type:
+        type: integer
+      indication_code_ids:
+        items:
+          type: integer
+        type: array
+      is_pregnant:
+        type: boolean
+      is_tanned:
+        type: boolean
+      notes:
+        type: string
+      on_anticoagulants:
+        type: boolean
+      patient_goal:
+        type: string
+      patient_id:
+        type: integer
+      photo_consent:
+        type: string
+      scheduled_at:
+        type: string
+    type: object
+  handlers.createUserRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
         type: string
     type: object
   handlers.loginRequest:
@@ -125,9 +1046,71 @@ definitions:
       id:
         example: 1
         type: integer
+      role:
+        example: doctor
+        type: string
       username:
         example: johndoe
         type: string
+    type: object
+  handlers.recordConsentRequest:
+    properties:
+      consent_method:
+        type: string
+      consent_type:
+        type: string
+      notes:
+        type: string
+      obtained_at:
+        type: string
+      risks_discussed:
+        type: boolean
+    type: object
+  handlers.recordOutcomeRequest:
+    properties:
+      aftercare_notes:
+        type: string
+      contact_info:
+        type: string
+      endpoint_ids:
+        items:
+          type: integer
+        type: array
+      follow_up_at:
+        type: string
+      notes:
+        type: string
+      outcome_status:
+        type: string
+      red_flags_text:
+        type: string
+    type: object
+  handlers.recordScreeningRequest:
+    properties:
+      active_cold_sores:
+        type: boolean
+      active_infection:
+        type: boolean
+      anticoagulants:
+        type: boolean
+      autoimmune_disorder:
+        type: boolean
+      breastfeeding:
+        type: boolean
+      isotretinoin:
+        type: boolean
+      keloid_history:
+        type: boolean
+      mitigation_notes:
+        type: string
+      notes:
+        type: string
+      photosensitivity:
+        type: boolean
+      pregnant:
+        type: boolean
+      recent_tan:
+        type: boolean
     type: object
   handlers.refreshRequest:
     properties:
@@ -173,6 +1156,296 @@ definitions:
       username:
         example: johndoe
         type: string
+    type: object
+  handlers.transitionSessionRequest:
+    properties:
+      status:
+        type: string
+    type: object
+  handlers.updateBotulinumModuleRequest:
+    properties:
+      batch_number:
+        type: string
+      diluent:
+        type: string
+      dilution_volume:
+        type: number
+      expiry_date:
+        type: string
+      injection_sites:
+        items:
+          type: integer
+        type: array
+      notes:
+        type: string
+      product_id:
+        type: integer
+      resulting_concentration:
+        type: string
+      total_units:
+        type: number
+      version:
+        type: integer
+    type: object
+  handlers.updateCO2ModuleRequest:
+    properties:
+      anaesthesia_used:
+        type: string
+      density:
+        type: number
+      device_id:
+        type: integer
+      handpiece_id:
+        type: integer
+      mode:
+        type: string
+      notes:
+        type: string
+      passes:
+        type: integer
+      pattern:
+        type: string
+      power:
+        type: number
+      pulse_duration:
+        type: number
+      pulse_energy:
+        type: number
+      scanner_pattern:
+        type: string
+      version:
+        type: integer
+    type: object
+  handlers.updateConsentRequest:
+    properties:
+      consent_method:
+        type: string
+      consent_type:
+        type: string
+      notes:
+        type: string
+      obtained_at:
+        type: string
+      risks_discussed:
+        type: boolean
+      version:
+        type: integer
+    type: object
+  handlers.updateFillerModuleRequest:
+    properties:
+      anatomical_sites:
+        type: string
+      batch_number:
+        type: string
+      endpoint:
+        type: string
+      expiry_date:
+        type: string
+      injection_plane:
+        type: string
+      needle_type:
+        type: string
+      notes:
+        type: string
+      product_id:
+        type: integer
+      syringe_volume:
+        type: number
+      total_volume:
+        type: number
+      version:
+        type: integer
+    type: object
+  handlers.updateIPLModuleRequest:
+    properties:
+      cooling_mode:
+        type: string
+      device_id:
+        type: integer
+      filter_band:
+        type: string
+      fluence:
+        type: number
+      handpiece_id:
+        type: integer
+      lightguide_size:
+        type: string
+      notes:
+        type: string
+      passes:
+        type: integer
+      pulse_count:
+        type: integer
+      pulse_delay:
+        type: number
+      pulse_duration:
+        type: number
+      total_pulses:
+        type: integer
+      version:
+        type: integer
+    type: object
+  handlers.updateNdYAGModuleRequest:
+    properties:
+      cooling_type:
+        type: string
+      device_id:
+        type: integer
+      fluence:
+        type: number
+      handpiece_id:
+        type: integer
+      notes:
+        type: string
+      pulse_duration:
+        type: number
+      repetition_rate:
+        type: number
+      spot_size:
+        type: string
+      total_pulses:
+        type: integer
+      version:
+        type: integer
+      wavelength:
+        type: string
+    type: object
+  handlers.updateOutcomeRequest:
+    properties:
+      aftercare_notes:
+        type: string
+      contact_info:
+        type: string
+      endpoint_ids:
+        items:
+          type: integer
+        type: array
+      follow_up_at:
+        type: string
+      notes:
+        type: string
+      outcome_status:
+        type: string
+      red_flags_text:
+        type: string
+      version:
+        type: integer
+    type: object
+  handlers.updatePatientRequest:
+    properties:
+      date_of_birth:
+        type: string
+      email:
+        type: string
+      external_reference:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      phone:
+        type: string
+      sex:
+        type: string
+      version:
+        type: integer
+    type: object
+  handlers.updateRFModuleRequest:
+    properties:
+      depth:
+        type: number
+      device_id:
+        type: integer
+      energy_level:
+        type: number
+      handpiece_id:
+        type: integer
+      notes:
+        type: string
+      overlap:
+        type: number
+      pulses_per_zone:
+        type: integer
+      rf_mode:
+        type: string
+      tip_type:
+        type: string
+      total_pulses:
+        type: integer
+      version:
+        type: integer
+    type: object
+  handlers.updateScreeningRequest:
+    properties:
+      active_cold_sores:
+        type: boolean
+      active_infection:
+        type: boolean
+      anticoagulants:
+        type: boolean
+      autoimmune_disorder:
+        type: boolean
+      breastfeeding:
+        type: boolean
+      isotretinoin:
+        type: boolean
+      keloid_history:
+        type: boolean
+      mitigation_notes:
+        type: string
+      notes:
+        type: string
+      photosensitivity:
+        type: boolean
+      pregnant:
+        type: boolean
+      recent_tan:
+        type: boolean
+      version:
+        type: integer
+    type: object
+  handlers.updateSessionRequest:
+    properties:
+      fitzpatrick_type:
+        type: integer
+      indication_code_ids:
+        items:
+          type: integer
+        type: array
+      is_pregnant:
+        type: boolean
+      is_tanned:
+        type: boolean
+      notes:
+        type: string
+      on_anticoagulants:
+        type: boolean
+      patient_goal:
+        type: string
+      photo_consent:
+        type: string
+      scheduled_at:
+        type: string
+      version:
+        type: integer
+    type: object
+  handlers.updateUserRequest:
+    properties:
+      bio:
+        type: string
+      email:
+        type: string
+      username:
+        type: string
+    type: object
+  service.ValidationResult:
+    properties:
+      missing:
+        items:
+          type: string
+        type: array
+      ready:
+        type: boolean
     type: object
 host: localhost:8080
 info:
@@ -334,19 +1607,6 @@ paths:
       summary: Register a new user
       tags:
       - auth
-  /foo:
-    get:
-      description: Returns a foo bar response and increments the foo metric counter
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.fooResponse'
-      summary: Foo bar
-      tags:
-      - general
   /health:
     get:
       description: Returns the health status of the API
@@ -360,22 +1620,2181 @@ paths:
       summary: Health check
       tags:
       - health
-  /hello:
+  /patients:
     get:
-      description: Returns a simple hello world message
+      description: Returns paginated list of patients with optional search by name,
+        phone, or email.
+      parameters:
+      - description: Search term
+        in: query
+        name: search
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Items per page
+        in: query
+        name: per_page
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.helloResponse'
-      summary: Hello world
+            $ref: '#/definitions/handlers.PaginatedResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List patients
       tags:
-      - general
+      - patients
+    post:
+      consumes:
+      - application/json
+      description: Creates a new patient record with demographics.
+      parameters:
+      - description: Patient details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.createPatientRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.PatientResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create patient
+      tags:
+      - patients
+  /patients/{id}:
+    get:
+      description: Returns a single patient record by ID.
+      parameters:
+      - description: Patient ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.PatientResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get patient
+      tags:
+      - patients
+    put:
+      consumes:
+      - application/json
+      description: Updates a patient record. Requires version field for optimistic
+        locking.
+      parameters:
+      - description: Patient ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated patient details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.updatePatientRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.PatientResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update patient
+      tags:
+      - patients
+  /patients/{id}/sessions:
+    get:
+      description: Returns the session history for a patient (empty until Phase 2).
+      parameters:
+      - description: Patient ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.SessionSummary'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get patient sessions
+      tags:
+      - patients
+  /registry/clinical-endpoints:
+    get:
+      description: Returns all active clinical endpoints, optionally filtered by module
+        type.
+      parameters:
+      - description: Module type filter (ipl, ndyag, co2, rf, filler, botulinum_toxin)
+        in: query
+        name: module_type
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.ClinicalEndpoint'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List clinical endpoints
+      tags:
+      - registry
+  /registry/devices:
+    get:
+      description: Returns all active devices in the registry, optionally filtered
+        by device type.
+      parameters:
+      - description: Device type filter (ipl, ndyag, co2, rf)
+        in: query
+        name: type
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Device'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List devices
+      tags:
+      - registry
+  /registry/devices/{id}:
+    get:
+      description: Returns a single device with its associated handpieces.
+      parameters:
+      - description: Device ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Device'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get device by ID
+      tags:
+      - registry
+  /registry/indication-codes:
+    get:
+      description: Returns all active indication codes, optionally filtered by module
+        type.
+      parameters:
+      - description: Module type filter (ipl, ndyag, co2, rf, filler, botulinum_toxin)
+        in: query
+        name: module_type
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.IndicationCode'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List indication codes
+      tags:
+      - registry
+  /registry/products:
+    get:
+      description: Returns all active products in the registry, optionally filtered
+        by product type.
+      parameters:
+      - description: Product type filter (filler, botulinum_toxin)
+        in: query
+        name: type
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Product'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List products
+      tags:
+      - registry
+  /registry/products/{id}:
+    get:
+      description: Returns a single product from the registry.
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Product'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get product by ID
+      tags:
+      - registry
+  /roles/assign:
+    post:
+      consumes:
+      - application/json
+      description: Assigns a role (admin or doctor) to a user. Admin-only endpoint.
+      parameters:
+      - description: Role assignment details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.assignRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.assignRoleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Assign role to user
+      tags:
+      - roles
+  /sessions:
+    get:
+      description: Returns a paginated list of sessions with optional filters.
+      parameters:
+      - description: Filter by patient ID
+        in: query
+        name: patient_id
+        type: integer
+      - description: Filter by clinician ID
+        in: query
+        name: clinician_id
+        type: integer
+      - description: Filter by status
+        in: query
+        name: status
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Items per page
+        in: query
+        name: per_page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.PaginatedResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List sessions
+      tags:
+      - sessions
+    post:
+      consumes:
+      - application/json
+      description: Creates a new treatment session for a patient.
+      parameters:
+      - description: Session details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.createSessionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.SessionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create session
+      tags:
+      - sessions
+  /sessions/{id}:
+    get:
+      description: Returns a single session by ID.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.SessionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get session
+      tags:
+      - sessions
+    put:
+      consumes:
+      - application/json
+      description: Updates a session's header fields. Requires version for optimistic
+        locking.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated session details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.updateSessionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.SessionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update session
+      tags:
+      - sessions
+  /sessions/{id}/addendums:
+    get:
+      description: Returns all addendum notes for a session.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Addendum'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List addendums
+      tags:
+      - addendums
+    post:
+      consumes:
+      - application/json
+      description: Creates a new addendum note on a locked session.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Addendum details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.createAddendumRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Addendum'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create addendum
+      tags:
+      - addendums
+  /sessions/{id}/addendums/{addendumId}:
+    get:
+      description: Returns a single addendum by ID.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Addendum ID
+        in: path
+        name: addendumId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Addendum'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get addendum
+      tags:
+      - addendums
+  /sessions/{id}/audit:
+    get:
+      description: Returns audit trail entries filtered by entity type and ID.
+      parameters:
+      - description: Entity type (e.g. session, patient)
+        in: query
+        name: entity_type
+        required: true
+        type: string
+      - description: Entity ID
+        in: query
+        name: entity_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.AuditEntry'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get audit trail
+      tags:
+      - audit
+  /sessions/{id}/consent:
+    get:
+      description: Returns the consent record for a session.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ConsentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get consent
+      tags:
+      - consent
+    post:
+      consumes:
+      - application/json
+      description: Records informed consent for a session (one per session).
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Consent details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.recordConsentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.ConsentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Record consent
+      tags:
+      - consent
+    put:
+      consumes:
+      - application/json
+      description: Updates the consent record for a session. Requires version for
+        optimistic locking.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated consent details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.updateConsentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ConsentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update consent
+      tags:
+      - consent
+  /sessions/{id}/lock:
+    post:
+      description: Transitions a signed session to permanently locked state.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Lock session
+      tags:
+      - signoff
+  /sessions/{id}/modules:
+    get:
+      description: Returns all treatment modules for a session.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/handlers.ModuleResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List session modules
+      tags:
+      - sessions
+    post:
+      consumes:
+      - application/json
+      description: Adds a treatment module (ipl, ndyag, co2, rf, filler, botulinum_toxin)
+        to a session.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Module type
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.addModuleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.ModuleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add module to session
+      tags:
+      - sessions
+  /sessions/{id}/modules/{moduleId}:
+    delete:
+      description: Removes a treatment module from a session.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Module ID
+        in: path
+        name: moduleId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Remove module from session
+      tags:
+      - sessions
+  /sessions/{id}/modules/botulinum:
+    post:
+      consumes:
+      - application/json
+      description: Creates a botulinum toxin module detail for a session.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Botulinum module details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.createBotulinumModuleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.BotulinumModuleDetailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create botulinum module
+      tags:
+      - modules-botulinum
+  /sessions/{id}/modules/botulinum/{moduleId}:
+    get:
+      description: Returns a botulinum toxin module detail by module ID.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Module ID
+        in: path
+        name: moduleId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.BotulinumModuleDetailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get botulinum module
+      tags:
+      - modules-botulinum
+    put:
+      consumes:
+      - application/json
+      description: Updates a botulinum toxin module detail. Requires version for optimistic
+        locking.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Module ID
+        in: path
+        name: moduleId
+        required: true
+        type: integer
+      - description: Updated botulinum details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.updateBotulinumModuleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.BotulinumModuleDetailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update botulinum module
+      tags:
+      - modules-botulinum
+  /sessions/{id}/modules/co2:
+    post:
+      consumes:
+      - application/json
+      description: Creates a CO2 laser module detail for a session.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: CO2 module details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.createCO2ModuleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.CO2ModuleDetailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create CO2 module
+      tags:
+      - modules-co2
+  /sessions/{id}/modules/co2/{moduleId}:
+    get:
+      description: Returns a CO2 module detail by module ID.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Module ID
+        in: path
+        name: moduleId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.CO2ModuleDetailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get CO2 module
+      tags:
+      - modules-co2
+    put:
+      consumes:
+      - application/json
+      description: Updates a CO2 module detail. Requires version for optimistic locking.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Module ID
+        in: path
+        name: moduleId
+        required: true
+        type: integer
+      - description: Updated CO2 details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.updateCO2ModuleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.CO2ModuleDetailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update CO2 module
+      tags:
+      - modules-co2
+  /sessions/{id}/modules/filler:
+    post:
+      consumes:
+      - application/json
+      description: Creates a dermal filler module detail for a session.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Filler module details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.createFillerModuleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.FillerModuleDetailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create filler module
+      tags:
+      - modules-filler
+  /sessions/{id}/modules/filler/{moduleId}:
+    get:
+      description: Returns a filler module detail by module ID.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Module ID
+        in: path
+        name: moduleId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.FillerModuleDetailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get filler module
+      tags:
+      - modules-filler
+    put:
+      consumes:
+      - application/json
+      description: Updates a filler module detail. Requires version for optimistic
+        locking.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Module ID
+        in: path
+        name: moduleId
+        required: true
+        type: integer
+      - description: Updated filler details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.updateFillerModuleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.FillerModuleDetailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update filler module
+      tags:
+      - modules-filler
+  /sessions/{id}/modules/ipl:
+    post:
+      consumes:
+      - application/json
+      description: Creates an IPL (Intense Pulsed Light) module detail for a session.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: IPL module details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.createIPLModuleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.IPLModuleDetailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create IPL module
+      tags:
+      - modules-ipl
+  /sessions/{id}/modules/ipl/{moduleId}:
+    get:
+      description: Returns an IPL module detail by module ID.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Module ID
+        in: path
+        name: moduleId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.IPLModuleDetailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get IPL module
+      tags:
+      - modules-ipl
+    put:
+      consumes:
+      - application/json
+      description: Updates an IPL module detail. Requires version for optimistic locking.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Module ID
+        in: path
+        name: moduleId
+        required: true
+        type: integer
+      - description: Updated IPL details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.updateIPLModuleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.IPLModuleDetailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update IPL module
+      tags:
+      - modules-ipl
+  /sessions/{id}/modules/ndyag:
+    post:
+      consumes:
+      - application/json
+      description: Creates an Nd:YAG laser module detail for a session.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Nd:YAG module details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.createNdYAGModuleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.NdYAGModuleDetailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create Nd:YAG module
+      tags:
+      - modules-ndyag
+  /sessions/{id}/modules/ndyag/{moduleId}:
+    get:
+      description: Returns an Nd:YAG module detail by module ID.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Module ID
+        in: path
+        name: moduleId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.NdYAGModuleDetailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get Nd:YAG module
+      tags:
+      - modules-ndyag
+    put:
+      consumes:
+      - application/json
+      description: Updates an Nd:YAG module detail. Requires version for optimistic
+        locking.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Module ID
+        in: path
+        name: moduleId
+        required: true
+        type: integer
+      - description: Updated Nd:YAG details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.updateNdYAGModuleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.NdYAGModuleDetailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update Nd:YAG module
+      tags:
+      - modules-ndyag
+  /sessions/{id}/modules/rf:
+    post:
+      consumes:
+      - application/json
+      description: Creates a radiofrequency module detail for a session.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: RF module details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.createRFModuleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.RFModuleDetailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create RF module
+      tags:
+      - modules-rf
+  /sessions/{id}/modules/rf/{moduleId}:
+    get:
+      description: Returns an RF module detail by module ID.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Module ID
+        in: path
+        name: moduleId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.RFModuleDetailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get RF module
+      tags:
+      - modules-rf
+    put:
+      consumes:
+      - application/json
+      description: Updates an RF module detail. Requires version for optimistic locking.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Module ID
+        in: path
+        name: moduleId
+        required: true
+        type: integer
+      - description: Updated RF details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.updateRFModuleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.RFModuleDetailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update RF module
+      tags:
+      - modules-rf
+  /sessions/{id}/outcome:
+    get:
+      description: Returns the clinical outcome for a session.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.SessionOutcomeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get outcome
+      tags:
+      - outcome
+    post:
+      consumes:
+      - application/json
+      description: Records the clinical outcome for a session (one per session).
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Outcome details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.recordOutcomeRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.SessionOutcomeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Record outcome
+      tags:
+      - outcome
+    put:
+      consumes:
+      - application/json
+      description: Updates the clinical outcome for a session. Requires version for
+        optimistic locking.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated outcome details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.updateOutcomeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.SessionOutcomeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update outcome
+      tags:
+      - outcome
+  /sessions/{id}/photos:
+    get:
+      description: Returns all photos for a session.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Photo'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List session photos
+      tags:
+      - photos
+  /sessions/{id}/photos/{photoId}:
+    delete:
+      description: Removes a photo from a session. Not allowed on signed/locked sessions.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Photo ID
+        in: path
+        name: photoId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete photo
+      tags:
+      - photos
+    get:
+      description: Returns metadata for a single photo.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Photo ID
+        in: path
+        name: photoId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Photo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get photo metadata
+      tags:
+      - photos
+  /sessions/{id}/photos/{photoId}/file:
+    get:
+      description: Serves the actual photo file binary from the filesystem.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Photo ID
+        in: path
+        name: photoId
+        required: true
+        type: integer
+      produces:
+      - image/jpeg
+      - image/png
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Serve photo file
+      tags:
+      - photos
+  /sessions/{id}/photos/before:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Uploads a before-type photo to a session.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Photo file
+        in: formData
+        name: photo
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Photo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Upload before photo
+      tags:
+      - photos
+  /sessions/{id}/photos/label/{moduleId}:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Uploads a label-type photo for a specific treatment module.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Module ID
+        in: path
+        name: moduleId
+        required: true
+        type: integer
+      - description: Photo file
+        in: formData
+        name: photo
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Photo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Upload label photo
+      tags:
+      - photos
+  /sessions/{id}/screening:
+    get:
+      description: Returns the contraindication screening for a session.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ScreeningResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get screening
+      tags:
+      - screening
+    post:
+      consumes:
+      - application/json
+      description: Records a contraindication screening for a session (one per session).
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Screening details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.recordScreeningRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.ScreeningResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Record screening
+      tags:
+      - screening
+    put:
+      consumes:
+      - application/json
+      description: Updates the contraindication screening for a session. Requires
+        version for optimistic locking.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated screening details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.updateScreeningRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ScreeningResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update screening
+      tags:
+      - screening
+  /sessions/{id}/signoff:
+    post:
+      description: Validates session completeness and transitions to signed status.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Sign off session
+      tags:
+      - signoff
+  /sessions/{id}/signoff/readiness:
+    get:
+      description: Checks whether a session has all required components for sign-off.
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/service.ValidationResult'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Check sign-off readiness
+      tags:
+      - signoff
+  /sessions/{id}/transition:
+    post:
+      consumes:
+      - application/json
+      description: Transitions a session to a new state (draft → in_progress → awaiting_signoff).
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Target status
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.transitionSessionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Transition session state
+      tags:
+      - sessions
   /users:
     get:
-      description: Returns a list of all users
+      description: Returns a list of all users (admin only)
       produces:
       - application/json
       responses:
@@ -385,30 +3804,59 @@ paths:
             items:
               $ref: '#/definitions/handlers.UserResponse'
             type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: List users
       tags:
       - users
     post:
-      description: Creates a new user
+      consumes:
+      - application/json
+      description: Creates a new user (admin only)
+      parameters:
+      - description: User details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.createUserRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/handlers.CreateUserResponse'
+            $ref: '#/definitions/handlers.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Create user
       tags:
       - users
   /users/{id}:
     delete:
-      description: Deletes a user by ID
+      description: Deletes a user by ID (admin only)
       parameters:
       - description: User ID
         in: path
         name: id
         required: true
-        type: string
+        type: integer
       produces:
       - application/json
       responses:
@@ -416,17 +3864,27 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/handlers.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Delete user
       tags:
       - users
     get:
-      description: Returns a specific user by ID
+      description: Returns a specific user by ID (admin only)
       parameters:
       - description: User ID
         in: path
         name: id
         required: true
-        type: string
+        type: integer
       produces:
       - application/json
       responses:
@@ -434,24 +3892,56 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/handlers.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get user
       tags:
       - users
     put:
-      description: Updates an existing user by ID
+      consumes:
+      - application/json
+      description: Updates an existing user by ID (admin only)
       parameters:
       - description: User ID
         in: path
         name: id
         required: true
-        type: string
+        type: integer
+      - description: Updated user details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.updateUserRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.UpdateUserResponse'
+            $ref: '#/definitions/handlers.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/apierrors.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Update user
       tags:
       - users

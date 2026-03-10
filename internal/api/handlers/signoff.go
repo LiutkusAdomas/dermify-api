@@ -11,6 +11,17 @@ import (
 )
 
 // HandleGetSignOffReadiness checks whether a session has all required components for sign-off.
+//
+//	@Summary		Check sign-off readiness
+//	@Description	Checks whether a session has all required components for sign-off.
+//	@Tags			signoff
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id	path	int	true	"Session ID"
+//	@Success		200	{object}	service.ValidationResult
+//	@Failure		400	{object}	apierrors.ErrorResponse
+//	@Failure		404	{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/signoff/readiness [get]
 func HandleGetSignOffReadiness(svc *service.SignoffService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -34,6 +45,18 @@ func HandleGetSignOffReadiness(svc *service.SignoffService, m *metrics.Client) f
 }
 
 // HandleSignOffSession validates completeness and transitions a session to signed status.
+//
+//	@Summary		Sign off session
+//	@Description	Validates session completeness and transitions to signed status.
+//	@Tags			signoff
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id	path	int	true	"Session ID"
+//	@Success		200	{object}	MessageResponse
+//	@Failure		400	{object}	apierrors.ErrorResponse
+//	@Failure		404	{object}	apierrors.ErrorResponse
+//	@Failure		409	{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/signoff [post]
 func HandleSignOffSession(svc *service.SignoffService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -65,6 +88,18 @@ func HandleSignOffSession(svc *service.SignoffService, m *metrics.Client) func(h
 }
 
 // HandleLockSession transitions a signed session to the locked state.
+//
+//	@Summary		Lock session
+//	@Description	Transitions a signed session to permanently locked state.
+//	@Tags			signoff
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id	path	int	true	"Session ID"
+//	@Success		200	{object}	MessageResponse
+//	@Failure		400	{object}	apierrors.ErrorResponse
+//	@Failure		404	{object}	apierrors.ErrorResponse
+//	@Failure		409	{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/lock [post]
 func HandleLockSession(svc *service.SignoffService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

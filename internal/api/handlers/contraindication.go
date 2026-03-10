@@ -45,6 +45,20 @@ type updateScreeningRequest struct {
 }
 
 // HandleRecordScreening records a contraindication screening for a session.
+//
+//	@Summary		Record screening
+//	@Description	Records a contraindication screening for a session (one per session).
+//	@Tags			screening
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id		path	int						true	"Session ID"
+//	@Param			request	body	recordScreeningRequest	true	"Screening details"
+//	@Success		201		{object}	ScreeningResponse
+//	@Failure		400		{object}	apierrors.ErrorResponse
+//	@Failure		409		{object}	apierrors.ErrorResponse
+//	@Failure		500		{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/screening [post]
 func HandleRecordScreening(svc *service.ContraindicationService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -99,6 +113,17 @@ func HandleRecordScreening(svc *service.ContraindicationService, m *metrics.Clie
 }
 
 // HandleGetScreening returns the screening record for a session.
+//
+//	@Summary		Get screening
+//	@Description	Returns the contraindication screening for a session.
+//	@Tags			screening
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id	path	int	true	"Session ID"
+//	@Success		200	{object}	ScreeningResponse
+//	@Failure		400	{object}	apierrors.ErrorResponse
+//	@Failure		404	{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/screening [get]
 func HandleGetScreening(svc *service.ContraindicationService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -122,6 +147,19 @@ func HandleGetScreening(svc *service.ContraindicationService, m *metrics.Client)
 }
 
 // HandleUpdateScreening updates a screening record for a session.
+//
+//	@Summary		Update screening
+//	@Description	Updates the contraindication screening for a session. Requires version for optimistic locking.
+//	@Tags			screening
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id		path	int							true	"Session ID"
+//	@Param			request	body	updateScreeningRequest	true	"Updated screening details"
+//	@Success		200		{object}	ScreeningResponse
+//	@Failure		400		{object}	apierrors.ErrorResponse
+//	@Failure		404		{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/screening [put]
 func HandleUpdateScreening(svc *service.ContraindicationService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

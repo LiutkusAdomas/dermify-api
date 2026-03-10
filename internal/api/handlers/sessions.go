@@ -53,6 +53,19 @@ type addModuleRequest struct {
 }
 
 // HandleCreateSession creates a new treatment session.
+//
+//	@Summary		Create session
+//	@Description	Creates a new treatment session for a patient.
+//	@Tags			sessions
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			request	body		createSessionRequest	true	"Session details"
+//	@Success		201		{object}	SessionResponse
+//	@Failure		400		{object}	apierrors.ErrorResponse
+//	@Failure		404		{object}	apierrors.ErrorResponse
+//	@Failure		500		{object}	apierrors.ErrorResponse
+//	@Router			/sessions [post]
 func HandleCreateSession(svc *service.SessionService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -98,6 +111,17 @@ func HandleCreateSession(svc *service.SessionService, m *metrics.Client) func(ht
 }
 
 // HandleGetSession returns a single session by ID.
+//
+//	@Summary		Get session
+//	@Description	Returns a single session by ID.
+//	@Tags			sessions
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id	path	int	true	"Session ID"
+//	@Success		200	{object}	SessionResponse
+//	@Failure		400	{object}	apierrors.ErrorResponse
+//	@Failure		404	{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id} [get]
 func HandleGetSession(svc *service.SessionService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -121,6 +145,20 @@ func HandleGetSession(svc *service.SessionService, m *metrics.Client) func(http.
 }
 
 // HandleListSessions returns a paginated list of sessions with optional filters.
+//
+//	@Summary		List sessions
+//	@Description	Returns a paginated list of sessions with optional filters.
+//	@Tags			sessions
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			patient_id		query	int		false	"Filter by patient ID"
+//	@Param			clinician_id	query	int		false	"Filter by clinician ID"
+//	@Param			status			query	string	false	"Filter by status"
+//	@Param			page			query	int		false	"Page number"	default(1)
+//	@Param			per_page		query	int		false	"Items per page"	default(20)
+//	@Success		200	{object}	PaginatedResponse
+//	@Failure		500	{object}	apierrors.ErrorResponse
+//	@Router			/sessions [get]
 func HandleListSessions(svc *service.SessionService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -163,6 +201,20 @@ func HandleListSessions(svc *service.SessionService, m *metrics.Client) func(htt
 }
 
 // HandleUpdateSession updates a session's header fields.
+//
+//	@Summary		Update session
+//	@Description	Updates a session's header fields. Requires version for optimistic locking.
+//	@Tags			sessions
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id		path	int						true	"Session ID"
+//	@Param			request	body	updateSessionRequest	true	"Updated session details"
+//	@Success		200		{object}	SessionResponse
+//	@Failure		400		{object}	apierrors.ErrorResponse
+//	@Failure		404		{object}	apierrors.ErrorResponse
+//	@Failure		409		{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id} [put]
 func HandleUpdateSession(svc *service.SessionService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -223,6 +275,20 @@ func HandleUpdateSession(svc *service.SessionService, m *metrics.Client) func(ht
 }
 
 // HandleTransitionSession transitions a session to a new state.
+//
+//	@Summary		Transition session state
+//	@Description	Transitions a session to a new state (draft → in_progress → awaiting_signoff).
+//	@Tags			sessions
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id		path	int							true	"Session ID"
+//	@Param			request	body	transitionSessionRequest	true	"Target status"
+//	@Success		200		{object}	MessageResponse
+//	@Failure		400		{object}	apierrors.ErrorResponse
+//	@Failure		404		{object}	apierrors.ErrorResponse
+//	@Failure		409		{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/transition [post]
 func HandleTransitionSession(svc *service.SessionService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -259,6 +325,21 @@ func HandleTransitionSession(svc *service.SessionService, m *metrics.Client) fun
 }
 
 // HandleAddModule adds a procedure module to a session.
+//
+//	@Summary		Add module to session
+//	@Description	Adds a treatment module (ipl, ndyag, co2, rf, filler, botulinum_toxin) to a session.
+//	@Tags			sessions
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id		path	int				true	"Session ID"
+//	@Param			request	body	addModuleRequest	true	"Module type"
+//	@Success		201		{object}	ModuleResponse
+//	@Failure		400		{object}	apierrors.ErrorResponse
+//	@Failure		404		{object}	apierrors.ErrorResponse
+//	@Failure		409		{object}	apierrors.ErrorResponse
+//	@Failure		422		{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/modules [post]
 func HandleAddModule(svc *service.SessionService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -296,6 +377,17 @@ func HandleAddModule(svc *service.SessionService, m *metrics.Client) func(http.R
 }
 
 // HandleListModules returns all modules for a session.
+//
+//	@Summary		List session modules
+//	@Description	Returns all treatment modules for a session.
+//	@Tags			sessions
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id	path	int	true	"Session ID"
+//	@Success		200	{array}		ModuleResponse
+//	@Failure		400	{object}	apierrors.ErrorResponse
+//	@Failure		500	{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/modules [get]
 func HandleListModules(svc *service.SessionService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -326,6 +418,19 @@ func HandleListModules(svc *service.SessionService, m *metrics.Client) func(http
 }
 
 // HandleRemoveModule removes a module from a session.
+//
+//	@Summary		Remove module from session
+//	@Description	Removes a treatment module from a session.
+//	@Tags			sessions
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id			path	int	true	"Session ID"
+//	@Param			moduleId	path	int	true	"Module ID"
+//	@Success		204
+//	@Failure		400	{object}	apierrors.ErrorResponse
+//	@Failure		404	{object}	apierrors.ErrorResponse
+//	@Failure		409	{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/modules/{moduleId} [delete]
 func HandleRemoveModule(svc *service.SessionService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

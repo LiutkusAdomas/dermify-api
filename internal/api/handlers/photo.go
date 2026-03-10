@@ -17,6 +17,20 @@ import (
 )
 
 // HandleUploadBeforePhoto uploads a before-type photo to a session.
+//
+//	@Summary		Upload before photo
+//	@Description	Uploads a before-type photo to a session.
+//	@Tags			photos
+//	@Accept			multipart/form-data
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id		path		int		true	"Session ID"
+//	@Param			photo	formData	file	true	"Photo file"
+//	@Success		201		{object}	domain.Photo
+//	@Failure		400		{object}	apierrors.ErrorResponse
+//	@Failure		403		{object}	apierrors.ErrorResponse
+//	@Failure		409		{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/photos/before [post]
 func HandleUploadBeforePhoto(svc *service.PhotoService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -85,6 +99,21 @@ func HandleUploadBeforePhoto(svc *service.PhotoService, m *metrics.Client) func(
 }
 
 // HandleUploadLabelPhoto uploads a label-type photo to a session module.
+//
+//	@Summary		Upload label photo
+//	@Description	Uploads a label-type photo for a specific treatment module.
+//	@Tags			photos
+//	@Accept			multipart/form-data
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id			path		int		true	"Session ID"
+//	@Param			moduleId	path		int		true	"Module ID"
+//	@Param			photo		formData	file	true	"Photo file"
+//	@Success		201			{object}	domain.Photo
+//	@Failure		400			{object}	apierrors.ErrorResponse
+//	@Failure		403			{object}	apierrors.ErrorResponse
+//	@Failure		409			{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/photos/label/{moduleId} [post]
 func HandleUploadLabelPhoto(svc *service.PhotoService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -161,6 +190,17 @@ func HandleUploadLabelPhoto(svc *service.PhotoService, m *metrics.Client) func(h
 }
 
 // HandleListSessionPhotos returns all photos for a session.
+//
+//	@Summary		List session photos
+//	@Description	Returns all photos for a session.
+//	@Tags			photos
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id	path	int	true	"Session ID"
+//	@Success		200	{array}		domain.Photo
+//	@Failure		400	{object}	apierrors.ErrorResponse
+//	@Failure		500	{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/photos [get]
 func HandleListSessionPhotos(svc *service.PhotoService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -186,6 +226,18 @@ func HandleListSessionPhotos(svc *service.PhotoService, m *metrics.Client) func(
 }
 
 // HandleGetPhoto returns metadata for a single photo.
+//
+//	@Summary		Get photo metadata
+//	@Description	Returns metadata for a single photo.
+//	@Tags			photos
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id		path	int	true	"Session ID"
+//	@Param			photoId	path	int	true	"Photo ID"
+//	@Success		200	{object}	domain.Photo
+//	@Failure		400	{object}	apierrors.ErrorResponse
+//	@Failure		404	{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/photos/{photoId} [get]
 func HandleGetPhoto(svc *service.PhotoService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -212,6 +264,18 @@ func HandleGetPhoto(svc *service.PhotoService, m *metrics.Client) func(http.Resp
 
 // HandleServePhotoFile serves the actual photo file from the filesystem.
 // The file path is derived from the database record (server-controlled), preventing path traversal.
+//
+//	@Summary		Serve photo file
+//	@Description	Serves the actual photo file binary from the filesystem.
+//	@Tags			photos
+//	@Produce		image/jpeg,image/png
+//	@Security		BearerAuth
+//	@Param			id		path	int	true	"Session ID"
+//	@Param			photoId	path	int	true	"Photo ID"
+//	@Success		200
+//	@Failure		400	{object}	apierrors.ErrorResponse
+//	@Failure		404	{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/photos/{photoId}/file [get]
 func HandleServePhotoFile(svc *service.PhotoService, basePath string) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		photoID, err := parsePhotoIDParam(r)
@@ -235,6 +299,19 @@ func HandleServePhotoFile(svc *service.PhotoService, basePath string) func(http.
 }
 
 // HandleDeletePhoto removes a photo from a session.
+//
+//	@Summary		Delete photo
+//	@Description	Removes a photo from a session. Not allowed on signed/locked sessions.
+//	@Tags			photos
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id		path	int	true	"Session ID"
+//	@Param			photoId	path	int	true	"Photo ID"
+//	@Success		204
+//	@Failure		400	{object}	apierrors.ErrorResponse
+//	@Failure		404	{object}	apierrors.ErrorResponse
+//	@Failure		409	{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/photos/{photoId} [delete]
 func HandleDeletePhoto(svc *service.PhotoService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

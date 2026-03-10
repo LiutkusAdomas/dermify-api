@@ -36,6 +36,20 @@ type updateOutcomeRequest struct {
 }
 
 // HandleRecordOutcome records a session outcome.
+//
+//	@Summary		Record outcome
+//	@Description	Records the clinical outcome for a session (one per session).
+//	@Tags			outcome
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id		path	int						true	"Session ID"
+//	@Param			request	body	recordOutcomeRequest	true	"Outcome details"
+//	@Success		201		{object}	SessionOutcomeResponse
+//	@Failure		400		{object}	apierrors.ErrorResponse
+//	@Failure		404		{object}	apierrors.ErrorResponse
+//	@Failure		409		{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/outcome [post]
 func HandleRecordOutcome(svc *service.OutcomeService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -87,6 +101,17 @@ func HandleRecordOutcome(svc *service.OutcomeService, m *metrics.Client) func(ht
 }
 
 // HandleGetOutcome returns the outcome for a session.
+//
+//	@Summary		Get outcome
+//	@Description	Returns the clinical outcome for a session.
+//	@Tags			outcome
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id	path	int	true	"Session ID"
+//	@Success		200	{object}	SessionOutcomeResponse
+//	@Failure		400	{object}	apierrors.ErrorResponse
+//	@Failure		404	{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/outcome [get]
 func HandleGetOutcome(svc *service.OutcomeService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -110,6 +135,19 @@ func HandleGetOutcome(svc *service.OutcomeService, m *metrics.Client) func(http.
 }
 
 // HandleUpdateOutcome updates a session outcome.
+//
+//	@Summary		Update outcome
+//	@Description	Updates the clinical outcome for a session. Requires version for optimistic locking.
+//	@Tags			outcome
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id		path	int						true	"Session ID"
+//	@Param			request	body	updateOutcomeRequest	true	"Updated outcome details"
+//	@Success		200		{object}	SessionOutcomeResponse
+//	@Failure		400		{object}	apierrors.ErrorResponse
+//	@Failure		404		{object}	apierrors.ErrorResponse
+//	@Router			/sessions/{id}/outcome [put]
 func HandleUpdateOutcome(svc *service.OutcomeService, m *metrics.Client) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
