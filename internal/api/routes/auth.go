@@ -13,14 +13,18 @@ import (
 // AuthRoutes handles all authentication-related routes.
 type AuthRoutes struct {
 	authSvc *service.AuthService
+	userSvc *service.UserService
+	orgSvc  *service.OrganizationService
 	config  *config.Configuration
 	metrics *metrics.Client
 }
 
 // NewAuthRoutes creates a new AuthRoutes instance.
-func NewAuthRoutes(authSvc *service.AuthService, cfg *config.Configuration, m *metrics.Client) *AuthRoutes {
+func NewAuthRoutes(authSvc *service.AuthService, userSvc *service.UserService, orgSvc *service.OrganizationService, cfg *config.Configuration, m *metrics.Client) *AuthRoutes {
 	return &AuthRoutes{
 		authSvc: authSvc,
+		userSvc: userSvc,
+		orgSvc:  orgSvc,
 		config:  cfg,
 		metrics: m,
 	}
@@ -37,6 +41,10 @@ func (ar *AuthRoutes) RegisterRoutes(router chi.Router) {
 		r.Group(func(r chi.Router) {
 			r.Use(middleware.RequireAuth(ar.config))
 			r.Get("/me", handlers.HandleGetProfile(ar.authSvc, ar.metrics))
+			r.Put("/preferences", handlers.HandleUpdatePreferences(ar.userSvc, ar.metrics))
+			r.Get("/invitations", handlers.HandleListPendingInvitations(ar.orgSvc, ar.metrics))
+			r.Post("/invitations/{token}/accept", handlers.HandleAcceptInvitation(ar.orgSvc, ar.metrics))
+			r.Post("/invitations/{token}/decline", handlers.HandleDeclineInvitation(ar.orgSvc, ar.metrics))
 		})
 	})
 }

@@ -8,12 +8,13 @@ import (
 
 // MockUserRepository is a test double for service.UserRepository.
 type MockUserRepository struct {
-	CreateFn     func(ctx context.Context, user *domain.User) error
-	GetByIDFn    func(ctx context.Context, id int64) (*domain.User, error)
-	GetByEmailFn func(ctx context.Context, email string) (*domain.User, error)
-	UpdateFn     func(ctx context.Context, user *domain.User) error
-	DeleteFn     func(ctx context.Context, id int64) error
-	ListFn       func(ctx context.Context) ([]*domain.User, error)
+	CreateFn            func(ctx context.Context, user *domain.User) error
+	GetByIDFn           func(ctx context.Context, id int64) (*domain.User, error)
+	GetByEmailFn        func(ctx context.Context, email string) (*domain.User, error)
+	UpdateFn            func(ctx context.Context, user *domain.User) error
+	DeleteFn            func(ctx context.Context, id int64) error
+	ListFn              func(ctx context.Context) ([]*domain.User, error)
+	UpdatePreferencesFn func(ctx context.Context, userID int64, language, timezone string) error
 }
 
 // Create delegates to CreateFn if set, otherwise returns nil.
@@ -62,4 +63,12 @@ func (m *MockUserRepository) List(ctx context.Context) ([]*domain.User, error) {
 		return m.ListFn(ctx)
 	}
 	return []*domain.User{}, nil
+}
+
+// UpdatePreferences delegates to UpdatePreferencesFn if set, otherwise returns nil.
+func (m *MockUserRepository) UpdatePreferences(ctx context.Context, userID int64, language, timezone string) error {
+	if m.UpdatePreferencesFn != nil {
+		return m.UpdatePreferencesFn(ctx, userID, language, timezone)
+	}
+	return nil
 }

@@ -65,7 +65,7 @@ func NewSessionRoutes(
 func (sr *SessionRoutes) RegisterRoutes(router chi.Router) {
 	router.Route("/sessions", func(r chi.Router) {
 		r.Use(middleware.RequireAuth(sr.config))
-		r.Use(middleware.RequireRole(domain.RoleDoctor))
+		r.Use(middleware.RequireRole(domain.RoleDoctor, domain.RoleAdmin))
 
 		// Session CRUD.
 		r.Post("/", handlers.HandleCreateSession(sr.sessionSvc, sr.metrics))

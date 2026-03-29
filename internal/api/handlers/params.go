@@ -48,3 +48,14 @@ func parseModuleIDParam(r *http.Request) (int64, error) {
 	idStr := chi.URLParam(r, "moduleId")
 	return strconv.ParseInt(idStr, 10, 64)
 }
+
+// parseNamedIDParam extracts a named URL parameter as int64.
+func parseNamedIDParam(r *http.Request, name string) (int64, error) {
+	idStr := chi.URLParam(r, name)
+	return strconv.ParseInt(idStr, 10, 64)
+}
+
+// getURLParam extracts a string URL parameter by name.
+func getURLParam(r *http.Request, name string) string {
+	return chi.URLParam(r, name)
+}

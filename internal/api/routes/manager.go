@@ -6,6 +6,7 @@ import (
 	"dermify-api/config"
 	"dermify-api/internal/api/handlers"
 	"dermify-api/internal/api/metrics"
+	"dermify-api/internal/pkg/email"
 	"dermify-api/internal/repository/postgres"
 	"dermify-api/internal/service"
 
@@ -24,6 +25,7 @@ type Manager struct {
 	patientRoutes  *PatientRoutes
 	registryRoutes *RegistryRoutes
 	sessionRoutes  *SessionRoutes
+	orgRoutes      *OrgRoutes
 	metrics        *metrics.Client
 }
 
@@ -77,15 +79,20 @@ func NewManager(db *sql.DB, cfg *config.Configuration, m *metrics.Client) *Manag
 	authRepo := postgres.NewPostgresAuthRepository(db)
 	authSvc := service.NewAuthService(authRepo, userRepo, roleSvc)
 
+	emailClient := email.NewClient(cfg.SMTP)
+	orgRepo := postgres.NewPostgresOrganizationRepository(db)
+	orgSvc := service.NewOrganizationService(orgRepo, emailClient)
+
 	return &Manager{
 		metrics:        m,
-		authRoutes:     NewAuthRoutes(authSvc, cfg, m),
+		authRoutes:     NewAuthRoutes(authSvc, userSvc, orgSvc, cfg, m),
 		userRoutes:     NewUserRoutes(userSvc, cfg, m),
 		apiRoutes:      NewAPIRoutes(m),
 		roleRoutes:     NewRoleRoutes(roleSvc, cfg, m),
 		patientRoutes:  NewPatientRoutes(patientSvc, cfg, m),
 		registryRoutes: NewRegistryRoutes(registrySvc, cfg, m),
 		sessionRoutes:  NewSessionRoutes(sessionSvc, consentSvc, contraindicationSvc, energySvc, injectableSvc, outcomeSvc, signoffSvc, addendumSvc, auditSvc, photoSvc, cfg.Storage.BasePath, cfg, m),
+		orgRoutes:      NewOrgRoutes(orgSvc, cfg, m),
 	}
 }
 
@@ -100,6 +107,7 @@ func (m *Manager) RegisterAllRoutes(router chi.Router) {
 		m.patientRoutes.RegisterRoutes(r)
 		m.registryRoutes.RegisterRoutes(r)
 		m.sessionRoutes.RegisterRoutes(r)
+		m.orgRoutes.RegisterRoutes(r)
 	})
 
 	// Register metrics endpoint (outside API versioning).

@@ -29,6 +29,8 @@ type UserRepository interface {
 	Delete(ctx context.Context, id int64) error
 	// List returns all users.
 	List(ctx context.Context) ([]*domain.User, error)
+	// UpdatePreferences updates the user's language and timezone.
+	UpdatePreferences(ctx context.Context, userID int64, language, timezone string) error
 }
 
 // UserService handles user business logic.
@@ -83,6 +85,11 @@ func (s *UserService) Delete(ctx context.Context, id int64) error {
 // List returns all users.
 func (s *UserService) List(ctx context.Context) ([]*domain.User, error) {
 	return s.repo.List(ctx)
+}
+
+// UpdatePreferences updates the user's language and timezone.
+func (s *UserService) UpdatePreferences(ctx context.Context, userID int64, language, timezone string) error {
+	return s.repo.UpdatePreferences(ctx, userID, language, timezone)
 }
 
 // validateUser checks required fields on a user record.

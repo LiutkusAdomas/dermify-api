@@ -160,6 +160,36 @@ const (
 	PhotoSessionNotEditable = "PHOTO_SESSION_NOT_EDITABLE"
 )
 
+// Error codes for organization-related failures.
+const (
+	OrgNotFound          = "ORG_NOT_FOUND"
+	OrgSlugExists        = "ORG_SLUG_EXISTS"
+	OrgInvalidSlug       = "ORG_INVALID_SLUG"
+	OrgNotMember         = "ORG_NOT_MEMBER"
+	OrgNotAdmin          = "ORG_NOT_ADMIN"
+	OrgMemberNotFound    = "ORG_MEMBER_NOT_FOUND"
+	OrgLastAdmin         = "ORG_LAST_ADMIN"
+	OrgNoFieldsToUpdate  = "ORG_NO_FIELDS_TO_UPDATE"
+	OrgAlreadyMember     = "ORG_ALREADY_MEMBER"
+	OrgCreationFailed    = "ORG_CREATION_FAILED"
+	OrgUpdateFailed      = "ORG_UPDATE_FAILED"
+	OrgLookupFailed      = "ORG_LOOKUP_FAILED"
+)
+
+// Error codes for invitation-related failures.
+const (
+	InvitationExists     = "INVITATION_EXISTS"
+	InvitationNotFound   = "INVITATION_NOT_FOUND"
+	InvitationWrongEmail = "INVITATION_WRONG_EMAIL"
+	InvitationFailed     = "INVITATION_FAILED"
+)
+
+// Error codes for preference-related failures.
+const (
+	PreferencesInvalidData  = "PREFERENCES_INVALID_DATA"
+	PreferencesUpdateFailed = "PREFERENCES_UPDATE_FAILED"
+)
+
 // Error codes for internal server errors.
 const (
 	InternalPasswordProcessing      = "INTERNAL_PASSWORD_PROCESSING"

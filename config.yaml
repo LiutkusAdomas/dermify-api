@@ -13,6 +13,14 @@ auth:
   refresh_token_expiry: 168h
 storage:
   base_path: "./data/photos"
+smtp:
+  host: ""
+  port: 587
+  username: ""
+  password: ""
+  from_email: "noreply@dermify.com"
+  from_name: "Dermify"
+  frontend_url: "http://localhost:5173"
 cors:
   allowed_origins:
     - "http://localhost:3000"

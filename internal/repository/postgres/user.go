@@ -45,9 +45,9 @@ func (r *PostgresUserRepository) GetByID(ctx context.Context, id int64) (*domain
 	var bio sql.NullString
 
 	err := r.db.QueryRowContext(ctx,
-		`SELECT id, username, email, password_hash, bio, COALESCE(role, ''), created_at, updated_at
+		`SELECT id, username, email, password_hash, bio, COALESCE(role, ''), language, timezone, created_at, updated_at
 		FROM users WHERE id = $1`, id,
-	).Scan(&u.ID, &u.Username, &u.Email, &u.PasswordHash, &bio, &u.Role, &u.CreatedAt, &u.UpdatedAt)
+	).Scan(&u.ID, &u.Username, &u.Email, &u.PasswordHash, &bio, &u.Role, &u.Language, &u.Timezone, &u.CreatedAt, &u.UpdatedAt)
 
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, service.ErrUserNotFound
@@ -70,9 +70,9 @@ func (r *PostgresUserRepository) GetByEmail(ctx context.Context, email string) (
 	var bio sql.NullString
 
 	err := r.db.QueryRowContext(ctx,
-		`SELECT id, username, email, password_hash, bio, COALESCE(role, ''), created_at, updated_at
+		`SELECT id, username, email, password_hash, bio, COALESCE(role, ''), language, timezone, created_at, updated_at
 		FROM users WHERE LOWER(email) = LOWER($1)`, email,
-	).Scan(&u.ID, &u.Username, &u.Email, &u.PasswordHash, &bio, &u.Role, &u.CreatedAt, &u.UpdatedAt)
+	).Scan(&u.ID, &u.Username, &u.Email, &u.PasswordHash, &bio, &u.Role, &u.Language, &u.Timezone, &u.CreatedAt, &u.UpdatedAt)
 
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, service.ErrUserNotFound
@@ -138,7 +138,7 @@ func (r *PostgresUserRepository) Delete(ctx context.Context, id int64) error {
 // List returns all users ordered by ID.
 func (r *PostgresUserRepository) List(ctx context.Context) ([]*domain.User, error) {
 	rows, err := r.db.QueryContext(ctx,
-		`SELECT id, username, email, password_hash, bio, COALESCE(role, ''), created_at, updated_at
+		`SELECT id, username, email, password_hash, bio, COALESCE(role, ''), language, timezone, created_at, updated_at
 		FROM users ORDER BY id ASC`,
 	)
 	if err != nil {
@@ -152,7 +152,7 @@ func (r *PostgresUserRepository) List(ctx context.Context) ([]*domain.User, erro
 		var u domain.User
 		var bio sql.NullString
 
-		if err := rows.Scan(&u.ID, &u.Username, &u.Email, &u.PasswordHash, &bio, &u.Role, &u.CreatedAt, &u.UpdatedAt); err != nil {
+		if err := rows.Scan(&u.ID, &u.Username, &u.Email, &u.PasswordHash, &bio, &u.Role, &u.Language, &u.Timezone, &u.CreatedAt, &u.UpdatedAt); err != nil {
 			return nil, fmt.Errorf("scanning user row: %w", err)
 		}
 
@@ -168,6 +168,35 @@ func (r *PostgresUserRepository) List(ctx context.Context) ([]*domain.User, erro
 	}
 
 	return users, nil
+}
+
+// UpdatePreferences updates the user's language and timezone preferences.
+func (r *PostgresUserRepository) UpdatePreferences(ctx context.Context, userID int64, language, timezone string) error {
+	if language != "" && timezone != "" {
+		_, err := r.db.ExecContext(ctx,
+			`UPDATE users SET language = $1, timezone = $2, updated_at = NOW() WHERE id = $3`,
+			language, timezone, userID,
+		)
+		return err
+	}
+
+	if language != "" {
+		_, err := r.db.ExecContext(ctx,
+			`UPDATE users SET language = $1, updated_at = NOW() WHERE id = $2`,
+			language, userID,
+		)
+		return err
+	}
+
+	if timezone != "" {
+		_, err := r.db.ExecContext(ctx,
+			`UPDATE users SET timezone = $1, updated_at = NOW() WHERE id = $2`,
+			timezone, userID,
+		)
+		return err
+	}
+
+	return nil
 }
 
 // isUniqueViolation checks if the error is a PostgreSQL unique constraint violation.
