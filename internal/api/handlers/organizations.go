@@ -198,12 +198,12 @@ func HandleUpdateMemberRole(orgSvc *service.OrganizationService, m *metrics.Clie
 			return
 		}
 
-		if !domain.ValidOrgRole(req.Role) {
-			apierrors.WriteError(w, http.StatusBadRequest, apierrors.RoleInvalidRole, "role must be admin, member, or viewer")
-			return
-		}
+	if !domain.ValidOrgRole(req.Role) {
+		apierrors.WriteError(w, http.StatusBadRequest, apierrors.RoleInvalidRole, "invalid organization role")
+		return
+	}
 
-		if err := orgSvc.UpdateMemberRole(r.Context(), membership.OrgID, userID, req.Role); err != nil {
+	if err := orgSvc.UpdateMemberRole(r.Context(), membership.OrgID, userID, req.Role); err != nil {
 			handleOrgError(w, err)
 			return
 		}
@@ -271,12 +271,12 @@ func HandleInviteUser(orgSvc *service.OrganizationService, m *metrics.Client) fu
 		if req.Role == "" {
 			req.Role = domain.OrgRoleMember
 		}
-		if !domain.ValidOrgRole(req.Role) {
-			apierrors.WriteError(w, http.StatusBadRequest, apierrors.RoleInvalidRole, "role must be admin, member, or viewer")
-			return
-		}
+	if !domain.ValidOrgRole(req.Role) {
+		apierrors.WriteError(w, http.StatusBadRequest, apierrors.RoleInvalidRole, "invalid organization role")
+		return
+	}
 
-		inv, err := orgSvc.InviteUser(r.Context(), membership.OrgID, claims.UserID, req.Email, req.Role)
+	inv, err := orgSvc.InviteUser(r.Context(), membership.OrgID, claims.UserID, req.Email, req.Role)
 		if err != nil {
 			handleOrgError(w, err)
 			return

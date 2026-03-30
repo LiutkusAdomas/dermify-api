@@ -21,14 +21,25 @@ type OrganizationWithRole struct {
 
 // OrgMembership roles.
 const (
-	OrgRoleAdmin  = "admin"
-	OrgRoleMember = "member"
-	OrgRoleViewer = "viewer"
+	OrgRoleAdmin        = "admin"
+	OrgRoleMember       = "member"
+	OrgRoleViewer       = "viewer"
+	OrgRoleDoctor       = "doctor"
+	OrgRoleReceptionist = "receptionist"
 )
 
 // ValidOrgRole checks if a role string is a valid organization role.
 func ValidOrgRole(role string) bool {
-	return role == OrgRoleAdmin || role == OrgRoleMember || role == OrgRoleViewer
+	switch role {
+	case OrgRoleAdmin, OrgRoleMember, OrgRoleViewer, OrgRoleDoctor, OrgRoleReceptionist:
+		return true
+	}
+	return false
+}
+
+// AllOrgRoles returns all valid organization roles.
+func AllOrgRoles() []string {
+	return []string{OrgRoleAdmin, OrgRoleMember, OrgRoleViewer, OrgRoleDoctor, OrgRoleReceptionist}
 }
 
 // OrgMember represents a user's membership in an organization.

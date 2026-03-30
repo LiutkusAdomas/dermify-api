@@ -184,6 +184,39 @@ const (
 	InvitationFailed     = "INVITATION_FAILED"
 )
 
+// Error codes for service type-related failures.
+const (
+	ServiceTypeNotFound      = "SERVICE_TYPE_NOT_FOUND"
+	ServiceTypeNameExists    = "SERVICE_TYPE_NAME_EXISTS"
+	ServiceTypeInvalidData   = "SERVICE_TYPE_INVALID_DATA"
+	ServiceTypeLookupFailed  = "SERVICE_TYPE_LOOKUP_FAILED"
+)
+
+// Error codes for appointment-related failures.
+const (
+	AppointmentNotFound          = "APPOINTMENT_NOT_FOUND"
+	AppointmentVersionConflict   = "APPOINTMENT_VERSION_CONFLICT"
+	AppointmentInvalidData       = "APPOINTMENT_INVALID_DATA"
+	AppointmentOverlap           = "APPOINTMENT_OVERLAP"
+	AppointmentInvalidTransition = "APPOINTMENT_INVALID_TRANSITION"
+	AppointmentOutsideHours      = "APPOINTMENT_OUTSIDE_HOURS"
+	AppointmentLookupFailed      = "APPOINTMENT_LOOKUP_FAILED"
+	AppointmentCreationFailed    = "APPOINTMENT_CREATION_FAILED"
+)
+
+// Error codes for schedule-related failures.
+const (
+	ScheduleNotFound      = "SCHEDULE_NOT_FOUND"
+	ScheduleInvalidData   = "SCHEDULE_INVALID_DATA"
+	ScheduleLookupFailed  = "SCHEDULE_LOOKUP_FAILED"
+)
+
+// Error codes for notification-related failures.
+const (
+	NotificationFailed     = "NOTIFICATION_FAILED"
+	NotificationNotFound   = "NOTIFICATION_NOT_FOUND"
+)
+
 // Error codes for preference-related failures.
 const (
 	PreferencesInvalidData  = "PREFERENCES_INVALID_DATA"
