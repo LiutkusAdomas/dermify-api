@@ -6,6 +6,7 @@ import (
 	"dermify-api/config"
 	"dermify-api/internal/api/handlers"
 	"dermify-api/internal/api/metrics"
+	"dermify-api/internal/pkg/email"
 	"dermify-api/internal/repository/postgres"
 	"dermify-api/internal/service"
 
@@ -17,14 +18,18 @@ import (
 
 // Manager handles all route registration.
 type Manager struct {
-	authRoutes     *AuthRoutes
-	userRoutes     *UserRoutes
-	apiRoutes      *APIRoutes
-	roleRoutes     *RoleRoutes
-	patientRoutes  *PatientRoutes
-	registryRoutes *RegistryRoutes
-	sessionRoutes  *SessionRoutes
-	metrics        *metrics.Client
+	authRoutes        *AuthRoutes
+	userRoutes        *UserRoutes
+	apiRoutes         *APIRoutes
+	roleRoutes        *RoleRoutes
+	patientRoutes     *PatientRoutes
+	registryRoutes    *RegistryRoutes
+	sessionRoutes     *SessionRoutes
+	orgRoutes         *OrgRoutes
+	serviceTypeRoutes *ServiceTypeRoutes
+	scheduleRoutes    *ScheduleRoutes
+	appointmentRoutes *AppointmentRoutes
+	metrics           *metrics.Client
 }
 
 // NewManager creates a new route manager.
@@ -77,15 +82,34 @@ func NewManager(db *sql.DB, cfg *config.Configuration, m *metrics.Client) *Manag
 	authRepo := postgres.NewPostgresAuthRepository(db)
 	authSvc := service.NewAuthService(authRepo, userRepo, roleSvc)
 
+	emailClient := email.NewClient(cfg.SMTP)
+	orgRepo := postgres.NewPostgresOrganizationRepository(db)
+	orgSvc := service.NewOrganizationService(orgRepo, emailClient)
+
+	serviceTypeRepo := postgres.NewPostgresServiceTypeRepository(db)
+	serviceTypeSvc := service.NewServiceTypeService(serviceTypeRepo)
+
+	scheduleRepo := postgres.NewPostgresScheduleRepository(db)
+	scheduleSvc := service.NewScheduleService(scheduleRepo)
+
+	appointmentRepo := postgres.NewPostgresAppointmentRepository(db)
+	notificationRepo := postgres.NewPostgresNotificationRepository(db)
+	notificationSvc := service.NewNotificationService(notificationRepo)
+	appointmentSvc := service.NewAppointmentService(appointmentRepo, scheduleRepo, sessionRepo, patientRepo, orgRepo, notificationSvc)
+
 	return &Manager{
-		metrics:        m,
-		authRoutes:     NewAuthRoutes(authSvc, cfg, m),
-		userRoutes:     NewUserRoutes(userSvc, cfg, m),
-		apiRoutes:      NewAPIRoutes(m),
-		roleRoutes:     NewRoleRoutes(roleSvc, cfg, m),
-		patientRoutes:  NewPatientRoutes(patientSvc, cfg, m),
-		registryRoutes: NewRegistryRoutes(registrySvc, cfg, m),
-		sessionRoutes:  NewSessionRoutes(sessionSvc, consentSvc, contraindicationSvc, energySvc, injectableSvc, outcomeSvc, signoffSvc, addendumSvc, auditSvc, photoSvc, cfg.Storage.BasePath, cfg, m),
+		metrics:           m,
+		authRoutes:        NewAuthRoutes(authSvc, userSvc, orgSvc, cfg, m),
+		userRoutes:        NewUserRoutes(userSvc, cfg, m),
+		apiRoutes:         NewAPIRoutes(m),
+		roleRoutes:        NewRoleRoutes(roleSvc, cfg, m),
+		patientRoutes:     NewPatientRoutes(patientSvc, cfg, m),
+		registryRoutes:    NewRegistryRoutes(registrySvc, cfg, m),
+		sessionRoutes:     NewSessionRoutes(sessionSvc, consentSvc, contraindicationSvc, energySvc, injectableSvc, outcomeSvc, signoffSvc, addendumSvc, auditSvc, photoSvc, cfg.Storage.BasePath, cfg, m),
+		orgRoutes:         NewOrgRoutes(orgSvc, cfg, m),
+		serviceTypeRoutes: NewServiceTypeRoutes(serviceTypeSvc, orgSvc, cfg, m),
+		scheduleRoutes:    NewScheduleRoutes(scheduleSvc, orgSvc, cfg, m),
+		appointmentRoutes: NewAppointmentRoutes(appointmentSvc, scheduleSvc, orgSvc, cfg, m),
 	}
 }
 
@@ -100,6 +124,10 @@ func (m *Manager) RegisterAllRoutes(router chi.Router) {
 		m.patientRoutes.RegisterRoutes(r)
 		m.registryRoutes.RegisterRoutes(r)
 		m.sessionRoutes.RegisterRoutes(r)
+		m.orgRoutes.RegisterRoutes(r)
+		m.serviceTypeRoutes.RegisterOrgRoutes(r)
+		m.scheduleRoutes.RegisterOrgRoutes(r)
+		m.appointmentRoutes.RegisterOrgRoutes(r)
 	})
 
 	// Register metrics endpoint (outside API versioning).

@@ -10,6 +10,8 @@ type User struct {
 	PasswordHash string    `json:"-"`
 	Bio          *string   `json:"bio,omitempty"`
 	Role         string    `json:"role"`
+	Language     string    `json:"language"`
+	Timezone     string    `json:"timezone"`
 	CreatedAt    time.Time `json:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at"`
 }

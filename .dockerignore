@@ -1,0 +1,9 @@
+.git
+.gitignore
+docs/
+data/
+infra/
+*.md
+*.yaml
+!config.yaml
+docker-compose.yml

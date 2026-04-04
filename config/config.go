@@ -20,11 +20,23 @@ type Configuration struct {
 	Database    DatabaseConfig `mapstructure:"database"`
 	Auth        AuthConfig     `mapstructure:"auth"`
 	Storage     StorageConfig  `mapstructure:"storage"`
+	SMTP        SMTPConfig     `mapstructure:"smtp"`
 }
 
 // StorageConfig holds file storage configuration.
 type StorageConfig struct {
 	BasePath string `mapstructure:"base_path"`
+}
+
+// SMTPConfig holds email sending configuration.
+type SMTPConfig struct {
+	Host        string `mapstructure:"host"`
+	Port        int    `mapstructure:"port"`
+	Username    string `mapstructure:"username"`
+	Password    string `mapstructure:"password"`
+	FromEmail   string `mapstructure:"from_email"`
+	FromName    string `mapstructure:"from_name"`
+	FrontendURL string `mapstructure:"frontend_url"`
 }
 
 // AuthConfig holds authentication and JWT configuration.

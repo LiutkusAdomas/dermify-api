@@ -203,6 +203,8 @@ type profileResponse struct {
 	Email     string `json:"email" example:"johndoe@example.com"`
 	Bio       string `json:"bio" example:"Software developer"`
 	Role      string `json:"role" example:"doctor"`
+	Language  string `json:"language" example:"en"`
+	Timezone  string `json:"timezone" example:"UTC"`
 	CreatedAt string `json:"created_at" example:"2024-01-01T00:00:00Z"`
 }
 
@@ -238,6 +240,8 @@ func HandleGetProfile(authSvc *service.AuthService, m *metrics.Client) func(w ht
 			Username:  user.Username,
 			Email:     user.Email,
 			Role:      user.Role,
+			Language:  user.Language,
+			Timezone:  user.Timezone,
 			CreatedAt: user.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
 		}
 
@@ -247,6 +251,57 @@ func HandleGetProfile(authSvc *service.AuthService, m *metrics.Client) func(w ht
 
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(resp) //nolint:errcheck // response write
+	}
+}
+
+type updatePreferencesRequest struct {
+	Language string `json:"language" example:"en"`
+	Timezone string `json:"timezone" example:"UTC"`
+}
+
+// HandleUpdatePreferences updates the authenticated user's language and timezone.
+//
+//	@Summary		Update user preferences
+//	@Description	Updates the authenticated user's language and timezone
+//	@Tags			auth
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			request	body		updatePreferencesRequest	true	"Preferences"
+//	@Success		200		{object}	MessageResponse
+//	@Failure		400		{object}	apierrors.ErrorResponse
+//	@Failure		401		{object}	apierrors.ErrorResponse
+//	@Failure		500		{object}	apierrors.ErrorResponse
+//	@Router			/auth/preferences [put]
+func HandleUpdatePreferences(userSvc *service.UserService, m *metrics.Client) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		claims := middleware.GetUserClaims(r.Context())
+		if claims == nil {
+			apierrors.WriteError(w, http.StatusUnauthorized, apierrors.AuthNotAuthenticated, "not authenticated")
+			return
+		}
+
+		var req updatePreferencesRequest
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			apierrors.WriteError(w, http.StatusBadRequest, apierrors.ValidationInvalidRequestBody, "invalid request body")
+			return
+		}
+
+		if req.Language == "" && req.Timezone == "" {
+			apierrors.WriteError(w, http.StatusBadRequest, apierrors.PreferencesInvalidData, "at least one of language or timezone is required")
+			return
+		}
+
+		if err := userSvc.UpdatePreferences(r.Context(), claims.UserID, req.Language, req.Timezone); err != nil {
+			slog.Error("failed to update preferences", "error", err)
+			apierrors.WriteError(w, http.StatusInternalServerError, apierrors.PreferencesUpdateFailed, "failed to update preferences")
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(map[string]string{"message": "preferences updated"}) //nolint:errcheck // response write
 	}
 }
 
