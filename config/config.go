@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"strings"
@@ -67,6 +68,41 @@ type CORSConfig struct {
 	AllowedOrigins []string `mapstructure:"allowed_origins"`
 	AllowedMethods []string `mapstructure:"allowed_methods"`
 	AllowedHeaders []string `mapstructure:"allowed_headers"`
+}
+
+// Validate checks that the configuration is safe for the current environment.
+// It returns an error if any critical setting is missing or insecure.
+func (c *Configuration) Validate() error {
+	var errs []error
+
+	if c.Auth.JWTSecret == "" || c.Auth.JWTSecret == "change-me-in-production" {
+		if c.Environment != "local" && c.Environment != "dev" {
+			errs = append(errs, errors.New("auth.jwt_secret must be set to a secure value in non-dev environments"))
+		}
+	}
+	if len(c.Auth.JWTSecret) < 32 && c.Environment != "local" && c.Environment != "dev" {
+		errs = append(errs, errors.New("auth.jwt_secret must be at least 32 characters"))
+	}
+
+	if c.Database.Host == "" {
+		errs = append(errs, errors.New("database.host is required"))
+	}
+	if c.Database.DBName == "" {
+		errs = append(errs, errors.New("database.dbname is required"))
+	}
+	if c.Database.User == "" {
+		errs = append(errs, errors.New("database.user is required"))
+	}
+
+	if c.Port <= 0 || c.Port > 65535 {
+		errs = append(errs, fmt.Errorf("port must be between 1 and 65535, got %d", c.Port))
+	}
+
+	if c.Database.SSLMode == "disable" && c.Environment != "local" && c.Environment != "dev" {
+		errs = append(errs, errors.New("database.sslmode must not be 'disable' in non-dev environments"))
+	}
+
+	return errors.Join(errs...)
 }
 
 // Configure is the intended way to instantiate a Configuration. This method should be used over direct instantiation

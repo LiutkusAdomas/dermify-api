@@ -22,10 +22,19 @@ func Open(dsn string, logger *slog.Logger) (*sql.DB, error) {
 		return nil, fmt.Errorf("db: open %w", err)
 	}
 
+	// Connection pool tuning
+	db.SetMaxOpenConns(25)
+	db.SetMaxIdleConns(5)
+	db.SetConnMaxLifetime(5 * time.Minute)
+	db.SetConnMaxIdleTime(2 * time.Minute)
+
 	for attempt := 1; attempt <= maxRetries; attempt++ {
 		err = db.Ping()
 		if err == nil {
-			logger.Info("connected to database")
+			logger.Info("connected to database",
+				slog.Int("max_open_conns", 25),
+				slog.Int("max_idle_conns", 5),
+			)
 			return db, nil
 		}
 
