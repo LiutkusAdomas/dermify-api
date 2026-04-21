@@ -74,6 +74,19 @@ function Write-Step([string]$msg) {
 # STEP 1 - Provision infrastructure
 # ============================================================
 function Deploy-Infra {
+    Write-Step "Registering required Azure resource providers"
+    foreach ($provider in @(
+        "Microsoft.ContainerRegistry",
+        "Microsoft.App",
+        "Microsoft.OperationalInsights",
+        "Microsoft.DBforPostgreSQL",
+        "Microsoft.Storage",
+        "Microsoft.Web"
+    )) {
+        Write-Host "  Registering $provider ..."
+        az provider register --namespace $provider --wait --output none
+    }
+
     Write-Step "Creating resource group '$ResourceGroup' in '$Location'"
     az group create --name $ResourceGroup --location $Location --output none
 
@@ -97,6 +110,7 @@ function Deploy-Infra {
         --resource-group $ResourceGroup `
         --name $dbServerName `
         --location $Location `
+        --tier Burstable `
         --sku-name Standard_B1ms `
         --storage-size 32 `
         --version 15 `
@@ -151,11 +165,13 @@ function Deploy-Infra {
         --output none
 
     # --- Static Web App ---
-    Write-Step "Creating Azure Static Web App '$swaName'"
+    # Static Web Apps only supports a limited set of regions; use westeurope as the nearest to northeurope
+    $swaLocation = "westeurope"
+    Write-Step "Creating Azure Static Web App '$swaName' (in '$swaLocation')"
     az staticwebapp create `
         --name $swaName `
         --resource-group $ResourceGroup `
-        --location $Location `
+        --location $swaLocation `
         --sku Free `
         --output none
 

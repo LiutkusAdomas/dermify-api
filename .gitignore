@@ -1,2 +1,20 @@
-.idea/
+# Build output
 dermify-api
+
+# Editor
+.idea/
+.vscode/
+*.suo
+*.sw?
+
+# Environment / secrets — never commit real credentials
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local-only DevOps / infra notes (safe to keep locally, never push)
+devops-local/
