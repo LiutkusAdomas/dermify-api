@@ -1,0 +1,152 @@
+# Azure Pipelines — dermify-api
+#
+# Prerequisites (do once in Azure DevOps):
+#   1. Service connection  : "dermify-azure"  (Azure Resource Manager, scoped to rg-dermify)
+#   2. Variable group      : "dermify-secrets" in Pipelines > Library, containing:
+#        ACR_PASSWORD               – from: az acr credential show --name dermifycr --query "passwords[0].value"
+#        OVERRIDE_DATABASE_PASSWORD – PostgreSQL admin password
+#        OVERRIDE_AUTH_JWT_SECRET   – JWT signing secret
+#   3. ACR Admin user must be enabled (already done by deploy.ps1)
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    exclude:
+      - "*.md"
+      - infra/**
+      - docs/**
+
+pr:
+  branches:
+    include:
+      - main
+
+variables:
+  GO_VERSION: "1.23"
+  ACR_NAME: "dermifycr"
+  IMAGE_REPO: "dermifycr.azurecr.io/dermify-api"
+  RESOURCE_GROUP: "rg-dermify"
+  CONTAINER_APP_NAME: "dermify-api"
+  # IMAGE_TAG is set dynamically per stage below
+
+stages:
+  # ──────────────────────────────────────────────────────────────
+  # Stage 1 — CI: lint + test
+  # Runs on every push and every PR.
+  # ──────────────────────────────────────────────────────────────
+  - stage: CI
+    displayName: "CI — Lint & Test"
+    jobs:
+      - job: LintAndTest
+        displayName: "golangci-lint + go test"
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: GoTool@0
+            displayName: "Install Go $(GO_VERSION)"
+            inputs:
+              version: $(GO_VERSION)
+
+          - script: go mod download
+            displayName: "Download modules"
+
+          - script: |
+              curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh \
+                | sh -s -- -b $(go env GOPATH)/bin v1.64.8
+              golangci-lint run --config golangci.yaml --timeout 5m
+            displayName: "golangci-lint"
+
+          - script: go test ./... -count=1 -timeout 120s
+            displayName: "go test"
+
+  # ──────────────────────────────────────────────────────────────
+  # Stage 2 — CD: build image, push to ACR, deploy to Container Apps
+  # Runs only on main branch (not PRs).
+  # ──────────────────────────────────────────────────────────────
+  - stage: CD
+    displayName: "CD — Build & Deploy"
+    dependsOn: CI
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    variables:
+      - group: dermify-secrets
+      - name: IMAGE_TAG
+        value: "$(Build.BuildId)"
+      - name: IMAGE_FULL
+        value: "$(IMAGE_REPO):$(Build.BuildId)"
+
+    jobs:
+      - job: BuildAndPush
+        displayName: "Docker build → ACR push"
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: Docker@2
+            displayName: "Login to ACR"
+            inputs:
+              command: login
+              containerRegistry: "" # leave blank — we login manually below so we can use the variable group secret
+              # (Use the script step below instead of a Docker service connection
+              #  to keep the ACR password in the variable group rather than a separate service connection)
+
+          - script: |
+              echo "$(ACR_PASSWORD)" | docker login $(ACR_NAME).azurecr.io \
+                --username $(ACR_NAME) \
+                --password-stdin
+            displayName: "ACR login"
+
+          - script: |
+              docker build \
+                --build-arg COMMIT=$(Build.SourceVersion) \
+                -t $(IMAGE_FULL) \
+                -t $(IMAGE_REPO):latest \
+                .
+            displayName: "Docker build"
+
+          - script: |
+              docker push $(IMAGE_FULL)
+              docker push $(IMAGE_REPO):latest
+            displayName: "Docker push"
+
+      - job: Deploy
+        displayName: "Deploy to Container Apps"
+        dependsOn: BuildAndPush
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: AzureCLI@2
+            displayName: "Update Container App image"
+            inputs:
+              azureSubscription: "dermify-azure"
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                az containerapp update \
+                  --name $(CONTAINER_APP_NAME) \
+                  --resource-group $(RESOURCE_GROUP) \
+                  --image $(IMAGE_REPO):$(Build.BuildId) \
+                  --output none
+                echo "Deployed image: $(IMAGE_REPO):$(Build.BuildId)"
+
+          - task: AzureCLI@2
+            displayName: "Verify deployment (poll for Running)"
+            inputs:
+              azureSubscription: "dermify-azure"
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                for i in $(seq 1 20); do
+                  STATUS=$(az containerapp revision list \
+                    --name $(CONTAINER_APP_NAME) \
+                    --resource-group $(RESOURCE_GROUP) \
+                    --query "[0].properties.runningState" -o tsv 2>/dev/null || echo "unknown")
+                  echo "Attempt $i — status: $STATUS"
+                  if [ "$STATUS" = "Running" ]; then
+                    echo "Container App is running."
+                    exit 0
+                  fi
+                  sleep 15
+                done
+                echo "Timed out waiting for Running state — check Azure Portal."
+                exit 1
