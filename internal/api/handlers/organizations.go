@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
+	"io"
 	"log/slog"
 	"net/http"
 
@@ -20,13 +21,18 @@ type createOrgRequest struct {
 }
 
 type updateOrgRequest struct {
-	Name        *string `json:"name"`
-	Description *string `json:"description"`
-	LogoURL     *string `json:"logo_url"`
+	Name            *string `json:"name"`
+	Description     *string `json:"description"`
+	LogoURL         *string `json:"logo_url"`
+	Timezone        *string `json:"timezone"`
+	InviteFromEmail *string `json:"invite_from_email"`
+	InviteFromName  *string `json:"invite_from_name"`
 }
 
 // HandleCreateOrganization creates a new organization and adds the creator as admin.
-func HandleCreateOrganization(orgSvc *service.OrganizationService, m *metrics.Client) func(w http.ResponseWriter, r *http.Request) {
+// The new organization's timezone defaults to the creator's user.Timezone when set,
+// falling back to UTC.
+func HandleCreateOrganization(orgSvc *service.OrganizationService, authSvc *service.AuthService, m *metrics.Client) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
@@ -56,7 +62,12 @@ func HandleCreateOrganization(orgSvc *service.OrganizationService, m *metrics.Cl
 			return
 		}
 
-		org, err := orgSvc.Create(r.Context(), req.Name, slug, req.Description, claims.UserID)
+		defaultTimezone := ""
+		if creator, err := authSvc.GetUserByID(r.Context(), claims.UserID); err == nil && creator != nil {
+			defaultTimezone = creator.Timezone
+		}
+
+		org, err := orgSvc.Create(r.Context(), req.Name, slug, req.Description, defaultTimezone, claims.UserID)
 		if err != nil {
 			handleOrgError(w, err)
 			return
@@ -133,7 +144,16 @@ func HandleUpdateOrganization(orgSvc *service.OrganizationService, m *metrics.Cl
 			return
 		}
 
-		org, err := orgSvc.Update(r.Context(), membership.OrgID, req.Name, req.Description, req.LogoURL)
+		org, err := orgSvc.Update(
+			r.Context(),
+			membership.OrgID,
+			req.Name,
+			req.Description,
+			req.LogoURL,
+			req.Timezone,
+			req.InviteFromEmail,
+			req.InviteFromName,
+		)
 		if err != nil {
 			handleOrgError(w, err)
 			return
@@ -175,6 +195,10 @@ type updateMemberRoleRequest struct {
 	Role string `json:"role"`
 }
 
+type setMemberMustChangePasswordRequest struct {
+	MustChangePassword *bool `json:"must_change_password"`
+}
+
 // HandleUpdateMemberRole changes a member's role within an organization (admin only).
 func HandleUpdateMemberRole(orgSvc *service.OrganizationService, m *metrics.Client) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -198,18 +222,66 @@ func HandleUpdateMemberRole(orgSvc *service.OrganizationService, m *metrics.Clie
 			return
 		}
 
-	if !domain.ValidOrgRole(req.Role) {
-		apierrors.WriteError(w, http.StatusBadRequest, apierrors.RoleInvalidRole, "invalid organization role")
-		return
-	}
+		if !domain.ValidOrgRole(req.Role) {
+			apierrors.WriteError(w, http.StatusBadRequest, apierrors.RoleInvalidRole, "invalid organization role")
+			return
+		}
 
-	if err := orgSvc.UpdateMemberRole(r.Context(), membership.OrgID, userID, req.Role); err != nil {
+		if err := orgSvc.UpdateMemberRole(r.Context(), membership.OrgID, userID, req.Role); err != nil {
 			handleOrgError(w, err)
 			return
 		}
 
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(map[string]string{"message": "role updated successfully"}) //nolint:errcheck // response write
+	}
+}
+
+// HandleSetMemberMustChangePassword toggles member password-change requirement (admin only).
+func HandleSetMemberMustChangePassword(orgSvc *service.OrganizationService, authSvc *service.AuthService, m *metrics.Client) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		claims := middleware.GetUserClaims(r.Context())
+		membership := middleware.GetOrgMembership(r.Context())
+		if claims == nil || membership == nil {
+			apierrors.WriteError(w, http.StatusForbidden, apierrors.OrgNotAdmin, "admin access required")
+			return
+		}
+
+		userID, err := parseNamedIDParam(r, "userId")
+		if err != nil {
+			apierrors.WriteError(w, http.StatusBadRequest, apierrors.ValidationInvalidRequestBody, "invalid user id")
+			return
+		}
+
+		var req setMemberMustChangePasswordRequest
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			apierrors.WriteError(w, http.StatusBadRequest, apierrors.ValidationInvalidRequestBody, "invalid request body")
+			return
+		}
+		if req.MustChangePassword == nil {
+			apierrors.WriteError(w, http.StatusBadRequest, apierrors.ValidationRequiredFields, "must_change_password is required")
+			return
+		}
+		if userID == claims.UserID {
+			apierrors.WriteError(w, http.StatusBadRequest, apierrors.ValidationInvalidRequestBody, "cannot enforce password change for your own account")
+			return
+		}
+
+		// Ensure the target user is a member of the same organization.
+		if _, err := orgSvc.GetMemberRole(r.Context(), membership.OrgID, userID); err != nil {
+			handleOrgError(w, err)
+			return
+		}
+
+		if err := authSvc.SetMustChangePassword(r.Context(), userID, *req.MustChangePassword); err != nil {
+			handleAuthError(w, err)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(map[string]string{"message": "member password policy updated"}) //nolint:errcheck // response write
 	}
 }
 
@@ -245,6 +317,10 @@ type inviteRequest struct {
 	Role  string `json:"role"`
 }
 
+type confirmInvitationRequest struct {
+	RequirePasswordChange bool `json:"require_password_change"`
+}
+
 // HandleInviteUser creates an invitation and optionally sends an email (admin only).
 func HandleInviteUser(orgSvc *service.OrganizationService, m *metrics.Client) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -271,12 +347,12 @@ func HandleInviteUser(orgSvc *service.OrganizationService, m *metrics.Client) fu
 		if req.Role == "" {
 			req.Role = domain.OrgRoleMember
 		}
-	if !domain.ValidOrgRole(req.Role) {
-		apierrors.WriteError(w, http.StatusBadRequest, apierrors.RoleInvalidRole, "invalid organization role")
-		return
-	}
+		if !domain.ValidOrgRole(req.Role) {
+			apierrors.WriteError(w, http.StatusBadRequest, apierrors.RoleInvalidRole, "invalid organization role")
+			return
+		}
 
-	inv, err := orgSvc.InviteUser(r.Context(), membership.OrgID, claims.UserID, req.Email, req.Role)
+		inv, err := orgSvc.InviteUser(r.Context(), membership.OrgID, claims.UserID, req.Email, req.Role)
 		if err != nil {
 			handleOrgError(w, err)
 			return
@@ -395,6 +471,39 @@ func HandleListOrgInvitations(orgSvc *service.OrganizationService, m *metrics.Cl
 	}
 }
 
+// HandleConfirmInvitation confirms an org invitation without email token flow (admin only).
+func HandleConfirmInvitation(orgSvc *service.OrganizationService, m *metrics.Client) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		membership := middleware.GetOrgMembership(r.Context())
+		if membership == nil {
+			apierrors.WriteError(w, http.StatusForbidden, apierrors.OrgNotAdmin, "admin access required")
+			return
+		}
+
+		invitationID, err := parseNamedIDParam(r, "invitationId")
+		if err != nil {
+			apierrors.WriteError(w, http.StatusBadRequest, apierrors.ValidationInvalidRequestBody, "invalid invitation id")
+			return
+		}
+
+		req := confirmInvitationRequest{}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil && !errors.Is(err, io.EOF) {
+			apierrors.WriteError(w, http.StatusBadRequest, apierrors.ValidationInvalidRequestBody, "invalid request body")
+			return
+		}
+
+		if err := orgSvc.ConfirmInvitation(r.Context(), membership.OrgID, invitationID, req.RequirePasswordChange); err != nil {
+			handleOrgError(w, err)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(map[string]string{"message": "invitation confirmed"}) //nolint:errcheck // response write
+	}
+}
+
 // handleOrgError maps service org errors to HTTP responses.
 func handleOrgError(w http.ResponseWriter, err error) {
 	switch {
@@ -412,6 +521,10 @@ func handleOrgError(w http.ResponseWriter, err error) {
 		apierrors.WriteError(w, http.StatusBadRequest, apierrors.OrgLastAdmin, "cannot remove the last admin")
 	case errors.Is(err, service.ErrOrgNoFieldsToUpdate):
 		apierrors.WriteError(w, http.StatusBadRequest, apierrors.OrgNoFieldsToUpdate, "no fields to update")
+	case errors.Is(err, service.ErrOrgInvalidTimezone):
+		apierrors.WriteError(w, http.StatusBadRequest, apierrors.OrgInvalidTimezone, "invalid organization timezone")
+	case errors.Is(err, service.ErrOrgInvalidInviteFrom):
+		apierrors.WriteError(w, http.StatusBadRequest, apierrors.OrgInvalidInviteFrom, "invalid organization invitation sender")
 	case errors.Is(err, service.ErrOrgAlreadyMember):
 		apierrors.WriteError(w, http.StatusConflict, apierrors.OrgAlreadyMember, "user is already a member of this organization")
 	case errors.Is(err, service.ErrInvitationExists):
@@ -420,6 +533,8 @@ func handleOrgError(w http.ResponseWriter, err error) {
 		apierrors.WriteError(w, http.StatusNotFound, apierrors.InvitationNotFound, "invitation not found or expired")
 	case errors.Is(err, service.ErrInvitationWrongEmail):
 		apierrors.WriteError(w, http.StatusForbidden, apierrors.InvitationWrongEmail, "this invitation is for a different email address")
+	case errors.Is(err, service.ErrInvitationUserNotFound):
+		apierrors.WriteError(w, http.StatusNotFound, apierrors.InvitationUserNotFound, "invited user account not found; ask user to register first")
 	default:
 		slog.Error("organization operation failed", "error", err)
 		apierrors.WriteError(w, http.StatusInternalServerError, apierrors.OrgLookupFailed, "internal error")

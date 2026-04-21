@@ -68,7 +68,7 @@ func (s *ScheduleService) CreateOverride(ctx context.Context, o *domain.Schedule
 	if o.StartTime != nil && o.EndTime != nil && *o.StartTime >= *o.EndTime {
 		return ErrScheduleInvalidData
 	}
-	o.CreatedAt = time.Now()
+	o.CreatedAt = time.Now().UTC()
 	return s.repo.CreateOverride(ctx, o)
 }
 

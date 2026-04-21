@@ -60,11 +60,13 @@ func HandleCreateAppointment(svc *service.AppointmentService, m *metrics.Client)
 			apierrors.WriteError(w, http.StatusBadRequest, apierrors.AppointmentInvalidData, "invalid start_time format, use RFC3339")
 			return
 		}
+		startTime = startTime.UTC()
 		endTime, err := time.Parse(time.RFC3339, req.EndTime)
 		if err != nil {
 			apierrors.WriteError(w, http.StatusBadRequest, apierrors.AppointmentInvalidData, "invalid end_time format, use RFC3339")
 			return
 		}
+		endTime = endTime.UTC()
 
 		appt := &domain.Appointment{
 			OrgID:         membership.OrgID,
@@ -109,12 +111,12 @@ func HandleListAppointments(svc *service.AppointmentService, m *metrics.Client) 
 
 		if startStr := r.URL.Query().Get("start"); startStr != "" {
 			if t, err := time.Parse(time.RFC3339, startStr); err == nil {
-				filter.Start = t
+				filter.Start = t.UTC()
 			}
 		}
 		if endStr := r.URL.Query().Get("end"); endStr != "" {
 			if t, err := time.Parse(time.RFC3339, endStr); err == nil {
-				filter.End = t
+				filter.End = t.UTC()
 			}
 		}
 
@@ -190,11 +192,13 @@ func HandleUpdateAppointment(svc *service.AppointmentService, m *metrics.Client)
 			apierrors.WriteError(w, http.StatusBadRequest, apierrors.AppointmentInvalidData, "invalid start_time format")
 			return
 		}
+		startTime = startTime.UTC()
 		endTime, err := time.Parse(time.RFC3339, req.EndTime)
 		if err != nil {
 			apierrors.WriteError(w, http.StatusBadRequest, apierrors.AppointmentInvalidData, "invalid end_time format")
 			return
 		}
+		endTime = endTime.UTC()
 
 		appt := &domain.Appointment{
 			ID:            id,

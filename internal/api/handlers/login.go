@@ -18,10 +18,11 @@ type loginRequest struct {
 }
 
 type loginResponse struct {
-	AccessToken  string `json:"access_token" example:"eyJhbGciOiJIUzI1NiIs..."`
-	RefreshToken string `json:"refresh_token" example:"dGhpcyBpcyBhIHJlZnJl..."`
-	ExpiresIn    int    `json:"expires_in" example:"3600"`
-	Message      string `json:"message" example:"login successful"`
+	AccessToken        string `json:"access_token" example:"eyJhbGciOiJIUzI1NiIs..."`
+	RefreshToken       string `json:"refresh_token" example:"dGhpcyBpcyBhIHJlZnJl..."`
+	ExpiresIn          int    `json:"expires_in" example:"3600"`
+	Message            string `json:"message" example:"login successful"`
+	MustChangePassword bool   `json:"must_change_password"`
 }
 
 // HandleLogin authenticates a user with email and password, returning JWT access
@@ -92,10 +93,11 @@ func HandleLogin(authSvc *service.AuthService, cfg *config.Configuration, m *met
 
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(loginResponse{ //nolint:errcheck // response write
-			AccessToken:  accessToken,
-			RefreshToken: refreshToken,
-			ExpiresIn:    int(cfg.Auth.AccessTokenExpiry.Seconds()),
-			Message:      "login successful",
+			AccessToken:        accessToken,
+			RefreshToken:       refreshToken,
+			ExpiresIn:          int(cfg.Auth.AccessTokenExpiry.Seconds()),
+			Message:            "login successful",
+			MustChangePassword: user.MustChangePassword,
 		})
 	}
 }

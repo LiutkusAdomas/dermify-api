@@ -31,6 +31,10 @@ type UserRepository interface {
 	List(ctx context.Context) ([]*domain.User, error)
 	// UpdatePreferences updates the user's language and timezone.
 	UpdatePreferences(ctx context.Context, userID int64, language, timezone string) error
+	// UpdatePassword updates user password hash and optionally clears must-change flag.
+	UpdatePassword(ctx context.Context, userID int64, passwordHash string, clearMustChange bool) error
+	// SetMustChangePassword toggles must-change-password flag for user.
+	SetMustChangePassword(ctx context.Context, userID int64, mustChange bool) error
 }
 
 // UserService handles user business logic.

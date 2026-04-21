@@ -101,7 +101,7 @@ func (r *PostgresAppointmentRepository) UpdateStatus(ctx context.Context, id, or
 	result, err := r.db.ExecContext(ctx,
 		`UPDATE appointments SET status = $1, cancellation_reason = $2, updated_at = $3, version = version + 1
 		 WHERE id = $4 AND org_id = $5 AND version = $6`,
-		status, cancellationReason, time.Now(), id, orgID, version,
+		status, cancellationReason, time.Now().UTC(), id, orgID, version,
 	)
 	if err != nil {
 		return fmt.Errorf("updating appointment status: %w", err)
@@ -118,7 +118,7 @@ func (r *PostgresAppointmentRepository) LinkSession(ctx context.Context, id, org
 	result, err := r.db.ExecContext(ctx,
 		`UPDATE appointments SET session_id = $1, status = 'in_progress', updated_at = $2, version = version + 1
 		 WHERE id = $3 AND org_id = $4 AND version = $5`,
-		sessionID, time.Now(), id, orgID, version,
+		sessionID, time.Now().UTC(), id, orgID, version,
 	)
 	if err != nil {
 		return fmt.Errorf("linking session to appointment: %w", err)

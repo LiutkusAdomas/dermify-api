@@ -103,7 +103,7 @@ func (s *AppointmentService) Create(ctx context.Context, a *domain.Appointment) 
 		return ErrAppointmentOverlap
 	}
 
-	now := time.Now()
+	now := time.Now().UTC()
 	a.Status = domain.AppointmentStatusScheduled
 	a.Version = 1
 	a.CreatedAt = now
@@ -151,7 +151,7 @@ func (s *AppointmentService) Update(ctx context.Context, a *domain.Appointment) 
 
 	a.Version = existing.Version
 	a.Status = existing.Status
-	a.UpdatedAt = time.Now()
+	a.UpdatedAt = time.Now().UTC()
 
 	if err := s.repo.Update(ctx, a); err != nil {
 		return err
@@ -206,7 +206,7 @@ func (s *AppointmentService) StartSession(ctx context.Context, appointmentID, or
 		ClinicianID: appt.DoctorID,
 	}
 
-	now := time.Now()
+	now := time.Now().UTC()
 	session.Status = domain.SessionStatusDraft
 	session.Version = 1
 	session.CreatedAt = now

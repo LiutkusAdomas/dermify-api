@@ -11,7 +11,7 @@ import (
 
 // Sentinel errors for authentication operations.
 var (
-	ErrInvalidCredentials  = errors.New("invalid credentials")             //nolint:gochecknoglobals // sentinel error
+	ErrInvalidCredentials  = errors.New("invalid credentials")              //nolint:gochecknoglobals // sentinel error
 	ErrRefreshTokenInvalid = errors.New("invalid or expired refresh token") //nolint:gochecknoglobals // sentinel error
 )
 
@@ -51,7 +51,7 @@ func (s *AuthService) Register(ctx context.Context, username, email, passwordHas
 		PasswordHash: passwordHash,
 	}
 
-	now := time.Now()
+	now := time.Now().UTC()
 	user.CreatedAt = now
 	user.UpdatedAt = now
 
@@ -90,6 +90,11 @@ func (s *AuthService) GetUserByID(ctx context.Context, id int64) (*domain.User, 
 	return s.userRepo.GetByID(ctx, id)
 }
 
+// GetUserByEmail retrieves a user by email.
+func (s *AuthService) GetUserByEmail(ctx context.Context, email string) (*domain.User, error) {
+	return s.userRepo.GetByEmail(ctx, email)
+}
+
 // StoreRefreshToken stores a hashed refresh token.
 func (s *AuthService) StoreRefreshToken(ctx context.Context, userID int64, tokenHash string, expiresAt time.Time) error {
 	return s.authRepo.StoreRefreshToken(ctx, userID, tokenHash, expiresAt)
@@ -113,4 +118,14 @@ func (s *AuthService) RevokeRefreshToken(ctx context.Context, tokenHash string) 
 // RevokeAllUserRefreshTokens revokes all refresh tokens for a user.
 func (s *AuthService) RevokeAllUserRefreshTokens(ctx context.Context, userID int64) error {
 	return s.authRepo.RevokeAllUserRefreshTokens(ctx, userID)
+}
+
+// UpdatePassword updates a user's password hash and optionally clears must-change-password flag.
+func (s *AuthService) UpdatePassword(ctx context.Context, userID int64, passwordHash string, clearMustChange bool) error {
+	return s.userRepo.UpdatePassword(ctx, userID, passwordHash, clearMustChange)
+}
+
+// SetMustChangePassword toggles the must-change-password flag for a user.
+func (s *AuthService) SetMustChangePassword(ctx context.Context, userID int64, mustChange bool) error {
+	return s.userRepo.SetMustChangePassword(ctx, userID, mustChange)
 }

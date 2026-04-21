@@ -3,6 +3,7 @@ package config_test
 import (
 	"dermify-api/config"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -49,19 +50,15 @@ port: 12345`,
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			testFile, err := os.CreateTemp(".", "*.yaml")
-			assert.NoError(t, err)
-			defer os.Remove(testFile.Name())
-
-			err = os.WriteFile(testFile.Name(), []byte(tc.input.fileInput), 6)
+			path := filepath.Join(t.TempDir(), "cfg.yaml")
+			err := os.WriteFile(path, []byte(tc.input.fileInput), 0o600)
 			assert.NoError(t, err)
 
 			if tc.input.envVar != "" {
-				err = os.Setenv("OVERRIDE_ENVIRONMENT", tc.input.envVar)
-				assert.NoError(t, err)
+				t.Setenv("OVERRIDE_ENVIRONMENT", tc.input.envVar)
 			}
 
-			actual := config.Configure(testFile.Name())
+			actual := config.Configure(path)
 
 			assert.Equal(t, tc.expected, *actual)
 		})

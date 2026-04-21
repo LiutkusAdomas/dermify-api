@@ -19,12 +19,12 @@ const (
 
 // Error codes for authentication/authorization failures.
 const (
-	AuthInvalidCredentials  = "AUTH_INVALID_CREDENTIALS"
-	AuthNotAuthenticated    = "AUTH_NOT_AUTHENTICATED"
-	AuthMissingHeader       = "AUTH_MISSING_HEADER"
-	AuthInvalidHeaderFormat = "AUTH_INVALID_HEADER_FORMAT"
-	AuthInvalidToken        = "AUTH_INVALID_TOKEN"
-	AuthInvalidRefreshToken = "AUTH_INVALID_REFRESH_TOKEN"
+	AuthInvalidCredentials   = "AUTH_INVALID_CREDENTIALS"
+	AuthNotAuthenticated     = "AUTH_NOT_AUTHENTICATED"
+	AuthMissingHeader        = "AUTH_MISSING_HEADER"
+	AuthInvalidHeaderFormat  = "AUTH_INVALID_HEADER_FORMAT"
+	AuthInvalidToken         = "AUTH_INVALID_TOKEN"
+	AuthInvalidRefreshToken  = "AUTH_INVALID_REFRESH_TOKEN"
 	AuthRefreshTokenRequired = "AUTH_REFRESH_TOKEN_REQUIRED"
 )
 
@@ -162,34 +162,37 @@ const (
 
 // Error codes for organization-related failures.
 const (
-	OrgNotFound          = "ORG_NOT_FOUND"
-	OrgSlugExists        = "ORG_SLUG_EXISTS"
-	OrgInvalidSlug       = "ORG_INVALID_SLUG"
-	OrgNotMember         = "ORG_NOT_MEMBER"
-	OrgNotAdmin          = "ORG_NOT_ADMIN"
-	OrgMemberNotFound    = "ORG_MEMBER_NOT_FOUND"
-	OrgLastAdmin         = "ORG_LAST_ADMIN"
-	OrgNoFieldsToUpdate  = "ORG_NO_FIELDS_TO_UPDATE"
-	OrgAlreadyMember     = "ORG_ALREADY_MEMBER"
-	OrgCreationFailed    = "ORG_CREATION_FAILED"
-	OrgUpdateFailed      = "ORG_UPDATE_FAILED"
-	OrgLookupFailed      = "ORG_LOOKUP_FAILED"
+	OrgNotFound         = "ORG_NOT_FOUND"
+	OrgSlugExists       = "ORG_SLUG_EXISTS"
+	OrgInvalidSlug      = "ORG_INVALID_SLUG"
+	OrgNotMember        = "ORG_NOT_MEMBER"
+	OrgNotAdmin         = "ORG_NOT_ADMIN"
+	OrgMemberNotFound   = "ORG_MEMBER_NOT_FOUND"
+	OrgLastAdmin        = "ORG_LAST_ADMIN"
+	OrgNoFieldsToUpdate = "ORG_NO_FIELDS_TO_UPDATE"
+	OrgAlreadyMember    = "ORG_ALREADY_MEMBER"
+	OrgCreationFailed   = "ORG_CREATION_FAILED"
+	OrgUpdateFailed     = "ORG_UPDATE_FAILED"
+	OrgLookupFailed     = "ORG_LOOKUP_FAILED"
+	OrgInvalidTimezone  = "ORG_INVALID_TIMEZONE"
+	OrgInvalidInviteFrom = "ORG_INVALID_INVITE_FROM"
 )
 
 // Error codes for invitation-related failures.
 const (
-	InvitationExists     = "INVITATION_EXISTS"
-	InvitationNotFound   = "INVITATION_NOT_FOUND"
-	InvitationWrongEmail = "INVITATION_WRONG_EMAIL"
-	InvitationFailed     = "INVITATION_FAILED"
+	InvitationExists       = "INVITATION_EXISTS"
+	InvitationNotFound     = "INVITATION_NOT_FOUND"
+	InvitationWrongEmail   = "INVITATION_WRONG_EMAIL"
+	InvitationUserNotFound = "INVITATION_USER_NOT_FOUND"
+	InvitationFailed       = "INVITATION_FAILED"
 )
 
 // Error codes for service type-related failures.
 const (
-	ServiceTypeNotFound      = "SERVICE_TYPE_NOT_FOUND"
-	ServiceTypeNameExists    = "SERVICE_TYPE_NAME_EXISTS"
-	ServiceTypeInvalidData   = "SERVICE_TYPE_INVALID_DATA"
-	ServiceTypeLookupFailed  = "SERVICE_TYPE_LOOKUP_FAILED"
+	ServiceTypeNotFound     = "SERVICE_TYPE_NOT_FOUND"
+	ServiceTypeNameExists   = "SERVICE_TYPE_NAME_EXISTS"
+	ServiceTypeInvalidData  = "SERVICE_TYPE_INVALID_DATA"
+	ServiceTypeLookupFailed = "SERVICE_TYPE_LOOKUP_FAILED"
 )
 
 // Error codes for appointment-related failures.
@@ -206,15 +209,15 @@ const (
 
 // Error codes for schedule-related failures.
 const (
-	ScheduleNotFound      = "SCHEDULE_NOT_FOUND"
-	ScheduleInvalidData   = "SCHEDULE_INVALID_DATA"
-	ScheduleLookupFailed  = "SCHEDULE_LOOKUP_FAILED"
+	ScheduleNotFound     = "SCHEDULE_NOT_FOUND"
+	ScheduleInvalidData  = "SCHEDULE_INVALID_DATA"
+	ScheduleLookupFailed = "SCHEDULE_LOOKUP_FAILED"
 )
 
 // Error codes for notification-related failures.
 const (
-	NotificationFailed     = "NOTIFICATION_FAILED"
-	NotificationNotFound   = "NOTIFICATION_NOT_FOUND"
+	NotificationFailed   = "NOTIFICATION_FAILED"
+	NotificationNotFound = "NOTIFICATION_NOT_FOUND"
 )
 
 // Error codes for preference-related failures.
@@ -225,11 +228,11 @@ const (
 
 // Error codes for internal server errors.
 const (
-	InternalPasswordProcessing      = "INTERNAL_PASSWORD_PROCESSING"
-	InternalTokenGeneration         = "INTERNAL_TOKEN_GENERATION"
-	InternalRefreshTokenGeneration  = "INTERNAL_REFRESH_TOKEN_GENERATION"
-	InternalRefreshTokenStorage     = "INTERNAL_REFRESH_TOKEN_STORAGE"
-	InternalUserLookup              = "INTERNAL_USER_LOOKUP"
+	InternalPasswordProcessing     = "INTERNAL_PASSWORD_PROCESSING"
+	InternalTokenGeneration        = "INTERNAL_TOKEN_GENERATION"
+	InternalRefreshTokenGeneration = "INTERNAL_REFRESH_TOKEN_GENERATION"
+	InternalRefreshTokenStorage    = "INTERNAL_REFRESH_TOKEN_STORAGE"
+	InternalUserLookup             = "INTERNAL_USER_LOOKUP"
 )
 
 // WriteError writes a structured JSON error response with the given status code,

@@ -32,9 +32,9 @@ func (r *PostgresOrganizationRepository) CreateWithMembership(ctx context.Contex
 	defer tx.Rollback() //nolint:errcheck // best-effort rollback
 
 	err = tx.QueryRowContext(ctx,
-		`INSERT INTO organizations (name, slug, description) VALUES ($1, $2, $3)
+		`INSERT INTO organizations (name, slug, description, timezone, invite_from_email, invite_from_name) VALUES ($1, $2, $3, $4, $5, $6)
 		 RETURNING id, created_at, updated_at`,
-		org.Name, org.Slug, org.Description,
+		org.Name, org.Slug, org.Description, org.Timezone, org.InviteFromEmail, org.InviteFromName,
 	).Scan(&org.ID, &org.CreatedAt, &org.UpdatedAt)
 	if err != nil {
 		if isUniqueViolation(err) {
@@ -57,7 +57,8 @@ func (r *PostgresOrganizationRepository) CreateWithMembership(ctx context.Contex
 // ListByUser returns all organizations a user belongs to, with roles.
 func (r *PostgresOrganizationRepository) ListByUser(ctx context.Context, userID int64) ([]*domain.OrganizationWithRole, error) {
 	rows, err := r.db.QueryContext(ctx,
-		`SELECT o.id, o.name, o.slug, COALESCE(o.description, ''), COALESCE(o.logo_url, ''),
+		`SELECT o.id, o.name, o.slug, COALESCE(o.description, ''), COALESCE(o.logo_url, ''), COALESCE(o.timezone, 'UTC'),
+		        COALESCE(o.invite_from_email, ''), COALESCE(o.invite_from_name, ''),
 		        o.created_at, o.updated_at, om.role
 		 FROM organizations o
 		 JOIN organization_memberships om ON om.org_id = o.id
@@ -73,7 +74,7 @@ func (r *PostgresOrganizationRepository) ListByUser(ctx context.Context, userID 
 	var orgs []*domain.OrganizationWithRole
 	for rows.Next() {
 		var o domain.OrganizationWithRole
-		if err := rows.Scan(&o.ID, &o.Name, &o.Slug, &o.Description, &o.LogoURL,
+		if err := rows.Scan(&o.ID, &o.Name, &o.Slug, &o.Description, &o.LogoURL, &o.Timezone, &o.InviteFromEmail, &o.InviteFromName,
 			&o.CreatedAt, &o.UpdatedAt, &o.Role); err != nil {
 			return nil, fmt.Errorf("scanning organization: %w", err)
 		}
@@ -86,9 +87,10 @@ func (r *PostgresOrganizationRepository) ListByUser(ctx context.Context, userID 
 func (r *PostgresOrganizationRepository) GetByID(ctx context.Context, orgID int64) (*domain.Organization, error) {
 	var o domain.Organization
 	err := r.db.QueryRowContext(ctx,
-		`SELECT id, name, slug, COALESCE(description, ''), COALESCE(logo_url, ''), created_at, updated_at
+		`SELECT id, name, slug, COALESCE(description, ''), COALESCE(logo_url, ''), COALESCE(timezone, 'UTC'),
+		        COALESCE(invite_from_email, ''), COALESCE(invite_from_name, ''), created_at, updated_at
 		 FROM organizations WHERE id = $1`, orgID,
-	).Scan(&o.ID, &o.Name, &o.Slug, &o.Description, &o.LogoURL, &o.CreatedAt, &o.UpdatedAt)
+	).Scan(&o.ID, &o.Name, &o.Slug, &o.Description, &o.LogoURL, &o.Timezone, &o.InviteFromEmail, &o.InviteFromName, &o.CreatedAt, &o.UpdatedAt)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, service.ErrOrgNotFound
 	}
@@ -99,7 +101,7 @@ func (r *PostgresOrganizationRepository) GetByID(ctx context.Context, orgID int6
 }
 
 // Update modifies organization fields.
-func (r *PostgresOrganizationRepository) Update(ctx context.Context, orgID int64, name, description, logoURL *string) (*domain.Organization, error) {
+func (r *PostgresOrganizationRepository) Update(ctx context.Context, orgID int64, name, description, logoURL, timezone, inviteFromEmail, inviteFromName *string) (*domain.Organization, error) {
 	setClauses := []string{}
 	args := []interface{}{}
 	argIdx := 1
@@ -117,6 +119,21 @@ func (r *PostgresOrganizationRepository) Update(ctx context.Context, orgID int64
 	if logoURL != nil {
 		setClauses = append(setClauses, "logo_url = $"+strconv.Itoa(argIdx))
 		args = append(args, *logoURL)
+		argIdx++
+	}
+	if timezone != nil {
+		setClauses = append(setClauses, "timezone = $"+strconv.Itoa(argIdx))
+		args = append(args, *timezone)
+		argIdx++
+	}
+	if inviteFromEmail != nil {
+		setClauses = append(setClauses, "invite_from_email = $"+strconv.Itoa(argIdx))
+		args = append(args, *inviteFromEmail)
+		argIdx++
+	}
+	if inviteFromName != nil {
+		setClauses = append(setClauses, "invite_from_name = $"+strconv.Itoa(argIdx))
+		args = append(args, *inviteFromName)
 		argIdx++
 	}
 
@@ -162,7 +179,7 @@ func (r *PostgresOrganizationRepository) GetMemberRole(ctx context.Context, orgI
 // ListMembers returns all members of an organization.
 func (r *PostgresOrganizationRepository) ListMembers(ctx context.Context, orgID int64) ([]*domain.OrgMember, error) {
 	rows, err := r.db.QueryContext(ctx,
-		`SELECT om.id, u.id, u.username, COALESCE(u.email, ''), u.email, om.role, om.created_at
+		`SELECT om.id, u.id, u.username, COALESCE(u.email, ''), u.email, om.role, u.must_change_password, om.created_at
 		 FROM organization_memberships om
 		 JOIN users u ON u.id = om.user_id
 		 WHERE om.org_id = $1
@@ -178,7 +195,7 @@ func (r *PostgresOrganizationRepository) ListMembers(ctx context.Context, orgID 
 	for rows.Next() {
 		var m domain.OrgMember
 		if err := rows.Scan(&m.ID, &m.UserID, &m.FirstName, &m.LastName,
-			&m.Email, &m.Role, &m.CreatedAt); err != nil {
+			&m.Email, &m.Role, &m.MustChangePassword, &m.CreatedAt); err != nil {
 			return nil, fmt.Errorf("scanning member: %w", err)
 		}
 		members = append(members, &m)
@@ -323,10 +340,12 @@ func (r *PostgresOrganizationRepository) ListUserInvitations(ctx context.Context
 func (r *PostgresOrganizationRepository) GetInvitationByToken(ctx context.Context, token string) (*domain.OrgInvitation, error) {
 	var inv domain.OrgInvitation
 	err := r.db.QueryRowContext(ctx,
-		`SELECT id, org_id, email, role FROM organization_invitations
-		 WHERE token = $1 AND status = 'pending' AND expires_at > NOW()`,
+		`SELECT i.id, i.org_id, o.name, i.email, i.role, i.expires_at
+		 FROM organization_invitations i
+		 JOIN organizations o ON o.id = i.org_id
+		 WHERE i.token = $1 AND i.status = 'pending' AND i.expires_at > NOW()`,
 		token,
-	).Scan(&inv.ID, &inv.OrgID, &inv.Email, &inv.Role)
+	).Scan(&inv.ID, &inv.OrgID, &inv.OrgName, &inv.Email, &inv.Role, &inv.ExpiresAt)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, service.ErrInvitationNotFound
 	}
@@ -363,6 +382,76 @@ func (r *PostgresOrganizationRepository) AcceptInvitation(ctx context.Context, i
 	return tx.Commit()
 }
 
+// ConfirmInvitation marks invitation accepted and provisions membership for existing invited user.
+func (r *PostgresOrganizationRepository) ConfirmInvitation(ctx context.Context, orgID, invitationID int64, requirePasswordChange bool) error {
+	tx, err := r.db.BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("starting transaction: %w", err)
+	}
+	defer tx.Rollback() //nolint:errcheck // best-effort rollback
+
+	var (
+		email string
+		role  string
+	)
+	err = tx.QueryRowContext(ctx,
+		`SELECT email, role
+		 FROM organization_invitations
+		 WHERE id = $1 AND org_id = $2 AND status = 'pending' AND expires_at > NOW()
+		 FOR UPDATE`,
+		invitationID, orgID,
+	).Scan(&email, &role)
+	if errors.Is(err, sql.ErrNoRows) {
+		return service.ErrInvitationNotFound
+	}
+	if err != nil {
+		return fmt.Errorf("querying pending invitation: %w", err)
+	}
+
+	var userID int64
+	err = tx.QueryRowContext(ctx,
+		`SELECT id FROM users WHERE LOWER(email) = LOWER($1)`,
+		email,
+	).Scan(&userID)
+	if errors.Is(err, sql.ErrNoRows) {
+		return service.ErrInvitationUserNotFound
+	}
+	if err != nil {
+		return fmt.Errorf("querying invited user: %w", err)
+	}
+
+	_, err = tx.ExecContext(ctx,
+		`UPDATE organization_invitations
+		 SET status = 'accepted'
+		 WHERE id = $1`,
+		invitationID,
+	)
+	if err != nil {
+		return fmt.Errorf("updating invitation status: %w", err)
+	}
+
+	_, err = tx.ExecContext(ctx,
+		`INSERT INTO organization_memberships (org_id, user_id, role) VALUES ($1, $2, $3)
+		 ON CONFLICT (org_id, user_id) DO NOTHING`,
+		orgID, userID, role,
+	)
+	if err != nil {
+		return fmt.Errorf("creating organization membership: %w", err)
+	}
+
+	if requirePasswordChange {
+		_, err = tx.ExecContext(ctx,
+			`UPDATE users SET must_change_password = true, updated_at = NOW() WHERE id = $1`,
+			userID,
+		)
+		if err != nil {
+			return fmt.Errorf("enabling must_change_password: %w", err)
+		}
+	}
+
+	return tx.Commit()
+}
+
 // DeclineInvitation marks an invitation as declined.
 func (r *PostgresOrganizationRepository) DeclineInvitation(ctx context.Context, token, email string) error {
 	result, err := r.db.ExecContext(ctx,
@@ -384,7 +473,8 @@ func (r *PostgresOrganizationRepository) DeclineInvitation(ctx context.Context, 
 func (r *PostgresOrganizationRepository) ListOrgInvitations(ctx context.Context, orgID int64) ([]*domain.OrgInvitation, error) {
 	rows, err := r.db.QueryContext(ctx,
 		`SELECT i.id, i.org_id, o.name, i.email, i.role, i.status,
-		        u.username, i.expires_at, i.created_at
+		        u.username, EXISTS(SELECT 1 FROM users iu WHERE LOWER(iu.email) = LOWER(i.email)) AS has_account,
+		        i.expires_at, i.created_at
 		 FROM organization_invitations i
 		 JOIN organizations o ON o.id = i.org_id
 		 JOIN users u ON u.id = i.invited_by
@@ -401,7 +491,7 @@ func (r *PostgresOrganizationRepository) ListOrgInvitations(ctx context.Context,
 	for rows.Next() {
 		var inv domain.OrgInvitation
 		if err := rows.Scan(&inv.ID, &inv.OrgID, &inv.OrgName, &inv.Email, &inv.Role,
-			&inv.Status, &inv.InvitedBy, &inv.ExpiresAt, &inv.CreatedAt); err != nil {
+			&inv.Status, &inv.InvitedBy, &inv.HasAccount, &inv.ExpiresAt, &inv.CreatedAt); err != nil {
 			return nil, fmt.Errorf("scanning invitation: %w", err)
 		}
 		invitations = append(invitations, &inv)

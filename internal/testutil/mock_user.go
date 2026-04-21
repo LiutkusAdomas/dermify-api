@@ -8,13 +8,15 @@ import (
 
 // MockUserRepository is a test double for service.UserRepository.
 type MockUserRepository struct {
-	CreateFn            func(ctx context.Context, user *domain.User) error
-	GetByIDFn           func(ctx context.Context, id int64) (*domain.User, error)
-	GetByEmailFn        func(ctx context.Context, email string) (*domain.User, error)
-	UpdateFn            func(ctx context.Context, user *domain.User) error
-	DeleteFn            func(ctx context.Context, id int64) error
-	ListFn              func(ctx context.Context) ([]*domain.User, error)
-	UpdatePreferencesFn func(ctx context.Context, userID int64, language, timezone string) error
+	CreateFn                func(ctx context.Context, user *domain.User) error
+	GetByIDFn               func(ctx context.Context, id int64) (*domain.User, error)
+	GetByEmailFn            func(ctx context.Context, email string) (*domain.User, error)
+	UpdateFn                func(ctx context.Context, user *domain.User) error
+	DeleteFn                func(ctx context.Context, id int64) error
+	ListFn                  func(ctx context.Context) ([]*domain.User, error)
+	UpdatePreferencesFn     func(ctx context.Context, userID int64, language, timezone string) error
+	UpdatePasswordFn        func(ctx context.Context, userID int64, passwordHash string, clearMustChange bool) error
+	SetMustChangePasswordFn func(ctx context.Context, userID int64, mustChange bool) error
 }
 
 // Create delegates to CreateFn if set, otherwise returns nil.
@@ -69,6 +71,22 @@ func (m *MockUserRepository) List(ctx context.Context) ([]*domain.User, error) {
 func (m *MockUserRepository) UpdatePreferences(ctx context.Context, userID int64, language, timezone string) error {
 	if m.UpdatePreferencesFn != nil {
 		return m.UpdatePreferencesFn(ctx, userID, language, timezone)
+	}
+	return nil
+}
+
+// UpdatePassword delegates to UpdatePasswordFn if set, otherwise returns nil.
+func (m *MockUserRepository) UpdatePassword(ctx context.Context, userID int64, passwordHash string, clearMustChange bool) error {
+	if m.UpdatePasswordFn != nil {
+		return m.UpdatePasswordFn(ctx, userID, passwordHash, clearMustChange)
+	}
+	return nil
+}
+
+// SetMustChangePassword delegates to SetMustChangePasswordFn if set, otherwise returns nil.
+func (m *MockUserRepository) SetMustChangePassword(ctx context.Context, userID int64, mustChange bool) error {
+	if m.SetMustChangePasswordFn != nil {
+		return m.SetMustChangePasswordFn(ctx, userID, mustChange)
 	}
 	return nil
 }

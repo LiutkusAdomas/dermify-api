@@ -13,6 +13,12 @@ type Client struct {
 	cfg config.SMTPConfig
 }
 
+// InvitationOptions allows sender customization per organization.
+type InvitationOptions struct {
+	FromEmail string
+	FromName  string
+}
+
 // NewClient creates an email client from SMTP configuration.
 func NewClient(cfg config.SMTPConfig) *Client {
 	return &Client{cfg: cfg}
@@ -24,21 +30,32 @@ func (c *Client) Enabled() bool {
 }
 
 // SendInvitation sends an organization invitation email.
-func (c *Client) SendInvitation(to, orgName, inviterName, token string) error {
+func (c *Client) SendInvitation(to, orgName, inviterName, token string, opts *InvitationOptions) error {
 	acceptURL := fmt.Sprintf("%s/invite/%s", c.cfg.FrontendURL, token)
 
 	subject := fmt.Sprintf("You've been invited to join %s on Dermify", orgName)
 	body := buildInvitationHTML(orgName, inviterName, acceptURL)
 
-	return c.send(to, subject, body)
+	return c.send(to, subject, body, opts)
 }
 
-func (c *Client) send(to, subject, htmlBody string) error {
+func (c *Client) send(to, subject, htmlBody string, opts *InvitationOptions) error {
 	if !c.Enabled() {
 		return nil
 	}
 
-	from := fmt.Sprintf("%s <%s>", c.cfg.FromName, c.cfg.FromEmail)
+	fromEmail := c.cfg.FromEmail
+	fromName := c.cfg.FromName
+	if opts != nil {
+		if opts.FromEmail != "" {
+			fromEmail = opts.FromEmail
+		}
+		if opts.FromName != "" {
+			fromName = opts.FromName
+		}
+	}
+
+	from := fmt.Sprintf("%s <%s>", fromName, fromEmail)
 
 	headers := []string{
 		fmt.Sprintf("From: %s", from),
@@ -57,7 +74,7 @@ func (c *Client) send(to, subject, htmlBody string) error {
 		auth = smtp.PlainAuth("", c.cfg.Username, c.cfg.Password, c.cfg.Host)
 	}
 
-	return smtp.SendMail(addr, auth, c.cfg.FromEmail, []string{to}, msg)
+	return smtp.SendMail(addr, auth, fromEmail, []string{to}, msg)
 }
 
 func buildInvitationHTML(orgName, inviterName, acceptURL string) string {

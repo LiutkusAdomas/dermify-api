@@ -198,14 +198,15 @@ func HandleRefreshToken(authSvc *service.AuthService, cfg *config.Configuration,
 }
 
 type profileResponse struct {
-	ID        int64  `json:"id" example:"1"`
-	Username  string `json:"username" example:"johndoe"`
-	Email     string `json:"email" example:"johndoe@example.com"`
-	Bio       string `json:"bio" example:"Software developer"`
-	Role      string `json:"role" example:"doctor"`
-	Language  string `json:"language" example:"en"`
-	Timezone  string `json:"timezone" example:"UTC"`
-	CreatedAt string `json:"created_at" example:"2024-01-01T00:00:00Z"`
+	ID                 int64  `json:"id" example:"1"`
+	Username           string `json:"username" example:"johndoe"`
+	Email              string `json:"email" example:"johndoe@example.com"`
+	Bio                string `json:"bio" example:"Software developer"`
+	Role               string `json:"role" example:"doctor"`
+	Language           string `json:"language" example:"en"`
+	Timezone           string `json:"timezone" example:"UTC"`
+	MustChangePassword bool   `json:"must_change_password"`
+	CreatedAt          string `json:"created_at" example:"2024-01-01T00:00:00Z"`
 }
 
 // HandleGetProfile returns the authenticated user's profile.
@@ -236,13 +237,14 @@ func HandleGetProfile(authSvc *service.AuthService, m *metrics.Client) func(w ht
 		}
 
 		resp := profileResponse{
-			ID:        user.ID,
-			Username:  user.Username,
-			Email:     user.Email,
-			Role:      user.Role,
-			Language:  user.Language,
-			Timezone:  user.Timezone,
-			CreatedAt: user.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+			ID:                 user.ID,
+			Username:           user.Username,
+			Email:              user.Email,
+			Role:               user.Role,
+			Language:           user.Language,
+			Timezone:           user.Timezone,
+			MustChangePassword: user.MustChangePassword,
+			CreatedAt:          user.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
 		}
 
 		if user.Bio != nil {
@@ -251,6 +253,64 @@ func HandleGetProfile(authSvc *service.AuthService, m *metrics.Client) func(w ht
 
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(resp) //nolint:errcheck // response write
+	}
+}
+
+type changePasswordRequest struct {
+	CurrentPassword string `json:"current_password"`
+	NewPassword     string `json:"new_password"`
+}
+
+// HandleChangePassword updates the authenticated user's password and clears must-change flag.
+func HandleChangePassword(authSvc *service.AuthService, m *metrics.Client) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		claims := middleware.GetUserClaims(r.Context())
+		if claims == nil {
+			apierrors.WriteError(w, http.StatusUnauthorized, apierrors.AuthNotAuthenticated, "not authenticated")
+			return
+		}
+
+		var req changePasswordRequest
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			apierrors.WriteError(w, http.StatusBadRequest, apierrors.ValidationInvalidRequestBody, "invalid request body")
+			return
+		}
+
+		if req.CurrentPassword == "" || req.NewPassword == "" {
+			apierrors.WriteError(w, http.StatusBadRequest, apierrors.ValidationRequiredFields, "current_password and new_password are required")
+			return
+		}
+		if len(req.NewPassword) < 8 {
+			apierrors.WriteError(w, http.StatusBadRequest, apierrors.ValidationRequiredFields, "new password must be at least 8 characters")
+			return
+		}
+
+		user, err := authSvc.GetUserByID(r.Context(), claims.UserID)
+		if err != nil {
+			handleAuthError(w, err)
+			return
+		}
+		if !auth.CheckPassword(req.CurrentPassword, user.PasswordHash) {
+			apierrors.WriteError(w, http.StatusUnauthorized, apierrors.AuthInvalidCredentials, "current password is incorrect")
+			return
+		}
+
+		hash, err := auth.HashPassword(req.NewPassword)
+		if err != nil {
+			apierrors.WriteError(w, http.StatusInternalServerError, apierrors.InternalPasswordProcessing, "failed to process password")
+			return
+		}
+
+		if err := authSvc.UpdatePassword(r.Context(), claims.UserID, hash, true); err != nil {
+			slog.Error("failed to update password", "error", err)
+			apierrors.WriteError(w, http.StatusInternalServerError, apierrors.InternalUserLookup, "failed to update password")
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(map[string]string{"message": "password updated"}) //nolint:errcheck // response write
 	}
 }
 

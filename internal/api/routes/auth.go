@@ -40,10 +40,13 @@ func (ar *AuthRoutes) RegisterRoutes(router chi.Router) {
 		r.With(authLimiter.Handler).Post("/login", handlers.HandleLogin(ar.authSvc, ar.config, ar.metrics))
 		r.With(authLimiter.Handler).Post("/logout", handlers.HandleLogout(ar.authSvc, ar.metrics))
 		r.With(authLimiter.Handler).Post("/refresh", handlers.HandleRefreshToken(ar.authSvc, ar.config, ar.metrics))
+		r.With(authLimiter.Handler).Get("/invitations/{token}", handlers.HandleGetInvitationStatus(ar.orgSvc, ar.authSvc, ar.metrics))
+		r.With(authLimiter.Handler).Post("/invitations/{token}/complete", handlers.HandleCompleteInvitation(ar.orgSvc, ar.authSvc, ar.config, ar.metrics))
 
 		r.Group(func(r chi.Router) {
 			r.Use(middleware.RequireAuth(ar.config))
 			r.Get("/me", handlers.HandleGetProfile(ar.authSvc, ar.metrics))
+			r.Put("/password", handlers.HandleChangePassword(ar.authSvc, ar.metrics))
 			r.Put("/preferences", handlers.HandleUpdatePreferences(ar.userSvc, ar.metrics))
 			r.Get("/invitations", handlers.HandleListPendingInvitations(ar.orgSvc, ar.metrics))
 			r.Post("/invitations/{token}/accept", handlers.HandleAcceptInvitation(ar.orgSvc, ar.metrics))

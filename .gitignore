@@ -18,3 +18,7 @@ Thumbs.db
 
 # Local-only DevOps / infra notes (safe to keep locally, never push)
 devops-local/
+
+# Test scratch files (e.g. config_test.go previously leaked YAML fixtures here
+# on Windows — kept as a safety net even though the test now uses t.TempDir())
+config/[0-9]*.yaml

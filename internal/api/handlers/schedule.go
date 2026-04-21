@@ -236,7 +236,9 @@ func HandleListOverrides(svc *service.ScheduleService, m *metrics.Client) func(w
 }
 
 // HandleGetAvailability returns available time slots for a doctor on a date.
-func HandleGetAvailability(scheduleSvc *service.ScheduleService, appointmentSvc *service.AppointmentService, m *metrics.Client) func(w http.ResponseWriter, r *http.Request) {
+// The `date` query parameter is interpreted in the `timezone` query parameter if supplied,
+// otherwise in the organization's configured timezone (falling back to UTC).
+func HandleGetAvailability(scheduleSvc *service.ScheduleService, appointmentSvc *service.AppointmentService, orgSvc *service.OrganizationService, m *metrics.Client) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
@@ -257,7 +259,18 @@ func HandleGetAvailability(scheduleSvc *service.ScheduleService, appointmentSvc 
 			apierrors.WriteError(w, http.StatusBadRequest, apierrors.ValidationRequiredFields, "date is required")
 			return
 		}
-		date, err := time.Parse("2006-01-02", dateStr)
+		tzQuery := r.URL.Query().Get("timezone")
+		if tzQuery == "" {
+			if org, err := orgSvc.GetByID(r.Context(), membership.OrgID); err == nil && org != nil {
+				tzQuery = org.Timezone
+			}
+		}
+		loc, err := parseTimezoneOrUTC(tzQuery)
+		if err != nil {
+			apierrors.WriteError(w, http.StatusBadRequest, apierrors.ScheduleInvalidData, "invalid timezone")
+			return
+		}
+		date, err := time.ParseInLocation("2006-01-02", dateStr, loc)
 		if err != nil {
 			apierrors.WriteError(w, http.StatusBadRequest, apierrors.ScheduleInvalidData, "invalid date format")
 			return
@@ -297,4 +310,16 @@ func handleScheduleError(w http.ResponseWriter, err error) {
 		slog.Error("schedule operation failed", "error", err)
 		apierrors.WriteError(w, http.StatusInternalServerError, apierrors.ScheduleLookupFailed, "internal error")
 	}
+}
+
+func parseTimezoneOrUTC(tz string) (*time.Location, error) {
+	if tz == "" {
+		return time.UTC, nil
+	}
+
+	loc, err := time.LoadLocation(tz)
+	if err != nil {
+		return nil, err
+	}
+	return loc, nil
 }

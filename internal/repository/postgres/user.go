@@ -45,9 +45,9 @@ func (r *PostgresUserRepository) GetByID(ctx context.Context, id int64) (*domain
 	var bio sql.NullString
 
 	err := r.db.QueryRowContext(ctx,
-		`SELECT id, username, email, password_hash, bio, COALESCE(role, ''), language, timezone, created_at, updated_at
+		`SELECT id, username, email, password_hash, bio, COALESCE(role, ''), language, timezone, must_change_password, created_at, updated_at
 		FROM users WHERE id = $1`, id,
-	).Scan(&u.ID, &u.Username, &u.Email, &u.PasswordHash, &bio, &u.Role, &u.Language, &u.Timezone, &u.CreatedAt, &u.UpdatedAt)
+	).Scan(&u.ID, &u.Username, &u.Email, &u.PasswordHash, &bio, &u.Role, &u.Language, &u.Timezone, &u.MustChangePassword, &u.CreatedAt, &u.UpdatedAt)
 
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, service.ErrUserNotFound
@@ -70,9 +70,9 @@ func (r *PostgresUserRepository) GetByEmail(ctx context.Context, email string) (
 	var bio sql.NullString
 
 	err := r.db.QueryRowContext(ctx,
-		`SELECT id, username, email, password_hash, bio, COALESCE(role, ''), language, timezone, created_at, updated_at
+		`SELECT id, username, email, password_hash, bio, COALESCE(role, ''), language, timezone, must_change_password, created_at, updated_at
 		FROM users WHERE LOWER(email) = LOWER($1)`, email,
-	).Scan(&u.ID, &u.Username, &u.Email, &u.PasswordHash, &bio, &u.Role, &u.Language, &u.Timezone, &u.CreatedAt, &u.UpdatedAt)
+	).Scan(&u.ID, &u.Username, &u.Email, &u.PasswordHash, &bio, &u.Role, &u.Language, &u.Timezone, &u.MustChangePassword, &u.CreatedAt, &u.UpdatedAt)
 
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, service.ErrUserNotFound
@@ -138,7 +138,7 @@ func (r *PostgresUserRepository) Delete(ctx context.Context, id int64) error {
 // List returns all users ordered by ID.
 func (r *PostgresUserRepository) List(ctx context.Context) ([]*domain.User, error) {
 	rows, err := r.db.QueryContext(ctx,
-		`SELECT id, username, email, password_hash, bio, COALESCE(role, ''), language, timezone, created_at, updated_at
+		`SELECT id, username, email, password_hash, bio, COALESCE(role, ''), language, timezone, must_change_password, created_at, updated_at
 		FROM users ORDER BY id ASC`,
 	)
 	if err != nil {
@@ -152,7 +152,7 @@ func (r *PostgresUserRepository) List(ctx context.Context) ([]*domain.User, erro
 		var u domain.User
 		var bio sql.NullString
 
-		if err := rows.Scan(&u.ID, &u.Username, &u.Email, &u.PasswordHash, &bio, &u.Role, &u.Language, &u.Timezone, &u.CreatedAt, &u.UpdatedAt); err != nil {
+		if err := rows.Scan(&u.ID, &u.Username, &u.Email, &u.PasswordHash, &bio, &u.Role, &u.Language, &u.Timezone, &u.MustChangePassword, &u.CreatedAt, &u.UpdatedAt); err != nil {
 			return nil, fmt.Errorf("scanning user row: %w", err)
 		}
 
@@ -196,6 +196,53 @@ func (r *PostgresUserRepository) UpdatePreferences(ctx context.Context, userID i
 		return err
 	}
 
+	return nil
+}
+
+// UpdatePassword updates password hash and optionally clears must-change-password.
+func (r *PostgresUserRepository) UpdatePassword(ctx context.Context, userID int64, passwordHash string, clearMustChange bool) error {
+	if clearMustChange {
+		result, err := r.db.ExecContext(ctx,
+			`UPDATE users SET password_hash = $1, must_change_password = false, updated_at = NOW() WHERE id = $2`,
+			passwordHash, userID,
+		)
+		if err != nil {
+			return err
+		}
+		rowsAffected, _ := result.RowsAffected()
+		if rowsAffected == 0 {
+			return service.ErrUserNotFound
+		}
+		return nil
+	}
+
+	result, err := r.db.ExecContext(ctx,
+		`UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2`,
+		passwordHash, userID,
+	)
+	if err != nil {
+		return err
+	}
+	rowsAffected, _ := result.RowsAffected()
+	if rowsAffected == 0 {
+		return service.ErrUserNotFound
+	}
+	return nil
+}
+
+// SetMustChangePassword toggles must-change-password flag.
+func (r *PostgresUserRepository) SetMustChangePassword(ctx context.Context, userID int64, mustChange bool) error {
+	result, err := r.db.ExecContext(ctx,
+		`UPDATE users SET must_change_password = $1, updated_at = NOW() WHERE id = $2`,
+		mustChange, userID,
+	)
+	if err != nil {
+		return err
+	}
+	rowsAffected, _ := result.RowsAffected()
+	if rowsAffected == 0 {
+		return service.ErrUserNotFound
+	}
 	return nil
 }
 

@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"errors"
+	"net/mail"
 	"regexp"
 	"strings"
 	"time"
@@ -15,17 +16,20 @@ import (
 
 // Sentinel errors for organization operations.
 var (
-	ErrOrgNotFound          = errors.New("organization not found")          //nolint:gochecknoglobals // sentinel error
-	ErrOrgSlugExists        = errors.New("organization slug already exists") //nolint:gochecknoglobals // sentinel error
-	ErrOrgNotMember         = errors.New("not a member of this organization") //nolint:gochecknoglobals // sentinel error
-	ErrOrgNotAdmin          = errors.New("admin access required")            //nolint:gochecknoglobals // sentinel error
-	ErrOrgMemberNotFound    = errors.New("membership not found")             //nolint:gochecknoglobals // sentinel error
-	ErrOrgLastAdmin         = errors.New("cannot remove the last admin")     //nolint:gochecknoglobals // sentinel error
-	ErrOrgNoFieldsToUpdate  = errors.New("no fields to update")             //nolint:gochecknoglobals // sentinel error
-	ErrOrgAlreadyMember     = errors.New("user is already a member")        //nolint:gochecknoglobals // sentinel error
-	ErrInvitationExists     = errors.New("pending invitation already exists") //nolint:gochecknoglobals // sentinel error
-	ErrInvitationNotFound   = errors.New("invitation not found or expired")  //nolint:gochecknoglobals // sentinel error
-	ErrInvitationWrongEmail = errors.New("invitation is for a different email") //nolint:gochecknoglobals // sentinel error
+	ErrOrgNotFound            = errors.New("organization not found")              //nolint:gochecknoglobals // sentinel error
+	ErrOrgSlugExists          = errors.New("organization slug already exists")    //nolint:gochecknoglobals // sentinel error
+	ErrOrgNotMember           = errors.New("not a member of this organization")   //nolint:gochecknoglobals // sentinel error
+	ErrOrgNotAdmin            = errors.New("admin access required")               //nolint:gochecknoglobals // sentinel error
+	ErrOrgMemberNotFound      = errors.New("membership not found")                //nolint:gochecknoglobals // sentinel error
+	ErrOrgLastAdmin           = errors.New("cannot remove the last admin")        //nolint:gochecknoglobals // sentinel error
+	ErrOrgNoFieldsToUpdate    = errors.New("no fields to update")                 //nolint:gochecknoglobals // sentinel error
+	ErrOrgAlreadyMember       = errors.New("user is already a member")            //nolint:gochecknoglobals // sentinel error
+	ErrInvitationExists       = errors.New("pending invitation already exists")   //nolint:gochecknoglobals // sentinel error
+	ErrInvitationNotFound     = errors.New("invitation not found or expired")     //nolint:gochecknoglobals // sentinel error
+	ErrInvitationWrongEmail   = errors.New("invitation is for a different email") //nolint:gochecknoglobals // sentinel error
+	ErrInvitationUserNotFound = errors.New("invited user account not found")      //nolint:gochecknoglobals // sentinel error
+	ErrOrgInvalidTimezone     = errors.New("invalid organization timezone")       //nolint:gochecknoglobals // sentinel error
+	ErrOrgInvalidInviteFrom   = errors.New("invalid organization invite sender")  //nolint:gochecknoglobals // sentinel error
 )
 
 // OrganizationRepository defines the data access contract for organizations.
@@ -33,7 +37,7 @@ type OrganizationRepository interface {
 	CreateWithMembership(ctx context.Context, org *domain.Organization, userID int64) error
 	ListByUser(ctx context.Context, userID int64) ([]*domain.OrganizationWithRole, error)
 	GetByID(ctx context.Context, orgID int64) (*domain.Organization, error)
-	Update(ctx context.Context, orgID int64, name, description, logoURL *string) (*domain.Organization, error)
+	Update(ctx context.Context, orgID int64, name, description, logoURL, timezone, inviteFromEmail, inviteFromName *string) (*domain.Organization, error)
 	GetMemberRole(ctx context.Context, orgID, userID int64) (string, error)
 	ListMembers(ctx context.Context, orgID int64) ([]*domain.OrgMember, error)
 	UpdateMemberRole(ctx context.Context, orgID, userID int64, role string) error
@@ -47,6 +51,7 @@ type OrganizationRepository interface {
 	ListUserInvitations(ctx context.Context, email string) ([]*domain.OrgInvitation, error)
 	GetInvitationByToken(ctx context.Context, token string) (*domain.OrgInvitation, error)
 	AcceptInvitation(ctx context.Context, invID, orgID, userID int64, role string) error
+	ConfirmInvitation(ctx context.Context, orgID, invitationID int64, requirePasswordChange bool) error
 	DeclineInvitation(ctx context.Context, token, email string) error
 	ListOrgInvitations(ctx context.Context, orgID int64) ([]*domain.OrgInvitation, error)
 }
@@ -80,14 +85,23 @@ func ValidSlug(slug string) bool {
 }
 
 // Create creates a new organization and adds the creator as admin.
-func (s *OrganizationService) Create(ctx context.Context, name, slug, description string, userID int64) (*domain.Organization, error) {
+// If defaultTimezone is a valid IANA zone it is used as the initial timezone;
+// otherwise the organization defaults to UTC.
+func (s *OrganizationService) Create(ctx context.Context, name, slug, description, defaultTimezone string, userID int64) (*domain.Organization, error) {
 	if slug == "" {
 		slug = GenerateSlug(name)
+	}
+	tz := "UTC"
+	if defaultTimezone != "" {
+		if _, err := time.LoadLocation(defaultTimezone); err == nil {
+			tz = defaultTimezone
+		}
 	}
 	org := &domain.Organization{
 		Name:        name,
 		Slug:        slug,
 		Description: description,
+		Timezone:    tz,
 	}
 	if err := s.repo.CreateWithMembership(ctx, org, userID); err != nil {
 		return nil, err
@@ -106,8 +120,18 @@ func (s *OrganizationService) GetByID(ctx context.Context, orgID int64) (*domain
 }
 
 // Update modifies organization details.
-func (s *OrganizationService) Update(ctx context.Context, orgID int64, name, description, logoURL *string) (*domain.Organization, error) {
-	return s.repo.Update(ctx, orgID, name, description, logoURL)
+func (s *OrganizationService) Update(ctx context.Context, orgID int64, name, description, logoURL, timezone, inviteFromEmail, inviteFromName *string) (*domain.Organization, error) {
+	if timezone != nil {
+		if _, err := time.LoadLocation(*timezone); err != nil {
+			return nil, ErrOrgInvalidTimezone
+		}
+	}
+	if inviteFromEmail != nil && *inviteFromEmail != "" {
+		if _, err := mail.ParseAddress(*inviteFromEmail); err != nil {
+			return nil, ErrOrgInvalidInviteFrom
+		}
+	}
+	return s.repo.Update(ctx, orgID, name, description, logoURL, timezone, inviteFromEmail, inviteFromName)
 }
 
 // GetMemberRole returns a user's role in an organization.
@@ -195,11 +219,25 @@ func (s *OrganizationService) InviteUser(ctx context.Context, orgID, inviterID i
 		return nil, err
 	}
 
-	orgName, _ := s.repo.GetOrgName(ctx, orgID)
+	org, _ := s.repo.GetByID(ctx, orgID)
+	orgName := ""
+	if org != nil {
+		orgName = org.Name
+	}
+	if orgName == "" {
+		orgName, _ = s.repo.GetOrgName(ctx, orgID)
+	}
 	inviterName, _ := s.repo.GetUserName(ctx, inviterID)
 
 	if s.emailClient != nil {
-		go s.emailClient.SendInvitation(targetEmail, orgName, inviterName, token) //nolint:errcheck // async fire-and-forget
+		var opts *email.InvitationOptions
+		if org != nil && (org.InviteFromEmail != "" || org.InviteFromName != "") {
+			opts = &email.InvitationOptions{
+				FromEmail: org.InviteFromEmail,
+				FromName:  org.InviteFromName,
+			}
+		}
+		go s.emailClient.SendInvitation(targetEmail, orgName, inviterName, token, opts) //nolint:errcheck // async fire-and-forget
 	}
 
 	return &domain.OrgInvitation{
@@ -214,6 +252,11 @@ func (s *OrganizationService) InviteUser(ctx context.Context, orgID, inviterID i
 		ExpiresAt: expiresAt,
 		CreatedAt: time.Now(),
 	}, nil
+}
+
+// GetInvitationByToken returns pending invitation details for token.
+func (s *OrganizationService) GetInvitationByToken(ctx context.Context, token string) (*domain.OrgInvitation, error) {
+	return s.repo.GetInvitationByToken(ctx, token)
 }
 
 // ListUserInvitations returns pending invitations for a user's email.
@@ -241,4 +284,9 @@ func (s *OrganizationService) DeclineInvitation(ctx context.Context, token, emai
 // ListOrgInvitations lists all invitations for an organization.
 func (s *OrganizationService) ListOrgInvitations(ctx context.Context, orgID int64) ([]*domain.OrgInvitation, error) {
 	return s.repo.ListOrgInvitations(ctx, orgID)
+}
+
+// ConfirmInvitation allows org admin to accept invitation without token click.
+func (s *OrganizationService) ConfirmInvitation(ctx context.Context, orgID, invitationID int64, requirePasswordChange bool) error {
+	return s.repo.ConfirmInvitation(ctx, orgID, invitationID, requirePasswordChange)
 }

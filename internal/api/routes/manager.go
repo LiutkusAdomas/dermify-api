@@ -106,7 +106,7 @@ func NewManager(db *sql.DB, cfg *config.Configuration, m *metrics.Client) *Manag
 		patientRoutes:     NewPatientRoutes(patientSvc, cfg, m),
 		registryRoutes:    NewRegistryRoutes(registrySvc, cfg, m),
 		sessionRoutes:     NewSessionRoutes(sessionSvc, consentSvc, contraindicationSvc, energySvc, injectableSvc, outcomeSvc, signoffSvc, addendumSvc, auditSvc, photoSvc, cfg.Storage.BasePath, cfg, m),
-		orgRoutes:         NewOrgRoutes(orgSvc, cfg, m),
+		orgRoutes:         NewOrgRoutes(orgSvc, authSvc, cfg, m),
 		serviceTypeRoutes: NewServiceTypeRoutes(serviceTypeSvc, orgSvc, cfg, m),
 		scheduleRoutes:    NewScheduleRoutes(scheduleSvc, orgSvc, cfg, m),
 		appointmentRoutes: NewAppointmentRoutes(appointmentSvc, scheduleSvc, orgSvc, cfg, m),

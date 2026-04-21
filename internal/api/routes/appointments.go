@@ -51,6 +51,6 @@ func (ar *AppointmentRoutes) RegisterOrgRoutes(router chi.Router) {
 	router.Route("/orgs/{orgId}/availability", func(r chi.Router) {
 		r.Use(middleware.RequireAuth(ar.config))
 		r.Use(middleware.RequireOrgMember(ar.orgSvc))
-		r.Get("/", handlers.HandleGetAvailability(ar.scheduleSvc, ar.appointmentSvc, ar.metrics))
+		r.Get("/", handlers.HandleGetAvailability(ar.scheduleSvc, ar.appointmentSvc, ar.orgSvc, ar.metrics))
 	})
 }
